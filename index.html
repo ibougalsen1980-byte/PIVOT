@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PIVOT, Prototype coach de basket</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+  :root{
+    --bg:#f4f1ea; --panel:#ffffff; --panel2:#f6f2ea; --line:#e6e0d4;
+    --txt:#181c22; --muted:#6a7178; --accent:#e8631f; --accent2:#ff8a4c;
+    --ok:#1a9e6a; --warn:#c98a12; --bad:#d64545; --blue:#2f6bd6;
+    --off:#e8631f; --def:#2f6bd6; --ball:#e6a700;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:#e7e1d4;color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  #app{max-width:460px;margin:0 auto;min-height:100vh;background:var(--bg);
+    display:flex;flex-direction:column;position:relative;box-shadow:0 0 40px rgba(0,0,0,.6)}
+  header.top{padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:20}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:800;letter-spacing:.5px}
+  .brand .dot{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:grid;place-items:center;font-size:15px;color:#101317;font-weight:900}
+  .brand small{display:block;font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.3px}
+  .teampill{font-size:11px;color:var(--muted);background:var(--panel2);padding:5px 9px;border-radius:20px;border:1px solid var(--line)}
+  main{flex:1;overflow-y:auto;padding:14px 14px 90px}
+  nav.tabs{position:sticky;bottom:0;display:flex;background:var(--panel);border-top:1px solid var(--line);
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:20}
+  nav.tabs button{flex:1;background:none;border:0;color:var(--muted);font-size:10.5px;font-weight:600;
+    padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+  nav.tabs button .ic{font-size:19px;line-height:1}
+  nav.tabs button.active{color:var(--accent)}
+  h2.view-title{font-size:20px;margin:2px 0 12px;font-weight:800}
+  .sub{color:var(--muted);font-size:12.5px;margin:-8px 0 14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+  .card h3{margin:0 0 10px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px}
+  .row{display:flex;align-items:center;gap:10px}
+  .between{justify-content:space-between}
+  .muted{color:var(--muted)}
+  .tag{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
+  .btn{background:var(--accent);color:#101317;border:0;border-radius:11px;padding:11px 14px;font-weight:800;
+    font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+  .btn:active{transform:translateY(1px)}
+  .btn.sec{background:var(--panel2);color:var(--txt);border:1px solid var(--line)}
+  .btn.ghost{background:none;border:1px solid var(--line);color:var(--txt)}
+  .btn.sm{padding:7px 10px;font-size:12px;border-radius:9px}
+  .btn.block{width:100%}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .kpi{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .kpi .n{font-size:22px;font-weight:800}
+  .kpi .l{font-size:11px;color:var(--muted);margin-top:2px}
+  .listitem{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .listitem:last-child{border-bottom:0}
+  .avatar{width:38px;height:38px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);
+    display:grid;place-items:center;font-weight:800;font-size:13px;flex:0 0 auto}
+  .num{width:26px;height:26px;border-radius:7px;background:var(--accent);color:#101317;display:grid;place-items:center;font-weight:800;font-size:12px}
+  .pos{font-size:10px;color:var(--muted)}
+  .reco{border-left:3px solid var(--accent);background:linear-gradient(90deg,rgba(245,106,38,.10),transparent);
+    padding:10px 12px;border-radius:8px;margin-bottom:8px;font-size:12.5px}
+  .reco b{color:var(--accent2)}
+  .alert{display:flex;gap:9px;align-items:center;font-size:12.5px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .alert:last-child{border-bottom:0}
+  .badge{font-size:9px;padding:2px 6px;border-radius:6px;font-weight:700}
+  .badge.warn{background:rgba(245,197,66,.15);color:var(--warn)}
+  .badge.bad{background:rgba(239,85,85,.15);color:var(--bad)}
+  .badge.ok{background:rgba(55,201,138,.15);color:var(--ok)}
+  input,select{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:10px;
+    padding:10px;font-size:14px;width:100%;font-family:inherit}
+  label.fld{display:block;font-size:11px;color:var(--muted);margin:0 0 5px 2px}
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;z-index:50}
+  .modal-bg.on{display:flex}
+  .modal{background:var(--panel);width:100%;max-width:460px;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);max-height:88vh;overflow-y:auto}
+  .modal h3{margin:0 0 12px;font-size:17px}
+  .seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:3px;margin-bottom:12px}
+  .seg button{flex:1;background:none;border:0;color:var(--muted);padding:8px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer}
+  .seg button.active{background:var(--accent);color:#101317}
+  /* stat entry */
+  .court-players{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px}
+  .pchip{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center;cursor:pointer;font-size:11px}
+  .pchip.sel{background:var(--accent);color:#101317;border-color:var(--accent);font-weight:800}
+  .pchip .pn{font-weight:800;font-size:15px;display:block}
+  .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}
+  .abtn{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:12px 4px;
+    font-weight:700;font-size:12.5px;cursor:pointer;text-align:center}
+  .abtn:active{background:var(--accent);color:#101317}
+  .abtn.wide{grid-column:span 3}
+  .scorebar{display:flex;align-items:center;justify-content:space-between;background:var(--panel2);border:1px solid var(--line);
+    border-radius:12px;padding:10px 14px;margin-bottom:10px}
+  .scorebar .s{font-size:26px;font-weight:800}
+  table.box{width:100%;border-collapse:collapse;font-size:11px}
+  table.box th,table.box td{padding:6px 3px;text-align:center;border-bottom:1px solid var(--line)}
+  table.box th{color:var(--muted);font-weight:600;font-size:10px}
+  table.box td.name{text-align:left;font-weight:700}
+  .toolbar{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+  .tool{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 9px;font-size:11px;cursor:pointer;font-weight:600}
+  .tool.active{background:var(--accent);color:#101317;border-color:var(--accent)}
+  .frames{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px}
+  .frame-thumb{flex:0 0 auto;width:52px;height:48px;border-radius:8px;border:2px solid var(--line);background:#0c2b17;
+    display:grid;place-items:center;font-size:11px;color:var(--muted);cursor:pointer;position:relative}
+  .frame-thumb.active{border-color:var(--accent);color:var(--txt)}
+  .frame-thumb small{position:absolute;top:2px;left:5px;font-size:9px}
+  svg.court{width:100%;display:block;background:#14572b;border-radius:12px;border:1px solid #0c3d1e;touch-action:none}
+  .hint{font-size:11px;color:var(--muted);margin:6px 2px}
+  .block-item{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-bottom:7px}
+  .block-item .bt{flex:1}
+  .block-item .bt b{font-size:13px}
+  .block-item .bt small{color:var(--muted);font-size:11px}
+  .iconbtn{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px}
+  .timerbig{font-size:44px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+  .flash{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:var(--panel);border:1px solid var(--line);
+    color:var(--txt);padding:9px 16px;border-radius:20px;font-size:13px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none}
+  .flash.on{opacity:1}
+  .pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  a.reset{color:var(--muted);font-size:11px;text-decoration:underline;cursor:pointer}
+  #aiFab{position:absolute;right:14px;bottom:80px;width:52px;height:52px;border-radius:50%;border:0;z-index:30;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));color:#101317;font-size:22px;font-weight:800;
+    box-shadow:0 6px 18px rgba(245,106,38,.45);cursor:pointer}
+  #aiFab:active{transform:translateY(1px)}
+  .chat{display:flex;flex-direction:column;gap:8px;max-height:52vh;overflow-y:auto;padding:4px 0 8px}
+  .msg{padding:9px 12px;border-radius:14px;font-size:13px;max-width:85%;line-height:1.35}
+  .msg.ai{background:var(--panel2);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
+  .msg.me{background:var(--accent);color:#101317;align-self:flex-end;border-bottom-right-radius:4px;font-weight:600}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+  .chip{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:16px;padding:6px 10px;font-size:11px;cursor:pointer}
+  .prog{height:7px;border-radius:5px;background:var(--panel2);overflow:hidden;border:1px solid var(--line)}
+  .prog i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+
+  /* ===================== PREMIUM SKIN (univers basket) ===================== */
+  body{background:#e7e1d4;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+  #app{
+    background:
+      radial-gradient(1100px 340px at 50% -160px, rgba(232,99,31,.10), transparent 62%),
+      linear-gradient(180deg,#faf7f1 0%, #f4f1ea 100%);
+  }
+  #app::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:repeating-linear-gradient(90deg, rgba(120,90,60,.05) 0 1px, transparent 1px 46px);}
+  header.top, main, nav.tabs{position:relative;z-index:1}
+
+  header.top{
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:2px solid transparent;
+    border-image:linear-gradient(90deg,var(--accent),var(--accent2),transparent) 1;
+    padding:16px 16px 12px;
+  }
+  .brand{font-family:'Oswald',sans-serif;font-size:22px;letter-spacing:2px;text-transform:uppercase;color:var(--txt)}
+  .brand .dot{width:30px;height:30px;border-radius:9px;font-family:'Oswald',sans-serif;font-size:18px;color:#fff;
+    box-shadow:0 4px 12px rgba(232,99,31,.4), inset 0 0 0 1px rgba(255,255,255,.25);position:relative;overflow:hidden}
+  .brand .dot::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(90deg,transparent 48%, rgba(0,0,0,.22) 49% 51%, transparent 52%);}
+  .brand small{font-family:'Inter',sans-serif;letter-spacing:.3px;text-transform:none;font-size:10px;margin-top:1px;color:var(--muted)}
+  .teampill{background:#fff;border:1px solid var(--line);color:var(--txt);font-weight:700;letter-spacing:.3px;
+    font-size:11px;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+
+  h2.view-title{font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+    font-size:26px;color:var(--txt);-webkit-text-fill-color:initial}
+  .card h3{font-family:'Oswald',sans-serif;letter-spacing:.6px;text-transform:uppercase;font-size:13px;color:var(--txt)}
+
+  .card{background:#ffffff;border:1px solid var(--line);border-radius:16px;
+    box-shadow:0 4px 16px rgba(60,50,40,.06)}
+
+  .kpi{background:var(--panel2);border:1px solid var(--line);border-radius:14px}
+  .kpi .n{font-family:'Oswald',sans-serif;font-weight:700;font-size:26px;color:var(--accent);-webkit-text-fill-color:initial}
+  .kpi .l{text-transform:uppercase;letter-spacing:.5px;font-size:10px}
+
+  .btn{background:var(--accent);color:#fff;
+    box-shadow:0 4px 12px rgba(232,99,31,.28);letter-spacing:.3px}
+  .btn.sec{background:#fff;color:var(--txt);border:1px solid var(--line);box-shadow:none}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  .num{font-family:'Oswald',sans-serif;border-radius:8px;color:#fff;
+    box-shadow:0 2px 6px rgba(232,99,31,.35)}
+
+  nav.tabs{background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(8px)}
+  nav.tabs button{color:var(--muted)}
+  nav.tabs button.active{color:var(--accent)}
+
+  .avatar{background:var(--panel2);border:1px solid var(--line);font-family:'Oswald',sans-serif;color:var(--txt)}
+  .pchip{color:var(--txt)}
+  .pchip.sel{color:#fff;box-shadow:0 4px 12px rgba(232,99,31,.35)}
+  .pchip .pn{font-family:'Oswald',sans-serif}
+  .scorebar{background:var(--panel2);border:1px solid var(--line)}
+  .scorebar .s{font-family:'Oswald',sans-serif;font-size:30px;color:var(--txt)}
+  .timerbig{font-family:'Oswald',sans-serif;color:var(--txt)}
+  table.box td.name{font-weight:600}
+  .reco b{color:var(--accent)}
+  .hint{color:var(--muted)}
+
+  #aiFab{color:#fff;box-shadow:0 6px 18px rgba(232,99,31,.45);animation:fabpulse 2.6s ease-in-out infinite}
+  @keyframes fabpulse{0%,100%{box-shadow:0 6px 18px rgba(232,99,31,.35)}50%{box-shadow:0 6px 26px rgba(232,99,31,.6)}}
+
+  .tag{text-transform:uppercase;letter-spacing:.4px;font-weight:600;background:var(--panel2);color:var(--muted)}
+  .modal{background:#ffffff;border-top:3px solid var(--accent)}
+  .modal h3{font-family:'Oswald',sans-serif;letter-spacing:.6px;text-transform:uppercase;color:var(--txt)}
+  .sysrow{display:flex;align-items:center;gap:11px;background:var(--panel2);
+    border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:8px}
+  .sysrow .badgepos{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.5px;color:var(--accent);
+    text-transform:uppercase}
+  .levelchip{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px}
+  .levelchip.pro{background:rgba(47,107,214,.14);color:#1f4f9e}
+  .levelchip.form{background:rgba(26,158,106,.16);color:#12704a}
+
+  /* ===================== SENIOR UI/UX PASS ===================== */
+  /* Transitions maîtrisées, seulement sur l'interactif, jamais sur le SVG */
+  .btn,.abtn,.tool,.chip,.pchip,.iconbtn,.pcolor,.teampill,.sysrow,.listitem,.block-item,.kpi,.card,nav.tabs button,.frame-thumb,.seg button{
+    transition:background-color .15s ease,border-color .15s ease,box-shadow .18s ease,transform .12s ease,color .15s ease}
+  /* Retour tactile, effet d'enfoncement */
+  .btn:active,.abtn:active,.tool:active,.chip:active,.iconbtn:active,.sysrow:active,.pchip:active,.block-item:active,.pcolor:active,.teampill:active{transform:scale(.97)}
+  .card:active{transform:scale(.994)}
+  /* Accessibilité, anneau de focus visible */
+  button:focus-visible,input:focus-visible,select:focus-visible,.chip:focus-visible,.sysrow:focus-visible{
+    outline:none;box-shadow:0 0 0 3px rgba(232,99,31,.35)}
+  /* Échelle d'élévation cohérente */
+  .card{box-shadow:0 1px 2px rgba(40,33,26,.05),0 6px 18px rgba(40,33,26,.06)}
+  .kpi{box-shadow:0 1px 2px rgba(40,33,26,.04)}
+  .modal{box-shadow:0 -10px 44px rgba(0,0,0,.28)}
+  #aiFab{will-change:transform}
+  #aiFab:active{transform:scale(.92)}
+  /* Cibles tactiles confortables */
+  .btn.sm{min-height:36px} .iconbtn{min-width:34px;min-height:34px} nav.tabs button{min-height:54px}
+  input,select{min-height:44px}
+  /* Survol sur écran large */
+  @media (hover:hover){
+    .btn:hover{filter:brightness(1.04)}
+    .btn.sec:hover,.btn.ghost:hover{background:var(--panel2)}
+    .sysrow:hover,.listitem:hover{background:#fbf8f2}
+    .card:hover{box-shadow:0 2px 4px rgba(40,33,26,.06),0 10px 26px rgba(40,33,26,.09)}
+    .chip:hover{border-color:var(--accent)}
+  }
+  /* Mouvement d'entrée d'écran, discret et directionnel */
+  @keyframes vfade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  main.enter{}
+  /* Feuille modale qui monte de sa source */
+  @keyframes sheetup{from{transform:translateY(26px);opacity:.5}to{transform:none;opacity:1}}
+  .modal-bg.on .modal{animation:sheetup .24s cubic-bezier(.2,.8,.2,1)}
+  .modal-bg{transition:opacity .2s ease}
+  /* Titres et respiration */
+  h2.view-title{margin:4px 0 10px}
+  .sub{line-height:1.5}
+  .card{padding:15px 15px}
+  /* ===================== MOTION DESIGN ===================== */
+  #splash{position:fixed;inset:0;z-index:200;display:grid;place-items:center;
+    background:radial-gradient(600px 300px at 50% 30%,rgba(232,99,31,.10),transparent),linear-gradient(180deg,#faf7f1,#efe9de)}
+  #splash.gone{opacity:0;transition:opacity .45s ease;pointer-events:none}
+  #splash .sp-logo{width:78px;height:78px;border-radius:21px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#fff;display:grid;place-items:center;font-family:'Oswald',sans-serif;font-size:44px;
+    box-shadow:0 14px 34px rgba(232,99,31,.45);animation:splashpop .6s cubic-bezier(.2,.9,.2,1.2) both}
+  #splash .sp-ball{width:15px;height:15px;border-radius:50%;background:var(--ball);margin-top:16px;
+    box-shadow:0 3px 6px rgba(0,0,0,.2);animation:dribble 1.05s ease-in-out .25s both}
+  #splash .sp-word{position:absolute;bottom:36%;font-family:'Oswald',sans-serif;letter-spacing:7px;font-size:20px;color:var(--txt);opacity:0;animation:wordin .5s ease .5s both}
+  @keyframes splashpop{0%{transform:scale(.4) rotate(-8deg);opacity:0}100%{transform:none;opacity:1}}
+  @keyframes wordin{from{opacity:0;transform:translateY(8px)}to{opacity:.9;transform:none}}
+  @keyframes dribble{0%{transform:translateY(-34px);opacity:0}30%{opacity:1}55%{transform:translateY(7px)}75%{transform:translateY(-12px)}100%{transform:translateY(0)}}
+  main.enter > *{opacity:0;animation:vfade .4s cubic-bezier(.2,.8,.2,1) forwards}
+  main.enter > *:nth-child(1){animation-delay:.02s}
+  main.enter > *:nth-child(2){animation-delay:.06s}
+  main.enter > *:nth-child(3){animation-delay:.10s}
+  main.enter > *:nth-child(4){animation-delay:.14s}
+  main.enter > *:nth-child(5){animation-delay:.18s}
+  main.enter > *:nth-child(6){animation-delay:.22s}
+  main.enter > *:nth-child(7){animation-delay:.26s}
+  main.enter > *:nth-child(n+8){animation-delay:.30s}
+  nav.tabs button{position:relative}
+  nav.tabs button.active::after{content:"";position:absolute;top:2px;left:50%;width:20px;height:3px;border-radius:3px;
+    background:var(--accent);transform:translateX(-50%) scaleX(0);animation:tabbar .28s cubic-bezier(.2,.8,.2,1) forwards}
+  @keyframes tabbar{to{transform:translateX(-50%) scaleX(1)}}
+  .kpi .n,.scorebar .s{font-variant-numeric:tabular-nums}
+
+  /* ===================== GLASSMORPHISM / NEUMORPHISM / 3D ===================== */
+  /* Glass sur le chrome, matière dominante */
+  header.top{background:rgba(255,255,255,.60);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5)}
+  nav.tabs{background:rgba(255,255,255,.62);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5)}
+  .modal{background:rgba(255,255,255,.80);-webkit-backdrop-filter:blur(22px) saturate(1.3);backdrop-filter:blur(22px) saturate(1.3);border-top:3px solid var(--accent)}
+  .modal-bg{background:rgba(22,16,10,.42);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+  #aiFab{-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .teampill{background:rgba(255,255,255,.68);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  .card.glass{background:rgba(255,255,255,.52);-webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3);border:1px solid rgba(255,255,255,.75)}
+  /* Neumorphism, accents tactiles seulement */
+  .seg{background:#efe9de;border:0;box-shadow:inset 3px 3px 7px rgba(176,158,130,.5),inset -3px -3px 7px rgba(255,255,255,.9)}
+  .seg button.active{box-shadow:2px 2px 6px rgba(176,158,130,.55),-2px -2px 6px rgba(255,255,255,.95)}
+  #pencolors .pcolor{box-shadow:2px 2px 5px rgba(176,158,130,.55),-2px -2px 5px rgba(255,255,255,.9) !important}
+  .kpi{border:0;box-shadow:4px 4px 10px rgba(176,158,130,.32),-4px -4px 10px rgba(255,255,255,.85)}
+  /* 3D léger et maîtrisé */
+  .brand .dot{transition:transform .35s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+  .kpi{transform-style:preserve-3d}
+  .kpi:active{transform:perspective(500px) rotateX(7deg) scale(.98)}
+  @media (hover:hover){ .brand:hover .dot{transform:perspective(320px) rotateY(20deg) rotateX(7deg)} }
+  #spLottie{width:104px;height:104px;margin-top:8px}
+  #splash .sp-ball{background:radial-gradient(circle at 34% 30%,#ffd98a,var(--ball) 52%,#a97900);box-shadow:0 4px 8px rgba(0,0,0,.22),inset -3px -3px 6px rgba(0,0,0,.18),inset 2px 2px 5px rgba(255,255,255,.5)}
+
+  /* ===================== IMMERSIF ===================== */
+  /* Parquet de basket légèrement texturé */
+  #app{background:
+    radial-gradient(1100px 340px at 50% -160px, rgba(232,99,31,.09), transparent 62%),
+    linear-gradient(180deg,#f6ecda 0%, #efe4cf 100%) !important}
+  #app::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.55;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(120,85,50,.11) 0 1px, transparent 1px 148px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.40) 0 1px, rgba(120,85,50,.07) 1px 2px, transparent 2px 30px);
+    background-position:0 0, 74px 0}
+  /* Cartes qui se soulèvent */
+  @media (hover:hover){
+    .card:hover{transform:translateY(-3px);box-shadow:0 4px 8px rgba(40,33,26,.08),0 18px 36px rgba(40,33,26,.13)}
+  }
+  .card:active{transform:translateY(-1px) scale(.997)}
+  /* Barres de stats qui poussent à l'apparition */
+  .prog i{transform-origin:left;animation:growx .6s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  /* Tracés tactiques qui se dessinent */
+  @keyframes pdraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  .court path.pdraw{stroke-dasharray:1;animation:pdraw .55s cubic-bezier(.4,.6,.3,1) forwards}
+  /* Timeline du calendrier */
+  .tl{position:relative;padding-left:26px}
+  .tl::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--accent),var(--accent2))}
+  .tl .ev{position:relative;margin-bottom:12px;opacity:0;animation:tlin .4s cubic-bezier(.2,.8,.2,1) forwards}
+  .tl .ev::before{content:"";position:absolute;left:-22px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(232,99,31,.18)}
+  .tl .ev.game::before{background:var(--blue);box-shadow:0 0 0 3px rgba(47,107,214,.18)}
+  .tl .ev:nth-child(1){animation-delay:.05s}.tl .ev:nth-child(2){animation-delay:.13s}.tl .ev:nth-child(3){animation-delay:.21s}
+  .tl .ev:nth-child(4){animation-delay:.29s}.tl .ev:nth-child(5){animation-delay:.37s}.tl .ev:nth-child(6){animation-delay:.45s}
+  @keyframes tlin{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
+
+  /* ===================== PREMIUM WOW ===================== */
+  #main{perspective:1100px}
+  /* Transition de page en 3D, plus vivante */
+  @keyframes cardin{from{opacity:0;transform:perspective(900px) translateY(26px) rotateX(9deg) scale(.97)}to{opacity:1;transform:none}}
+  main.enter > *{animation-name:cardin !important;animation-duration:.5s !important;animation-timing-function:cubic-bezier(.2,.85,.25,1) !important}
+  /* Inclinaison 3D des cartes sous le pointeur */
+  .card{will-change:transform}
+  .card.tilted{transition:transform .07s linear, box-shadow .2s ease;box-shadow:0 20px 44px rgba(40,33,26,.20)}
+  /* Reflet qui balaie les boutons primaires */
+  .btn:not(.sec):not(.ghost){position:relative;overflow:hidden}
+  .btn:not(.sec):not(.ghost)::after{content:"";position:absolute;top:0;left:-130%;width:55%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);pointer-events:none}
+  @media (hover:hover){ .btn:not(.sec):not(.ghost):hover::after{left:150%;transition:left .65s ease} }
+  /* Bannière d'accueil premium */
+  .hero{position:relative;overflow:hidden;border-radius:20px;padding:22px 18px;color:#fff;margin:2px 0 14px;
+    background:linear-gradient(135deg,#ef6c2f 0%,#ff9a58 42%,#c0431a 100%);
+    box-shadow:0 16px 38px rgba(232,99,31,.38);transform-style:preserve-3d}
+  .hero::before{content:"";position:absolute;inset:0;opacity:.18;
+    background:repeating-linear-gradient(90deg,rgba(255,255,255,.5) 0 1px,transparent 1px 46px)}
+  .hero .sheen{position:absolute;inset:0;background:linear-gradient(100deg,transparent 32%,rgba(255,255,255,.35) 50%,transparent 68%);
+    transform:translateX(-120%);animation:sheen 3.6s ease-in-out infinite}
+  @keyframes sheen{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}
+  .hero .eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.9;position:relative;z-index:1}
+  .hero .big{font-family:'Oswald',sans-serif;font-size:32px;line-height:1.02;text-transform:uppercase;letter-spacing:1px;margin-top:3px;position:relative;z-index:1;text-shadow:0 2px 10px rgba(0,0,0,.15)}
+  .hero .small{font-size:12.5px;opacity:.92;margin-top:7px;position:relative;z-index:1}
+  /* Icône d'onglet actif qui rebondit */
+  nav.tabs button.active .ic{animation:navpop .34s cubic-bezier(.2,.8,.2,1.5)}
+  @keyframes navpop{0%{transform:scale(.75)}60%{transform:scale(1.28)}100%{transform:scale(1)}}
+
+  /* ===================== DESIGN SYSTEM v2 (icônes + tab bar) ===================== */
+  .mi{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;
+    text-transform:none;white-space:nowrap;direction:ltr;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;display:inline-block}
+  .teampill.mi{font-size:20px;padding:0;color:var(--txt);display:grid;place-items:center;width:38px;height:34px}
+  #aiFab .mi{font-size:27px}
+  main{padding:16px 16px 100px}
+  /* Barre d'onglets flottante, façon Linear et Strava */
+  nav.tabs{margin:0 12px calc(12px + env(safe-area-inset-bottom));border-radius:26px;padding:7px 6px;border:1px solid rgba(255,255,255,.65);
+    box-shadow:0 14px 34px rgba(40,33,26,.20);background:rgba(255,255,255,.70);
+    -webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6)}
+  nav.tabs button{border-radius:18px;min-height:50px;gap:4px;transition:background-color .22s ease,color .22s ease}
+  nav.tabs button .ic.mi{font-size:24px;font-variation-settings:'FILL' 0,'wght' 500}
+  nav.tabs button.active{background:rgba(232,99,31,.13);color:var(--accent)}
+  nav.tabs button.active .ic.mi{font-variation-settings:'FILL' 1,'wght' 600}
+  nav.tabs button.active::after{display:none}
+  nav.tabs button .lbl{font-size:10px;font-weight:600;letter-spacing:.2px}
+
+  /* ===================== PANNEAU D'AFFICHAGE ===================== */
+  .scoreboard{position:relative;overflow:hidden;background:linear-gradient(180deg,#161b21,#0b0e12);
+    border:1px solid #262e38;border-radius:16px;padding:14px 16px;margin-bottom:12px;
+    box-shadow:inset 0 0 22px rgba(0,0,0,.55),0 8px 22px rgba(0,0,0,.18)}
+  .scoreboard::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px)}
+  .sb-row{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .sb-date{font-family:'Oswald',sans-serif;letter-spacing:2px;text-transform:uppercase;font-size:12px;color:#ff8a4c}
+  .sb-time{font-family:'Oswald',sans-serif;font-weight:700;font-size:32px;letter-spacing:3px;color:#ffd23f;
+    text-shadow:0 0 12px rgba(255,210,63,.55);font-variant-numeric:tabular-nums}
+  .sb-quote{position:relative;z-index:1;margin-top:11px;padding-top:11px;border-top:1px dashed rgba(255,255,255,.13);
+    color:#e9edf1;font-size:13px;line-height:1.5;font-style:italic}
+  .sb-quote .lbl2{display:block;font-style:normal;text-transform:uppercase;letter-spacing:1.5px;font-size:9px;color:#ff8a4c;margin-bottom:4px}
+  /* Pied de page */
+  .footer{margin-top:14px;text-align:center}
+  .foot-links{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+  .foot-links a{font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);
+    padding:7px 12px;border-radius:20px;cursor:pointer}
+  @media (hover:hover){ .foot-links a:hover{border-color:var(--accent);color:var(--accent)} }
+  .foot-copy{font-size:11px;color:var(--muted);opacity:.85}
+  .faq-q{font-weight:700;font-size:13.5px;margin-bottom:3px}
+  .faq-a{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+
+  /* ===================== ABONNEMENT & PREMIERS PAS ===================== */
+  .pp{position:relative;overflow:hidden;background:linear-gradient(135deg,#161b22,#0c0f14);color:#fff;
+    border:1px solid #262e38;border-radius:16px;padding:16px;margin-bottom:12px}
+  .pp::after{content:"";position:absolute;top:-40%;right:-10%;width:180px;height:180px;border-radius:50%;
+    background:radial-gradient(circle,rgba(232,99,31,.35),transparent 70%)}
+  .pp .ppt{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:17px;letter-spacing:.6px;position:relative;z-index:1}
+  .offer{background:linear-gradient(135deg,#ef6c2f,#ff9a58);color:#fff;border-radius:14px;padding:12px 14px;text-align:center;margin-bottom:12px;font-weight:700;box-shadow:0 8px 20px rgba(232,99,31,.3)}
+  .plan{border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:10px;background:var(--panel)}
+  .plan.reco{border:2px solid var(--accent);box-shadow:0 12px 28px rgba(232,99,31,.18)}
+  .plan .pname{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.5px;font-size:16px}
+  .plan .price{font-family:'Oswald',sans-serif;font-size:28px;margin:4px 0;color:var(--txt)}
+  .plan .price small{font-size:12px;color:var(--muted);font-weight:400}
+  .plan ul{margin:8px 0 0;padding-left:18px;font-size:12.5px;line-height:1.65}
+  .plan .tagreco{display:inline-block;background:var(--accent);color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+  .steps .st{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+  .steps .st:last-child{border-bottom:0}
+  .steps .st .ck{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;border:2px solid var(--line);color:var(--muted);font-size:18px}
+  .steps .st.done .ck{background:var(--ok);border-color:var(--ok);color:#fff}
+  .steps .st .lbl3{flex:1;font-size:13px;font-weight:600}
+  .steps .st.done .lbl3{color:var(--muted);text-decoration:line-through;font-weight:400}
+
+  /* Respecte la préférence de mouvement réduit */
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition-duration:.001s !important}
+    main.enter > *{opacity:1 !important}
+    .tl .ev{opacity:1 !important}
+    .hero .sheen{display:none !important}
+    #splash{display:none !important}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand">
+      <div class="dot">P</div>
+      <div>PIVOT<small id="teamName">Coach</small></div>
+    </div>
+    <div class="row" style="gap:6px">
+      <button class="teampill mi" id="muteBtn" onclick="toggleMute()" title="Sons">volume_up</button>
+      <button class="teampill mi" onclick="openLangPicker()" title="Langue">language</button>
+      <button class="teampill" id="datePill" onclick="openTeamSwitcher()">Équipe ▾</button>
+    </div>
+  </header>
+  <main id="main"></main>
+  <button id="aiFab" onclick="aiChat()" title="Assistant IA"><span class="mi">auto_awesome</span></button>
+  <nav class="tabs" id="tabs">
+    <button data-v="home" class="active"><span class="ic mi">home</span><span class="lbl">Accueil</span></button>
+    <button data-v="roster"><span class="ic mi">groups</span><span class="lbl">Effectif</span></button>
+    <button data-v="session"><span class="ic mi">assignment</span><span class="lbl">Séance</span></button>
+    <button data-v="match"><span class="ic mi">sports_basketball</span><span class="lbl">Match</span></button>
+    <button data-v="tactics"><span class="ic mi">draw</span><span class="lbl">Tactique</span></button>
+  </nav>
+</div>
+
+<div id="splash"><div class="sp-logo">P</div><div class="sp-ball" id="spBall"></div><div id="spLottie"></div><div class="sp-word">PIVOT</div></div>
+<div class="modal-bg" id="modalBg"><div class="modal" id="modal"></div></div>
+<div class="flash" id="flash"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+<script>
+"use strict";
+/* ============ ÉTAT / DONNÉES ============ */
+const LS_KEY = "pivot_proto_v2";
+const POSITIONS = ["Meneur","Arrière","Ailier","Ailier fort","Pivot"];
+function uid(){return Math.random().toString(36).slice(2,9)}
+
+function demoPlayers(){return [
+    {id:uid(),first:"Amadou",last:"Ba",num:4,pos:"Meneur",present:true},
+    {id:uid(),first:"Youssou",last:"Ndiaye",num:5,pos:"Arrière",present:true},
+    {id:uid(),first:"Ibrahim",last:"Fall",num:6,pos:"Ailier",present:true},
+    {id:uid(),first:"Cheikh",last:"Diop",num:7,pos:"Ailier fort",present:true},
+    {id:uid(),first:"Moussa",last:"Sarr",num:8,pos:"Pivot",present:true},
+    {id:uid(),first:"Lamine",last:"Sow",num:9,pos:"Arrière",present:true},
+    {id:uid(),first:"Pape",last:"Gueye",num:10,pos:"Ailier",present:false},
+    {id:uid(),first:"Ousmane",last:"Kane",num:11,pos:"Pivot",present:true},
+    {id:uid(),first:"Modou",last:"Sy",num:12,pos:"Meneur",present:true},
+    {id:uid(),first:"Babacar",last:"Faye",num:13,pos:"Ailier fort",present:false},
+  ];}
+function newTeam(name,category,level,players){return {
+    id:uid(), name:name, category:category||"Seniors", level:level||"Départemental", season:"2026-2027",
+    players:players||[], session:{title:"Nouvelle séance", blocks:[]},
+    match:{opponent:"Adversaire", live:false, events:[], onCourt:[]}
+  };}
+const SEED = {
+  profile:{done:false, name:"", years:"", diplomas:[], level:"", category:""},
+  drills:[
+    {id:uid(),title:"Mise en train + appuis",cat:"Échauffement",dur:10,intensity:"Faible"},
+    {id:uid(),title:"Ball handling 2 ballons",cat:"Maniement",dur:12,intensity:"Moyenne"},
+    {id:uid(),title:"Tir en sortie de dribble",cat:"Tir",dur:15,intensity:"Moyenne"},
+    {id:uid(),title:"3 contre 2 transition",cat:"Jeu collectif",dur:15,intensity:"Forte"},
+    {id:uid(),title:"Pick and roll aile",cat:"Jeu collectif",dur:12,intensity:"Moyenne"},
+    {id:uid(),title:"Défense sur homme + aide",cat:"Défense",dur:12,intensity:"Forte"},
+    {id:uid(),title:"Lancers francs sous fatigue",cat:"Tir",dur:8,intensity:"Faible"},
+    {id:uid(),title:"5 contre 5 dirigé",cat:"Situation match",dur:16,intensity:"Forte"},
+  ],
+  plays:[], continuity:{}, consentShare:{},
+  teams:[ (function(){const t=newTeam("U15 Garçons","U15","Départemental",demoPlayers());t.match.opponent="AS Dakar";return t;})() ],
+  activeTeam:null
+};
+
+let DB = load();
+migrateDB();
+function T(){
+  if(DB.teams && DB.teams.length){ return DB.teams.find(t=>t.id===DB.activeTeam) || DB.teams[0]; }
+  return {players:[],session:{title:"",blocks:[]},match:{opponent:"",events:[]},name:"",season:"",category:"",level:""};
+}
+function migrateDB(){
+  if(!DB.teams || !DB.teams.length){ DB.teams = JSON.parse(JSON.stringify(SEED.teams)); }
+  if(!DB.profile) DB.profile={done:false,name:"",years:"",diplomas:[],level:"",category:""};
+  if(!DB.continuity) DB.continuity={};
+  if(!DB.consentShare) DB.consentShare={};
+  if(!DB.drills) DB.drills=JSON.parse(JSON.stringify(SEED.drills));
+  if(!DB.plays) DB.plays=[];
+  if(!DB.activeTeam) DB.activeTeam=DB.teams[0].id;
+  const p0=T().players[0];
+  if(p0 && Object.keys(DB.continuity).length===0){
+    DB.continuity[p0.id]=[
+      {date:"02/07",focus:"Tir extérieur",note:"50 tirs, 31 réussis (62%)"},
+      {date:"05/07",focus:"Maniement",note:"20 min ball handling, main faible"}
+    ];
+    DB.consentShare[p0.id]=true;
+  }
+  save();
+}
+function load(){
+  try{const s=localStorage.getItem(LS_KEY); if(s) return JSON.parse(s);}catch(e){}
+  return JSON.parse(JSON.stringify(SEED));
+}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(DB))}catch(e){}}
+function resetAll(){ if(confirm("Réinitialiser toutes les données de démonstration ?")){DB=JSON.parse(JSON.stringify(SEED)); DB.activeTeam=DB.teams[0].id; save(); render();} }
+function switchTeam(id){ DB.activeTeam=id; save(); closeModal(); render(); }
+function openTeamSwitcher(){
+  openModal(`
+    <h3>Mes équipes</h3>
+    <div class="sub">Change d'équipe ou ajoute-en une</div>
+    ${DB.teams.map(t=>`<div class="sysrow" onclick="switchTeam('${t.id}')" style="cursor:pointer">
+      <div style="flex:1"><div style="font-weight:700;font-size:14px">${t.name}</div><div class="badgepos">${t.category} · ${t.level}</div></div>
+      ${t.id===DB.activeTeam?'<span class="levelchip pro">Active</span>':'<span class="btn sm sec">Ouvrir</span>'}
+    </div>`).join("")}
+    <button class="btn block" style="margin-top:8px" onclick="addTeamModal()">＋ Ajouter une équipe</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+  `);
+}
+const CATS=["U7","U9","U11","U13","U15","U18","Seniors"];
+const LEVELS=["École de basket","Départemental","Régional","National","Centre de formation","Professionnel"];
+function addTeamModal(){
+  openModal(`
+    <h3>Nouvelle équipe</h3>
+    <label class="fld">Nom de l'équipe</label><input id="nt_name" placeholder="Ex : U13 Filles">
+    <div class="grid2" style="margin-top:8px">
+      <div><label class="fld">Catégorie</label><select id="nt_cat">${CATS.map(c=>`<option>${c}</option>`).join("")}</select></div>
+      <div><label class="fld">Niveau</label><select id="nt_lvl">${LEVELS.map(l=>`<option>${l}</option>`).join("")}</select></div>
+    </div>
+    <div style="height:14px"></div>
+    <button class="btn block" onclick="createTeam()">Créer l'équipe</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="openTeamSwitcher()">Retour</button>
+  `);
+}
+function createTeam(){
+  const name=val("nt_name")||("Équipe "+(DB.teams.length+1));
+  const t=newTeam(name,val("nt_cat"),val("nt_lvl"),[]);
+  DB.teams.push(t); DB.activeTeam=t.id; save(); closeModal(); render(); flash("Équipe créée");
+}
+
+/* ============ MULTILINGUE ============ */
+const LANG={
+  fr:{home:"Accueil",roster:"Effectif",session:"Séance",match:"Match",tactics:"Tactique",hello:"Bonjour"},
+  en:{home:"Home",roster:"Roster",session:"Practice",match:"Game",tactics:"Plays",hello:"Hello"},
+  es:{home:"Inicio",roster:"Plantel",session:"Sesión",match:"Partido",tactics:"Jugadas",hello:"Hola"},
+  pt:{home:"Início",roster:"Elenco",session:"Treino",match:"Jogo",tactics:"Jogadas",hello:"Olá"},
+};
+const ALL_LANGS=[
+  {code:"fr",name:"Français",ready:true},{code:"en",name:"English",ready:true},
+  {code:"es",name:"Español",ready:true},{code:"pt",name:"Português",ready:true},
+  {code:"ca",name:"Català",ready:false},{code:"de",name:"Deutsch",ready:false},
+  {code:"nl",name:"Nederlands",ready:false},{code:"it",name:"Italiano",ready:false},
+  {code:"ar",name:"العربية",ready:false},{code:"ru",name:"Русский",ready:false},
+  {code:"tr",name:"Türkçe",ready:false},{code:"el",name:"Ελληνικά",ready:false},
+  {code:"pl",name:"Polski",ready:false},{code:"zh",name:"中文",ready:false},
+  {code:"ja",name:"日本語",ready:false},{code:"ko",name:"한국어",ready:false},
+  {code:"wo",name:"Wolof",ready:false},{code:"ln",name:"Lingala",ready:false},
+];
+function getLang(){ return (DB.profile && DB.profile.lang) || 'fr'; }
+function tr(k){ const l=getLang(); const base=LANG[l]?l:'en'; return (LANG[base] && LANG[base][k]) || LANG.fr[k] || k; }
+function setLang(code){
+  DB.profile.lang=code; save(); closeModal();
+  const l=ALL_LANGS.find(x=>x.code===code);
+  if(l && !l.ready) flash("Interface en anglais pour "+l.name+", traduction complète à venir");
+  render();
+}
+function openLangPicker(){
+  openModal(`
+    <h3>🌐 Langue</h3>
+    <div class="sub">Interface disponible. Les langues marquées bientôt seront complétées par des traducteurs.</div>
+    ${ALL_LANGS.map(l=>`<div class="sysrow" onclick="setLang('${l.code}')" style="cursor:pointer">
+      <div style="flex:1;font-weight:700;font-size:14px">${l.name}</div>
+      ${getLang()===l.code?'<span class="levelchip pro">Active</span>':(l.ready?'<span class="levelchip form">Prêt</span>':'<span class="tag">Bientôt</span>')}
+    </div>`).join("")}
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+  `);
+}
+
+/* ============ NAVIGATION ============ */
+let view = "home";
+const main = document.getElementById("main");
+document.querySelectorAll("#tabs button").forEach(b=>{
+  b.onclick=()=>{view=b.dataset.v; document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("active",x===b)); render();};
+});
+function render(){
+  const nav=document.getElementById("tabs"), fab=document.getElementById("aiFab"), head=document.querySelector("header.top");
+  if(!DB.profile.done){
+    nav.style.display="none"; fab.style.display="none"; head.style.display="none";
+    renderOnboarding(); return;
+  }
+  nav.style.display=""; fab.style.display=""; head.style.display="";
+  document.querySelectorAll('#tabs button').forEach(b=>{const lb=b.querySelector('.lbl'); if(lb) lb.textContent=tr(b.dataset.v);});
+  { const mb=document.getElementById('muteBtn'); if(mb) mb.textContent=(DB.profile&&DB.profile.muted)?'volume_off':'volume_up'; }
+  document.getElementById("teamName").textContent = DB.profile.name ? DB.profile.name.split(" ")[0] : "Coach";
+  document.getElementById("datePill").textContent = T().name+" ▾";
+  main.scrollTop=0;
+  main.classList.remove("enter"); void main.offsetWidth; main.classList.add("enter");
+  if(view==="home") renderHome();
+  else if(view==="roster") renderRoster();
+  else if(view==="session") renderSession();
+  else if(view==="match") renderMatch();
+  else if(view==="tactics") renderTactics();
+  try{ if(!window.matchMedia || !matchMedia('(prefers-reduced-motion: reduce)').matches) animateNumbers(); }catch(e){}
+  save();
+}
+function animateNumbers(){
+  document.querySelectorAll('#main .kpi .n, #main .scorebar .s').forEach(el=>{
+    const raw=(el.textContent||'').trim(); if(!/^\d+$/.test(raw)) return; const target=parseInt(raw,10);
+    if(target<=0){ el.textContent="0"; return; }
+    const dur=Math.min(750,260+target*10); let t0=null; el.textContent="0";
+    function step(ts){ if(!t0)t0=ts; const k=Math.min(1,(ts-t0)/dur); el.textContent=Math.round(target*(1-Math.pow(1-k,3))); if(k<1)requestAnimationFrame(step); else el.textContent=String(target); }
+    requestAnimationFrame(step);
+  });
+}
+function flash(msg){const f=document.getElementById("flash");f.textContent=msg;f.classList.add("on");clearTimeout(f._t);f._t=setTimeout(()=>f.classList.remove("on"),1400);}
+/* Effets sonores discrets, synthétisés, sans fichier externe */
+let _audio=null;
+function sfx(type){
+  try{
+    if(DB.profile && DB.profile.muted) return;
+    _audio=_audio||new (window.AudioContext||window.webkitAudioContext)();
+    const t=_audio.currentTime, o=_audio.createOscillator(), g=_audio.createGain();
+    o.connect(g); g.connect(_audio.destination);
+    if(type==="ok"){ o.type="sine"; o.frequency.setValueAtTime(620,t); o.frequency.exponentialRampToValueAtTime(940,t+.12);
+      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.13,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+.22); o.start(t); o.stop(t+.24); }
+    else if(type==="swish"){ o.type="triangle"; o.frequency.setValueAtTime(320,t); o.frequency.exponentialRampToValueAtTime(120,t+.18);
+      g.gain.setValueAtTime(.11,t); g.gain.exponentialRampToValueAtTime(.0001,t+.2); o.start(t); o.stop(t+.22); }
+    else { o.type="sine"; o.frequency.setValueAtTime(520,t);
+      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.09,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+.14); o.start(t); o.stop(t+.16); }
+  }catch(e){}
+}
+function toggleMute(){ if(!DB.profile) return; DB.profile.muted=!DB.profile.muted; save(); flash(DB.profile.muted?"Sons coupés":"Sons activés"); if(!DB.profile.muted) sfx("tap"); render(); }
+
+/* ============ MODAL ============ */
+const modalBg=document.getElementById("modalBg"), modalEl=document.getElementById("modal");
+function openModal(html){modalEl.innerHTML=html;modalBg.classList.add("on");}
+function closeModal(){modalBg.classList.remove("on");}
+modalBg.onclick=e=>{if(e.target===modalBg)closeModal();};
+
+/* ============ ONBOARDING (première ouverture) ============ */
+const YEARS=["Moins d'1 an","1 à 3 ans","3 à 7 ans","7 à 15 ans","Plus de 15 ans"];
+const DIPLOMAS=["Débutant, aucun","Initiateur","Animateur","Brevet fédéral","CQP","DE / DES","Autre"];
+let ONB={name:"",years:"",diplomas:[],level:"",category:"U13",teamName:""};
+function pill(label,selected,onclick){
+  return `<span class="chip" style="${selected?'background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600':''}" onclick="${onclick}">${label}</span>`;
+}
+function syncOnbInputs(){ const n=document.getElementById("onb_name"), t=document.getElementById("onb_team"); if(n)ONB.name=n.value; if(t)ONB.teamName=t.value; }
+function onbSet(k,v){ syncOnbInputs(); ONB[k]=v; renderOnboarding(); }
+function onbToggleDip(d){ syncOnbInputs(); const i=ONB.diplomas.indexOf(d); if(i>=0)ONB.diplomas.splice(i,1); else ONB.diplomas.push(d); renderOnboarding(); }
+function deriveLevel(){
+  const pro = ["7 à 15 ans","Plus de 15 ans"].includes(ONB.years)
+    || ONB.diplomas.some(d=>["Brevet fédéral","CQP","DE / DES"].includes(d))
+    || ["National","Centre de formation","Professionnel"].includes(ONB.level);
+  return pro?"pro":"beg";
+}
+function renderOnboarding(){
+  main.innerHTML=`
+    <div style="text-align:center;padding:14px 0 6px">
+      <div style="width:56px;height:56px;border-radius:15px;margin:0 auto 10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-family:'Oswald',sans-serif;font-size:30px;color:#fff;box-shadow:0 8px 20px rgba(239,108,47,.4)">P</div>
+      <h2 class="view-title" style="margin:0">Bienvenue sur PIVOT</h2>
+      <div class="sub" style="margin-top:4px">Réponds en 30 secondes, l'app s'adapte à ton profil et à ton niveau.</div>
+      <button class="btn sm sec" style="margin-top:8px" onclick="openLangPicker()">🌐 Langue de l'application</button>
+    </div>
+
+    <div class="card">
+      <label class="fld">Ton nom</label>
+      <input id="onb_name" placeholder="Prénom Nom" value="${ONB.name}">
+    </div>
+
+    <div class="card">
+      <h3>Ton expérience de coach</h3>
+      <div class="chips">${YEARS.map(y=>pill(y, ONB.years===y, `onbSet('years','${y}')`)).join("")}</div>
+    </div>
+
+    <div class="card">
+      <h3>Tes diplômes et formations</h3>
+      <div class="chips">${DIPLOMAS.map(d=>pill(d, ONB.diplomas.includes(d), `onbToggleDip('${d}')`)).join("")}</div>
+      <div class="hint">Plusieurs choix possibles.</div>
+    </div>
+
+    <div class="card">
+      <h3>Niveau de l'équipe entraînée</h3>
+      <div class="chips">${LEVELS.map(l=>pill(l, ONB.level===l, `onbSet('level','${l}')`)).join("")}</div>
+    </div>
+
+    <div class="card">
+      <h3>Catégorie d'âge</h3>
+      <div class="chips">${CATS.map(c=>pill(c, ONB.category===c, `onbSet('category','${c}')`)).join("")}</div>
+    </div>
+
+    <div class="card">
+      <label class="fld">Nom de ta première équipe</label>
+      <input id="onb_team" placeholder="Ex : U15 Garçons" value="${ONB.teamName}">
+      <div class="hint">Tu pourras en ajouter d'autres et basculer entre elles à tout moment.</div>
+    </div>
+
+    <button class="btn block" onclick="finishOnboarding()" style="padding:14px">C'est parti ▸</button>
+    <div style="height:14px"></div>
+  `;
+}
+function finishOnboarding(){
+  syncOnbInputs();
+  if(!ONB.name){ flash("Indique ton nom"); return; }
+  if(!ONB.years){ flash("Choisis ton expérience"); return; }
+  if(!ONB.level){ flash("Choisis le niveau de l'équipe"); return; }
+  const lvl=deriveLevel();
+  DB.profile={done:true, name:ONB.name, years:ONB.years, diplomas:ONB.diplomas.slice(), level:ONB.level, category:ONB.category, aiLevel:lvl};
+  aiLevel=lvl;
+  const t=T();
+  t.name=ONB.teamName || (ONB.category+" ");
+  t.category=ONB.category; t.level=ONB.level;
+  save();
+  view="home";
+  document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("active",x.dataset.v==="home"));
+  render();
+  flash(lvl==="pro"?"Profil pro, réponses expertes activées":"Profil enregistré, réponses pédagogiques activées");
+}
+function editProfile(){
+  ONB={name:DB.profile.name||"",years:DB.profile.years||"",diplomas:(DB.profile.diplomas||[]).slice(),level:DB.profile.level||"",category:DB.profile.category||"U13",teamName:T().name||""};
+  DB.profile.done=false; save(); render();
+}
+
+/* ============ ACCUEIL / TABLEAU DE BORD ============ */
+function renderHome(){
+  const present=T().players.filter(p=>p.present).length, total=T().players.length;
+  const absent=T().players.filter(p=>!p.present);
+  const lastMatch = matchIsPlayed();
+  const teamPts = boxScore().team.pts;
+  main.innerHTML = `
+    <div class="hero">
+      <div class="sheen"></div>
+      <div class="eyebrow">${T().name} · Saison ${T().season}</div>
+      <div class="big">${tr('hello')}<br>${DB.profile.name?DB.profile.name.split(" ")[0]:"Coach"}</div>
+      <div class="small">Ta journée, tout est relié, tout est ici.</div>
+    </div>
+
+    ${scoreboardHTML()}
+    ${stepsCardHTML()}
+    ${pricingBannerHTML()}
+
+    <div class="card">
+      <h3>🔔 Alertes</h3>
+      ${absent.length? absent.map(p=>`<div class="alert"><span class="badge warn">ABSENT</span> ${p.first} ${p.last} n'est pas dispo pour la prochaine séance</div>`).join(""):`<div class="muted" style="font-size:12.5px">Aucune alerte. Effectif au complet.</div>`}
+      <div class="alert"><span class="badge bad">SANTÉ</span> Pense à recueillir 2 consentements parentaux manquants</div>
+    </div>
+
+    <div class="grid2">
+      <div class="kpi"><div class="n">${present}/${total}</div><div class="l">Présents prévus</div></div>
+      <div class="kpi"><div class="n">${T().session.blocks.length}</div><div class="l">Blocs de séance</div></div>
+      <div class="kpi"><div class="n">${DB.plays.length}</div><div class="l">Systèmes créés</div></div>
+      <div class="kpi"><div class="n">${lastMatch?teamPts:"-"}</div><div class="l">Pts dernier match</div></div>
+    </div>
+
+    <div class="card">
+      <h3>📅 À venir</h3>
+      <div class="listitem"><div class="num" style="background:var(--blue)">📋</div><div style="flex:1"><b>${T().session.title}</b><br><small class="muted">Mardi 18:30 · Gymnase municipal</small></div><span class="tag">Séance</span></div>
+      <div class="listitem"><div class="num">🏀</div><div style="flex:1"><b>Match vs ${T().match.opponent}</b><br><small class="muted">Samedi 15:00 · Domicile</small></div><span class="tag">Match</span></div>
+      <button class="btn sec block" style="margin-top:10px" onclick="openTimeline()">🗓 Voir le calendrier</button>
+    </div>
+
+    <div class="card">
+      <h3>✨ Recommandations de l'assistant IA</h3>
+      <div class="reco">La prochaine séance a peu de <b>tir sous fatigue</b>. Ajoute un bloc de lancers francs en fin de séance ?</div>
+      <div class="reco"><b>Moussa Sarr</b> enchaîne 3 séances à forte charge. Prévois une récupération allégée.</div>
+      <div class="reco">Prépare <b>${T().match.opponent}</b> : leur meneur marque beaucoup en transition. Travaille le repli.</div>
+      <div class="hint">Chaque suggestion est refusable. L'IA propose, tu décides.</div>
+    </div>
+
+    <div class="card">
+      <h3>📚 Références de haut niveau</h3>
+      <div class="grid2">
+        <button class="btn sec" onclick="openSystems()">🏀 Systèmes de jeu</button>
+        <button class="btn sec" onclick="openDrillsRef()">🎯 Exercices experts</button>
+      </div>
+      <div class="hint">Systèmes animés prêts à charger dans le tableau tactique, du centre de formation au niveau pro.</div>
+    </div>
+
+    <div class="card" style="border:1px solid var(--accent)">
+      <h3>🛡 Posture & protection de l'enfance</h3>
+      <div class="muted" style="font-size:12.5px;margin-bottom:10px">Des repères pour accompagner les jeunes en difficulté, tenir un cadre, et savoir quand alerter.</div>
+      <button class="btn block" onclick="openPosture()">Ouvrir les repères</button>
+    </div>
+
+    <div class="card">
+      <h3>🧩 Autres modules</h3>
+      <div class="grid2">
+        <button class="btn sec" onclick="openPhysique()">💪 Préparation physique</button>
+        <button class="btn sec" onclick="openSante()">🩺 Santé & prévention</button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="foot-links">
+        <a onclick="openPricing()">Abonnement</a>
+        <a onclick="openFAQ()">FAQ</a>
+        <a onclick="openLegal()">Mentions légales</a>
+        <a onclick="editProfile()">Mon profil</a>
+        <a onclick="resetAll()">Réinitialiser</a>
+      </div>
+      <div class="foot-copy">© 2026 PIVOT · Tous droits réservés</div>
+    </div>
+  `;
+  startClock(); updateClock();
+}
+
+/* ============ PRÉPARATION PHYSIQUE ============ */
+const PHYS=[
+  {t:"Pliométrie bas du corps",g:"Explosivité",d:20,per:"Pré-saison"},
+  {t:"Force gainage complet",g:"Gainage",d:15,per:"Toute saison"},
+  {t:"Vitesse et appuis 10m",g:"Vitesse",d:18,per:"Compétition"},
+  {t:"Mobilité chevilles et hanches",g:"Mobilité",d:12,per:"Toute saison"},
+  {t:"Prévention chevilles",g:"Prévention",d:10,per:"Toute saison"},
+  {t:"Retour au calme et étirements",g:"Récupération",d:10,per:"Toute saison"},
+];
+/* ============ PANNEAU, HORLOGE, PENSÉE DU JOUR, FAQ, LÉGAL ============ */
+const QUOTES=[
+  "Le talent gagne des matchs, l'état d'esprit gagne des saisons.",
+  "On ne devient pas fort le jour du match, mais tous les jours avant.",
+  "La discipline, c'est faire ce qu'il faut même quand l'envie n'y est pas.",
+  "Perdre n'est pas tomber, perdre c'est refuser de se relever.",
+  "Le collectif transforme cinq joueurs en une seule force.",
+  "Chaque répétition est un vote pour le joueur que tu veux devenir.",
+  "La régularité bat le talent quand le talent ne travaille pas.",
+  "Un bon coach construit des joueurs, un grand coach construit des personnes.",
+  "Le rebond appartient à celui qui le veut le plus.",
+  "Ce n'est pas la taille du joueur, c'est la taille de son cœur.",
+  "L'effort d'aujourd'hui est le résultat de demain.",
+  "Défendre, c'est aussi une manière de dire je tiens à mon équipe.",
+  "Les champions se voient à l'entraînement, pas seulement en match.",
+  "Rate, apprends, recommence. C'est le vrai chemin du progrès.",
+  "La confiance se gagne un panier, une défense, un effort à la fois.",
+  "Sous la pression, on ne monte pas à son niveau de rêve, on tombe à son niveau de préparation.",
+  "Le respect de l'adversaire commence par le respect de soi.",
+  "Cours pour le copain qui est à côté de toi, il court pour toi.",
+  "La fatigue passe, la fierté du travail bien fait reste.",
+  "On joue comme on s'entraîne, alors entraîne-toi comme tu veux jouer.",
+  "Le meilleur système ne vaut rien sans l'envie de le jouer ensemble.",
+  "Progresser, c'est accepter d'être mauvais avant d'être bon.",
+  "Un vrai leader élève ceux qui l'entourent.",
+  "Le basket t'apprend la vie, apprends-lui ton exigence.",
+];
+function dayOfYear(){ const d=new Date(); const s=new Date(d.getFullYear(),0,0); return Math.floor((d-s)/86400000); }
+function quoteOfDay(){ return QUOTES[dayOfYear()%QUOTES.length]; }
+function scoreboardHTML(){
+  return `<div class="scoreboard">
+    <div class="sb-row"><div class="sb-date" id="sbDate">--</div><div class="sb-time" id="sbTime">--:--:--</div></div>
+    <div class="sb-quote"><span class="lbl2">Pensée du jour</span>"${quoteOfDay()}"</div>
+  </div>`;
+}
+let _clockIv=null;
+function updateClock(){
+  const dt=document.getElementById("sbTime"), dd=document.getElementById("sbDate");
+  if(!dt||!dd) return;
+  const n=new Date();
+  const jours=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+  const mois=["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Aoû","Sep","Oct","Nov","Déc"];
+  dd.textContent=jours[n.getDay()]+" "+n.getDate()+" "+mois[n.getMonth()];
+  const p=x=>String(x).padStart(2,"0");
+  dt.textContent=p(n.getHours())+":"+p(n.getMinutes())+":"+p(n.getSeconds());
+}
+function startClock(){ if(_clockIv) return; _clockIv=setInterval(updateClock,1000); }
+/* ---- Premiers pas (rendre l'app indispensable au débutant) ---- */
+function goStep(tab){ if(!tab)return; view=tab; document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x.dataset.v===tab)); render(); }
+function coachSteps(){
+  const t=T();
+  return [
+    {label:"Créer ta première équipe",done:true,tab:null,ic:"groups"},
+    {label:"Ajouter tes joueurs",done:(t.players&&t.players.length>0),tab:"roster",ic:"person_add"},
+    {label:"Construire ta première séance",done:(t.session&&t.session.blocks.length>0),tab:"session",ic:"assignment"},
+    {label:"Dessiner un système sur la plaquette",done:(DB.plays&&DB.plays.length>0),tab:"tactics",ic:"draw"},
+    {label:"Saisir ton premier match",done:(t.match&&t.match.events.length>0),tab:"match",ic:"sports_basketball"},
+  ];
+}
+function stepsCardHTML(){
+  const s=coachSteps(), done=s.filter(x=>x.done).length, total=s.length;
+  if(done>=total) return "";
+  return `<div class="card">
+    <h3>🚀 Tes premiers pas <span class="muted" style="font-weight:400;font-size:11px">${done}/${total}</span></h3>
+    <div class="prog" style="margin:2px 0 10px"><i style="width:${Math.round(done/total*100)}%"></i></div>
+    <div class="steps">
+      ${s.map(x=>`<div class="st ${x.done?'done':''}" onclick="goStep(${x.tab?`'${x.tab}'`:'null'})">
+        <div class="ck mi">${x.done?'check':x.ic}</div>
+        <div class="lbl3">${x.label}</div>
+        ${x.done?'':'<span class="mi" style="color:var(--muted);font-size:20px">chevron_right</span>'}
+      </div>`).join("")}
+    </div>
+  </div>`;
+}
+function pricingBannerHTML(){
+  return `<div class="pp">
+    <div class="ppt">Active PIVOT, IA incluse</div>
+    <div style="font-size:12.5px;opacity:.88;margin:5px 0 11px;position:relative;z-index:1">L'assistant IA, les séances générées, la plaquette, le passeport joueur. Un seul abonnement, premier mois offert.</div>
+    <button class="btn block" style="position:relative;z-index:1" onclick="openPricing()">Voir l'offre</button>
+  </div>`;
+}
+function openPricing(){
+  openModal(`
+    <h3>Un seul abonnement, tout inclus</h3>
+    <div class="offer">🎁 Premier mois offert, sans engagement</div>
+    <div class="plan reco">
+      <div class="tagreco">Tout compris, IA incluse</div>
+      <div class="pname">PIVOT</div><div class="price">7,99€ <small>/ mois</small></div>
+      <ul>
+        <li><b>Assistant IA basket</b>, le cœur de PIVOT</li>
+        <li>Génération de séances par l'IA et variantes selon le niveau</li>
+        <li>Plaquette tactique, animation et export PDF et vidéo</li>
+        <li>Saisie de match, à la voix comprise, et statistiques</li>
+        <li>Effectif, présences et passeport joueur</li>
+        <li>Plusieurs équipes, du Baby Basket aux U18</li>
+        <li>Posture et protection de l'enfance</li>
+      </ul>
+      <button class="btn block" style="margin-top:12px" onclick="startTrial('PIVOT')">Commencer le mois offert</button>
+    </div>
+    <div class="hint">L'intelligence artificielle est incluse, c'est tout l'intérêt de PIVOT. Prix indicatif de démonstration. Sans engagement, résiliable à tout moment.</div>
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+  `);
+}
+function startTrial(p){ closeModal(); sfx("ok"); flash("Essai activé, premier mois offert (démonstration)"); }
+function openFAQ(){
+  const faq=[
+    ["PIVOT, c'est quoi ?","Une application qui réunit dans un seul outil l'effectif, la tactique animée, la saisie de match, les séances et le suivi des joueurs, du Baby Basket aux U18."],
+    ["Ça marche sans connexion ?","Oui pour les usages de terrain comme la saisie de match et les présences. Les données se synchronisent au retour du réseau dans la version complète."],
+    ["Comment saisir un match à la voix ?","Onglet Match, bouton Dicter, puis parle : numéro, action, réussi ou manqué. Le micro fonctionne sur Chrome et Edge, sinon tape la phrase."],
+    ["Comment créer un système de jeu ?","Onglet Tactique. Dessine au stylo, place les joueurs et le ballon, trace les mouvements, ajoute des images, puis lis l'animation et enregistre."],
+    ["L'assistant IA connaît mon niveau ?","Oui. À l'onboarding tu indiques ton expérience et tes diplômes, l'assistant adapte ses réponses, plus pédagogiques ou plus expertes."],
+    ["Puis-je gérer plusieurs équipes ?","Oui. En haut à droite, la pastille d'équipe permet d'ajouter des équipes et de basculer entre elles."],
+    ["Mes données sont-elles protégées ?","La protection des mineurs et le consentement parental sont au cœur de la conception. Voir les mentions légales."],
+    ["Comment changer la langue ?","Bouton langue en haut. L'interface est disponible en plusieurs langues, d'autres arrivent avec des traducteurs professionnels."],
+  ];
+  openModal(`
+    <h3>Foire aux questions</h3>
+    <div class="sub">Les réponses aux questions les plus fréquentes</div>
+    ${faq.map(q=>`<div class="faq-q">${q[0]}</div><div class="faq-a">${q[1]}</div>`).join("")}
+    <button class="btn sec block" onclick="closeModal()">Fermer</button>
+  `);
+}
+function openLegal(){
+  openModal(`
+    <h3>Mentions légales</h3>
+    <div class="sub">PIVOT, prototype</div>
+    <div class="card"><h3>Éditeur</h3><div style="font-size:13px;line-height:1.55">PIVOT est un projet porté par Sarr Ibrahima. Ce prototype est présenté à titre de démonstration.</div></div>
+    <div class="card"><h3>Droits réservés</h3><div style="font-size:13px;line-height:1.55">© 2026 PIVOT. Tous droits réservés. La marque PIVOT, ses contenus, ses textes et son interface sont protégés. Toute reproduction ou usage sans autorisation est interdit.</div></div>
+    <div class="card"><h3>Propriété intellectuelle</h3><div style="font-size:13px;line-height:1.55">Les exercices, systèmes, séances et contenus produits dans l'application appartiennent à leur auteur. Le partage et la revente respectent les droits de chacun.</div></div>
+    <div class="card"><h3>Données personnelles et mineurs</h3><div style="font-size:13px;line-height:1.55">La majorité des joueurs sont mineurs. La collecte est limitée au nécessaire, le consentement parental est requis, et les données de santé sont traitées à part, avec un accès restreint. Chacun peut demander l'accès, la rectification ou l'effacement de ses données.</div></div>
+    <div class="card"><h3>Contact</h3><div style="font-size:13px;line-height:1.55">Pour toute demande, rapprochez-vous de Sarr Ibrahima.</div></div>
+    <button class="btn sec block" onclick="closeModal()">Fermer</button>
+  `);
+}
+function openTimeline(){
+  const ev=[
+    {d:"Lun",dd:"14/07",t:"18:30",title:T().session.title,sub:"Gymnase municipal",kind:"training"},
+    {d:"Mar",dd:"15/07",t:"18:30",title:"Séance tir et défense",sub:"Gymnase municipal",kind:"training"},
+    {d:"Jeu",dd:"17/07",t:"19:00",title:"Séance jeu collectif",sub:"Gymnase municipal",kind:"training"},
+    {d:"Ven",dd:"18/07",t:"18:00",title:"Activation d'avant-match",sub:"Légère",kind:"training"},
+    {d:"Sam",dd:"19/07",t:"15:00",title:"Match vs "+T().match.opponent,sub:"Domicile",kind:"game"},
+    {d:"Dim",dd:"20/07",t:"repos",title:"Repos et récupération",sub:"Étirements conseillés",kind:"training"},
+  ];
+  openModal(`
+    <h3>🗓 Calendrier de la semaine</h3>
+    <div class="sub">${T().name} · vue timeline</div>
+    <div class="tl">
+      ${ev.map(e=>`<div class="ev ${e.kind==='game'?'game':''}">
+        <div class="row between"><b style="font-size:13.5px">${e.title}</b><span class="tag">${e.d} ${e.t}</span></div>
+        <div class="muted" style="font-size:11.5px">${e.dd} · ${e.sub}</div>
+      </div>`).join("")}
+    </div>
+    <button class="btn sec block" style="margin-top:6px" onclick="closeModal()">Fermer</button>
+  `);
+}
+function openPhysique(){
+  openModal(`
+    <h3>Préparation physique</h3>
+    <div class="sub">Programmes adaptés à l'âge, au poste et à la période de saison</div>
+    ${PHYS.map(p=>`<div class="block-item"><div class="bt"><b>${p.t}</b><br><small>${p.g} · ${p.d} min · ${p.per}</small></div><button class="btn sm" onclick="flash('Programme assigné à l\\'équipe')">Assigner</button></div>`).join("")}
+    <div class="reco" style="margin-top:8px">✨ L'IA propose d'alléger le volume cette semaine : 2 joueurs cumulent une charge élevée.</div>
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+  `);
+}
+/* ============ SANTÉ ============ */
+function openSante(){
+  openModal(`
+    <h3>Santé et prévention</h3>
+    <div class="sub">Accès réservé aux rôles autorisés, journalisé dans la vraie app</div>
+    <div class="card">
+      <h3>🚑 À surveiller</h3>
+      <div class="alert"><span class="badge bad">BLESSURE</span> Ousmane Kane · entorse cheville · reprise estimée dans 8 jours</div>
+      <div class="alert"><span class="badge warn">CHARGE</span> Moussa Sarr · 3 séances fortes d'affilée · récupération conseillée</div>
+    </div>
+    <div class="card">
+      <h3>😴 Bien-être déclaré (moyenne équipe)</h3>
+      <div class="row between" style="font-size:12px;margin-bottom:6px"><span>Sommeil</span><span class="muted">7,2 / 10</span></div>
+      <div class="prog"><i style="width:72%"></i></div>
+      <div class="row between" style="font-size:12px;margin:10px 0 6px"><span>Fraîcheur</span><span class="muted">6,4 / 10</span></div>
+      <div class="prog"><i style="width:64%"></i></div>
+    </div>
+    <div class="hint">L'app aide au suivi et à la prévention. Elle ne pose jamais de diagnostic.</div>
+    <button class="btn sec block" onclick="closeModal()">Fermer</button>
+  `);
+}
+/* ============ POSTURE & PROTECTION DE L'ENFANCE ============ */
+const POSTURE=[
+  {t:"Le cadre avant tout",d:"Un jeune en difficulté a besoin d'un cadre clair, stable et sécurisant. Des règles simples, connues de tous, tenues avec constance. Le cadre ne punit pas, il contient et rassure. C'est dans un cadre fiable qu'un jeune se pose."},
+  {t:"La posture éducative",d:"Rester présent, constant, à la bonne distance. Ni trop dur, ni copain. On peut sanctionner un acte sans humilier la personne. Après une tension, on répare toujours la relation. Le lien est l'outil de travail."},
+  {t:"Lire le passage à l'acte",d:"Un comportement violent dit souvent quelque chose qui ne se dit pas avec des mots. Derrière l'acte, il y a une émotion, une peur, une histoire. Comprendre ne veut pas dire tout accepter. On pose la limite, puis on cherche le sens."},
+  {t:"Repérer le mal-être",d:"Sois attentif aux changements : repli soudain, agressivité inhabituelle, chute scolaire, marques, propos inquiétants, évitement. Un signal isolé n'est pas une preuve, mais plusieurs signaux appellent la vigilance et le dialogue."},
+  {t:"Le lien avec la famille",d:"La famille est une partenaire, pas une adversaire. Informer, associer, respecter, sans jamais juger. Pour un mineur, rien d'important ne se décide sans les représentants légaux, sauf danger immédiat."},
+  {t:"La limite et l'alerte",d:"Le coach n'est pas un thérapeute. Si un jeune est en danger, se confie sur des violences, ou si tu as un doute sérieux, tu ne restes jamais seul avec ça. Tu protèges, tu transmets, tu alertes. En France, le 119, Allô Enfance en Danger, existe pour ça. Ailleurs, suis les procédures locales de protection."},
+  {t:"Protéger les équipes",d:"Accompagner des jeunes difficiles use. L'analyse des pratiques, le partage entre collègues et le droit de dire ses limites préviennent l'épuisement. Un adulte à bout ne protège plus personne."},
+];
+const VIGILANCE=[
+  "Repli soudain, l'enfant se coupe du groupe.",
+  "Agressivité ou opposition inhabituelles, montée sans raison claire.",
+  "Chute scolaire ou décrochage brutal.",
+  "Marques physiques inexpliquées, gêne à se changer.",
+  "Propos inquiétants sur lui, sur sa maison, sur un adulte.",
+  "Peur d'un lieu, d'un moment, d'une personne.",
+  "Hygiène ou tenue négligées, fatigue installée.",
+  "Sexualisation des propos ou des gestes qui ne correspond pas à l'âge.",
+];
+const PROTOCOLE=[
+  "Rester calme, accueillir sans interroger comme un enquêteur, ne pas promettre le secret.",
+  "Noter les faits par écrit, mots exacts de l'enfant, date, contexte, sans interprétation.",
+  "Ne pas rester seul avec l'information, en parler sans délai au responsable.",
+  "Transmettre à la hiérarchie et, si danger, aux services compétents.",
+  "En France, le 119, Allô Enfance en Danger. Ailleurs, suivre la procédure locale.",
+  "Protéger l'enfant en priorité, préserver la relation de confiance, ne pas se transformer en juge.",
+];
+function textPDF(title, sections){
+  const { jsPDF }=window.jspdf; const pdf=new jsPDF({unit:"pt",format:"a4"});
+  const pw=pdf.internal.pageSize.getWidth(), ph=pdf.internal.pageSize.getHeight(); const M=40, W=pw-2*M; let y=56;
+  pdf.setFont("helvetica","bold"); pdf.setFontSize(17); pdf.setTextColor(20,24,34);
+  pdf.splitTextToSize(title,W).forEach(l=>{pdf.text(l,M,y);y+=22;}); y+=6;
+  sections.forEach(s=>{
+    if(s.h){ if(y>ph-90){pdf.addPage();y=56;} pdf.setFont("helvetica","bold");pdf.setFontSize(13);pdf.setTextColor(232,99,31); pdf.text(s.h,M,y); y+=17; }
+    if(s.body){ pdf.setFont("helvetica","normal");pdf.setFontSize(11);pdf.setTextColor(45,45,45);
+      pdf.splitTextToSize(s.body,W).forEach(l=>{ if(y>ph-50){pdf.addPage();y=56;} pdf.text(l,M,y); y+=15; }); y+=8;
+    }
+  });
+  pdf.setFontSize(9);pdf.setTextColor(150,150,150);pdf.text("Fait avec PIVOT",M,ph-26);
+  return pdf;
+}
+async function sharePDF(pdf,name,text){
+  const blob=pdf.output("blob"); const file=new File([blob],name,{type:"application/pdf"});
+  if(navigator.canShare && navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file],title:text,text:text}); return; }catch(e){ if(e&&e.name==="AbortError")return; } }
+  const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(url),5000);
+  flash("PDF prêt");
+}
+function exportPosturePDF(){
+  if(!window.jspdf){ flash("Chargement, réessaie"); return; }
+  const secs=[{h:"L'approche",body:"Une méthode de terrain pour accompagner des jeunes en difficulté dans le cadre du basket. Elle ne remplace ni un professionnel, ni une procédure officielle. Elle donne des repères de posture et un protocole clair pour agir juste et protéger."}];
+  POSTURE.forEach(p=>secs.push({h:p.t,body:p.d}));
+  secs.push({h:"Grille de vigilance", body:"Plusieurs signaux, pas un seul, appellent l'attention :\n- "+VIGILANCE.join("\n- ")});
+  secs.push({h:"Protocole d'alerte", body:PROTOCOLE.map((s,i)=>(i+1)+". "+s).join("\n")});
+  secs.push({h:"Rappel", body:"Le coach protège et transmet, il n'enquête pas et ne juge pas. En cas de danger immédiat, on agit et on alerte sans attendre."});
+  const pdf=textPDF("Méthode PIVOT, posture et protection de l'enfance", secs);
+  sharePDF(pdf,"pivot_protection_enfance.pdf","Méthode posture et protection de l'enfance");
+}
+function openPosture(){
+  openModal(`
+    <h3>🛡 Méthode posture & protection de l'enfance</h3>
+    <div class="sub">Une méthode de terrain, ancrée dans l'expérience éducative, pas dans un discours d'IA. Pour tenir un cadre, accompagner les jeunes en difficulté, et savoir agir.</div>
+    <div class="card"><h3>L'approche</h3><div style="font-size:13px;line-height:1.55">Elle ne remplace ni un professionnel, ni une procédure officielle. Elle donne des repères de posture et un protocole clair, pour agir juste et protéger.</div></div>
+    <div style="font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);font-size:13px;margin:8px 2px 4px">Les repères</div>
+    ${POSTURE.map((p,i)=>`<div class="card"><h3>${i+1}. ${p.t}</h3><div style="font-size:13px;line-height:1.55">${p.d}</div></div>`).join("")}
+    <div class="card"><h3>👁 Grille de vigilance</h3>
+      <div class="hint" style="margin-bottom:6px">Un signal isolé n'est pas une preuve. Plusieurs signaux appellent l'attention.</div>
+      <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${VIGILANCE.map(v=>`<li>${v}</li>`).join("")}</ul></div>
+    <div class="card" style="border:1px solid var(--accent)"><h3>🚸 Protocole d'alerte</h3>
+      <ol style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${PROTOCOLE.map(s=>`<li>${s}</li>`).join("")}</ol></div>
+    <div class="card" style="border:1px solid var(--bad)">
+      <h3 style="color:var(--bad)">En cas de danger immédiat</h3>
+      <div style="font-size:13px;line-height:1.55">Tu agis pour protéger et tu alertes sans attendre. Tu n'évalues pas seul la gravité, tu ne mènes pas l'enquête. Tu transmets à ta hiérarchie et aux services compétents.</div>
+    </div>
+    <button class="btn block" onclick="exportPosturePDF()">📄 Exporter la méthode pour mon staff</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+  `);
+}
+
+/* ============ ASSISTANT IA (conversation) ============ */
+let aiLevel=(DB.profile && DB.profile.aiLevel) ? DB.profile.aiLevel : 'pro';
+let chatLog=[{who:"ai",txt:"Salut Coach. Je connais ton effectif, tes séances et tes matchs, et je m'adapte à ton niveau. Dis-moi ce dont tu as besoin, tactique, séance, préparation mentale d'un joueur."}];
+function setLevel(l){aiLevel=l;var b=document.getElementById('lvlBeg'),p=document.getElementById('lvlPro');if(b)b.classList.toggle('active',l==='beg');if(p)p.classList.toggle('active',l==='pro');flash(l==='beg'?'Réponses niveau débutant':'Réponses niveau pro');}
+function aiChat(){
+  openModal(`
+    <h3>✨ Assistant IA basket</h3>
+    <div class="seg" style="margin-bottom:10px">
+      <button id="lvlBeg" class="${aiLevel==='beg'?'active':''}" onclick="setLevel('beg')">Coach débutant</button>
+      <button id="lvlPro" class="${aiLevel==='pro'?'active':''}" onclick="setLevel('pro')">Coach pro</button>
+    </div>
+    <div class="chat" id="chatBox"></div>
+    <div class="chips">
+      <span class="chip" onclick="askAI('Génère une séance U15 axée tir, 90 minutes')">Générer une séance</span>
+      <span class="chip" onclick="askAI('Prépare notre prochain adversaire')">Préparer l'adversaire</span>
+      <span class="chip" onclick="askAI('Mon meneur perd confiance après 3 matchs ratés')">🧠 Coach mental</span>
+      <span class="chip" onclick="askAI('Mon équipe se décourage quand on est menés')">Gérer le découragement</span>
+    </div>
+    <div class="row" style="gap:8px">
+      <input id="chatInput" placeholder="Écris ta demande..." onkeydown="if(event.key==='Enter'){askAI(this.value);this.value='';}">
+      <button class="btn" onclick="var i=document.getElementById('chatInput');askAI(i.value);i.value='';">➤</button>
+    </div>
+    <div style="height:8px"></div>
+    <button class="btn sec block" onclick="closeModal()">Fermer</button>
+  `);
+  drawChat();
+}
+function drawChat(){
+  const box=document.getElementById("chatBox");if(!box)return;
+  box.innerHTML=chatLog.map(m=>`<div class="msg ${m.who}">${m.txt}</div>`).join("");
+  box.scrollTop=box.scrollHeight;
+}
+async function realAI(q){
+  const r=await fetch('/api/coach',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({message:q, level:aiLevel,
+      team:{name:T().name, category:T().category, level:T().level, opponent:T().match.opponent,
+        players:(T().players||[]).length}})});
+  if(!r.ok) throw new Error('api');
+  const d=await r.json();
+  if(!d||!d.reply) throw new Error('reply');
+  return String(d.reply).replace(/</g,'&lt;').replace(/\n/g,'<br>');
+}
+async function askAI(q){
+  q=(q||"").trim();if(!q)return;
+  chatLog.push({who:"me",txt:q});
+  chatLog.push({who:"ai",txt:"<span class='muted'>PIVOT réfléchit…</span>"});
+  drawChat();
+  let ans;
+  try{ ans=await realAI(q); }
+  catch(e){ await new Promise(r=>setTimeout(r,300)); ans=aiReply(q); }
+  chatLog[chatLog.length-1].txt=ans;
+  drawChat();
+}
+// Reponse structuree, adaptee au niveau (contrat de raisonnement du dossier, parties 21 a 23).
+function sec(o){ // o: {lecture, analyse, propositions, pas, reserve}
+  let h="";
+  if(o.lecture) h+="<b>Lecture.</b> "+o.lecture+"<br><br>";
+  if(o.analyse) h+="<b>Analyse.</b> "+o.analyse+"<br><br>";
+  if(o.propositions) h+="<b>Propositions.</b> "+o.propositions+"<br><br>";
+  if(o.pas) h+="<b>Prochain pas.</b> "+o.pas;
+  if(o.reserve) h+="<br><br><b>Réserve.</b> "+o.reserve;
+  return h;
+}
+function isYouth(s){return /u7|u9|u11|u13|jeune|enfant|baby/.test(s);}
+function aiReply(q){
+  const s=q.toLowerCase(), pro=(aiLevel==='pro');
+
+  // Séance
+  if(s.includes("séance")||s.includes("seance")||s.includes("entrain")){
+    generateSession();
+    return pro
+      ? sec({lecture:"Tu veux une séance à dominante tir, tenue dans le temps imparti.",
+             analyse:"Une séance efficace alterne charge et technique, et place le travail précis quand la fraîcheur est haute, donc le tir en première moitié, le collectif ensuite.",
+             propositions:"J'ai chargé une trame équilibrée dans l'onglet Séance : mise en train, maniement, tir en place puis en sortie de dribble, jeu collectif, défense, situation de match, et lancers sous fatigue pour finir. Ajuste les volumes selon ton effectif présent.",
+             pas:"Ouvre l'onglet Séance, garde les blocs de tir en début, et cale les durées sur tes 90 minutes.",
+             reserve:"Sans connaître le niveau réel de tes tireurs, les dosages sont des points de départ, pas une vérité."})
+      : sec({lecture:"Tu veux une séance simple et prête, centrée sur le tir.",
+             analyse:"L'idée : le travail précis en début de séance quand ils sont frais, le jeu et la défense après, et finir par des lancers.",
+             propositions:"Je l'ai déjà construite dans l'onglet Séance. Tu n'as qu'à suivre les blocs dans l'ordre.",
+             pas:"Va dans Séance, lance la vue terrain, et laisse-toi guider par le minuteur bloc par bloc."});
+  }
+
+  // Adversaire
+  if(s.includes("adversaire")||s.includes("scout")||s.includes(T().match.opponent.toLowerCase())){
+    return pro
+      ? sec({lecture:"Tu prépares "+T().match.opponent+" et tu cherches où porter l'effort.",
+             analyse:"D'après les données saisies, ils pèsent surtout en transition et via leur meneur. Deux leviers donc, priver la source, le meneur, et supprimer les paniers faciles, la transition.",
+             propositions:"Trois axes. Un, repli immédiat après tir pour couper la course. Deux, pression contrôlée sur le porteur pour ralentir la remontée sans te faire déborder. Trois, sécuriser le rebond défensif, car chaque rebond concédé relance leur transition.",
+             pas:"Fixe le repli comme priorité numéro un de la semaine et mets-le en situation à l'entraînement.",
+             reserve:"L'échantillon de matchs saisis est mince, à confirmer sur les prochaines confrontations."})
+      : sec({lecture:"Tu veux savoir quoi préparer contre "+T().match.opponent+".",
+             analyse:"Ils marquent surtout en courant vite et par leur meneur.",
+             propositions:"Travaille deux choses simples : revenir vite en défense dès qu'on perd le ballon, et bien prendre le rebond pour les empêcher de repartir.",
+             pas:"À la prochaine séance, fais un exercice de retour défensif après chaque tir."});
+  }
+
+  // Coach mental
+  if(s.includes("confiance")||s.includes("mental")||s.includes("stress")||s.includes("peur")||s.includes("pression")||s.includes("décourag")||s.includes("decourag")){
+    const youth=isYouth(s);
+    const esc = youth
+      ? "<br><br><b>Attention.</b> S'il s'agit d'un mineur et que le mal-être dépasse le terrain, sommeil, humeur, propos inquiétants, ce n'est plus de la préparation mentale. Oriente vers le parent et un professionnel. L'app accompagne la performance, elle ne soigne pas."
+      : "<br><br><b>Attention.</b> Si le retrait déborde le sport, fatigue durable, mal-être, ça relève d'un accompagnement qui dépasse ce cadre. Oriente vers un professionnel qualifié.";
+    if(s.includes("décourag")||s.includes("decourag")){
+      return (pro
+        ? sec({lecture:"Le problème n'est pas le score, c'est la réaction du groupe à l'adversité.",
+               analyse:"Trois facteurs se combinent souvent : une attention rivée au résultat et non à la tâche, l'absence de repère pour rebondir, et la contagion émotionnelle dans le groupe.",
+               propositions:"Fixe des objectifs de processus par période, indépendants du score, gagner le rebond, cinq stops de suite. Prépare un mot de recentrage court, toujours le même. Valorise l'effort visible même dans la défaite pour couper la spirale.",
+               pas:"Mets-les volontairement en situation de retard au score à l'entraînement et entraîne la réaction."})
+        : sec({lecture:"Ton équipe lâche quand elle est menée, c'est une question d'état d'esprit, pas de niveau.",
+               analyse:"Ils regardent le score au lieu de jouer le point suivant.",
+               propositions:"Donne-leur un petit objectif par quart-temps qui ne dépend pas du score, comme bien défendre cinq fois de suite. Et félicite les efforts, même quand vous perdez.",
+               pas:"À l'entraînement, fais un match où ils démarrent menés, pour les habituer à réagir."}))
+        + esc;
+    }
+    return (pro
+      ? sec({lecture:"On est sur une bascule classique, la baisse de réussite se change en évitement, ce qui aggrave la spirale.",
+             analyse:"Sépare trois plans. Technique, la qualité des tirs baisse-t-elle ou seulement le pourcentage, la donnée le dira. Décisionnel, l'évitement en fin de match est un signal de charge mentale, pas de niveau. Rôle, le statut amplifie la pression ressentie.",
+             propositions:"Recentre-le sur des indicateurs de processus, qualité de la prise et de l'équilibre, pas le résultat. Nourris-le de réussites contrôlées à l'entraînement. Redonne-lui des responsabilités graduées avant de lui rendre les fins de match.",
+             pas:"Regarde d'abord la qualité réelle de ses tirs sur les 3 matchs avant de trancher technique ou mental."})
+      : sec({lecture:"Ton joueur doute après quelques matchs ratés, et il commence à se cacher.",
+             analyse:"Rater fait douter, douter fait éviter, et éviter fait rater encore. Il faut casser ce cercle.",
+             propositions:"Félicite les bons choix, pas seulement les paniers. Fais-lui réussir plein de tirs faciles à l'entraînement pour lui redonner confiance. Redonne-lui des responsabilités petit à petit.",
+             pas:"Parle-lui en tête à tête, dis-lui ce que tu attends de lui, pas ce qui ne va pas."}))
+      + esc;
+  }
+
+  // Fatigue / charge
+  if(s.includes("fatig")||s.includes("charge")||s.includes("repos")){
+    return sec({lecture:"Tu veux gérer la fraîcheur d'un joueur chargé.",
+      analyse:"D'après le suivi, Moussa Sarr enchaîne trois séances fortes. Le risque n'est pas qu'il soit faible, c'est qu'il accumule sans récupérer.",
+      propositions:"Allège son volume à la prochaine séance, plus de mobilité et de récupération, moins d'intensité. Garde-le impliqué sans le surcharger.",
+      pas:"Regarde l'onglet Santé et baisse sa charge cette semaine.",
+      reserve:"Le ressenti d'effort déclaré compléterait la lecture, la donnée seule ne suffit pas."});
+  }
+
+  // Règle
+  if(s.includes("3 second")||s.includes("trois second")||s.includes("règle")||s.includes("regle")){
+    return "<b>Règle des 3 secondes.</b> Un attaquant ne reste pas plus de 3 secondes consécutives dans la raquette adverse quand son équipe contrôle le ballon en zone avant. Sanction, perte de balle. La version défensive diffère selon les référentiels. Dis-moi la règle précise qui t'intéresse.";
+  }
+
+  // Rotation
+  if(s.includes("rotation")){
+    return sec({lecture:"Tu veux structurer tes rotations.",
+      analyse:"L'enjeu, garder de l'équilibre sur le terrain à chaque instant et gérer les fautes sans casser le rythme.",
+      propositions:"Garde toujours un meneur en jeu, alterne tes intérieurs par blocs de 5 à 6 minutes, et sors un joueur à 2 fautes en première mi-temps. Je peux bâtir une feuille depuis ton effectif présent.",
+      pas:"Dis-moi combien de joueurs tu comptes faire tourner, je te propose un plan."});
+  }
+
+  return sec({lecture:"J'ai bien reçu ta demande, mais elle est large.",
+    analyse:"Pour une réponse située, j'ai besoin d'un point de plus, l'âge, l'objectif, ou le joueur concerné.",
+    propositions:"Reformule avec ce détail, ou touche une suggestion, générer une séance, préparer l'adversaire, ou un point de préparation mentale.",
+    pas:"Précise ta demande et je te réponds au niveau que tu as choisi, débutant ou pro."});
+}
+
+/* ============ EFFECTIF ============ */
+function initials(p){return (p.first[0]||"")+(p.last[0]||"");}
+function renderRoster(){
+  main.innerHTML=`
+    <h2 class="view-title">Effectif</h2>
+    <div class="sub">${T().players.length} joueurs · ${T().players.filter(p=>p.present).length} disponibles</div>
+    <div class="card" id="rosterList"></div>
+    <button class="btn block" onclick="addPlayerModal()">＋ Ajouter un joueur</button>
+  `;
+  const list=document.getElementById("rosterList");
+  list.innerHTML = T().players.sort((a,b)=>a.num-b.num).map(p=>`
+    <div class="listitem">
+      <div class="num">${p.num}</div>
+      <div class="avatar">${initials(p)}</div>
+      <div style="flex:1" onclick="playerDetail('${p.id}')">
+        <b>${p.first} ${p.last}</b><br><span class="pos">${p.pos}</span>
+      </div>
+      <span class="badge ${p.present?'ok':'bad'}">${p.present?'DISPO':'ABSENT'}</span>
+      <button class="iconbtn" onclick="togglePresent('${p.id}')">${p.present?'✓':'✗'}</button>
+    </div>`).join("");
+}
+function togglePresent(id){const p=T().players.find(x=>x.id===id);p.present=!p.present;save();renderRoster();}
+function addPlayerModal(){
+  openModal(`
+    <h3>Nouveau joueur</h3>
+    <label class="fld">Prénom</label><input id="np_first" placeholder="Prénom">
+    <div style="height:8px"></div>
+    <label class="fld">Nom</label><input id="np_last" placeholder="Nom">
+    <div class="grid2" style="margin-top:8px">
+      <div><label class="fld">Numéro</label><input id="np_num" type="number" value="14"></div>
+      <div><label class="fld">Poste</label><select id="np_pos">${POSITIONS.map(p=>`<option>${p}</option>`).join("")}</select></div>
+    </div>
+    <div style="height:14px"></div>
+    <button class="btn block" onclick="createPlayer()">Ajouter à l'effectif</button>
+    <div style="height:8px"></div>
+    <button class="btn sec block" onclick="closeModal()">Annuler</button>
+  `);
+}
+function createPlayer(){
+  const f=val("np_first"),l=val("np_last");
+  if(!f||!l){flash("Prénom et nom obligatoires");return;}
+  T().players.push({id:uid(),first:f,last:l,num:parseInt(val("np_num"))||0,pos:val("np_pos"),present:true});
+  save();closeModal();renderRoster();flash("Joueur ajouté");
+}
+function playerDetail(id){
+  const p=T().players.find(x=>x.id===id);
+  const bs=boxScore().players[id]||{pts:0,reb:0,ast:0};
+  const shared=!!DB.consentShare[id];
+  const solos=DB.continuity[id]||[];
+  const soloHtml = shared
+    ? (solos.length
+        ? solos.map(s=>`<div class="sysrow"><div style="flex:1"><div style="font-weight:700;font-size:13px">${s.focus}</div><div class="muted" style="font-size:11.5px">${s.note}</div></div><span class="badgepos">${s.date}</span></div>`).join("")
+        : `<div class="hint">Aucune séance solo pour l'instant.</div>`)
+    : `<div class="hint">🔒 Le joueur n'a pas autorisé le partage. Les séances solo et leurs mesures restent masquées pour le coach.</div>`;
+  openModal(`
+    <h3>${p.first} ${p.last} · #${p.num}</h3>
+    <div class="sub">${p.pos} · ${p.present?'Disponible':'Absent'}</div>
+    <div class="grid3">
+      <div class="kpi"><div class="n">${bs.pts||0}</div><div class="l">Points (match)</div></div>
+      <div class="kpi"><div class="n">${bs.reb||0}</div><div class="l">Rebonds</div></div>
+      <div class="kpi"><div class="n">${bs.ast||0}</div><div class="l">Passes</div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3>🎯 Objectif en cours</h3>
+      <div class="reco">Monter le pourcentage aux lancers francs de <b>55%</b> à <b>70%</b> d'ici décembre.</div>
+    </div>
+    <div class="card">
+      <h3>🔗 Continuité joueur <span class="levelchip pro" style="margin-left:4px">Nouveau</span></h3>
+      <div class="row between" style="margin-bottom:10px">
+        <span class="muted" style="font-size:12px">Partage des séances solo au coach</span>
+        <button class="btn sm ${shared?'':'sec'}" onclick="toggleShare('${id}')">${shared?'Autorisé ✓':'Non autorisé'}</button>
+      </div>
+      ${soloHtml}
+      <button class="btn sm sec block" style="margin-top:10px" onclick="addSolo('${id}')">＋ Simuler une séance solo du joueur</button>
+      <div class="hint">Ce que le joueur travaille seul remonte au coach, avec son accord. Personne d'autre ne relie ça.</div>
+    </div>
+    <button class="btn block" onclick="openPassport('${id}')">🪪 Ouvrir le passeport joueur</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+  `);
+}
+function setSkill(id,k,d){
+  const p=T().players.find(x=>x.id===id); if(!p||!p.skills)return;
+  p.skills[k]=Math.max(0,Math.min(5,(p.skills[k]||0)+d)); save(); openPassport(id);
+}
+function openPassport(id){
+  const p=T().players.find(x=>x.id===id); if(!p)return;
+  if(!p.passportId) p.passportId="PVT-"+Math.random().toString(36).slice(2,7).toUpperCase();
+  if(!p.skills) p.skills={"Tir":3,"Dribble":3,"Passe":3,"Défense":3,"Physique":3,"État d'esprit":4};
+  save();
+  const bs=boxScore().players[id]||{pts:0,reb:0,ast:0,fg3m:0};
+  const solos=DB.continuity[id]||[]; const shared=!!DB.consentShare[id];
+  const age = p.birthdate ? (new Date().getFullYear()-new Date(p.birthdate).getFullYear()) : null;
+  const bars=Object.entries(p.skills).map(([k,v])=>`
+    <div style="margin-bottom:8px">
+      <div class="row between" style="font-size:12px;margin-bottom:3px"><span>${k}</span>
+        <span class="row" style="gap:6px;align-items:center">
+          <button class="iconbtn" style="width:24px;height:24px" onclick="setSkill('${id}','${k}',-1)">−</button>
+          <span class="muted" style="min-width:26px;text-align:center">${v}/5</span>
+          <button class="iconbtn" style="width:24px;height:24px" onclick="setSkill('${id}','${k}',1)">+</button>
+        </span></div>
+      <div class="prog"><i style="width:${v/5*100}%"></i></div>
+    </div>`).join("");
+  openModal(`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+      <div class="avatar" style="width:52px;height:52px;font-size:18px">${initials(p)}</div>
+      <div style="flex:1">
+        <div style="font-family:'Oswald',sans-serif;font-size:20px;text-transform:uppercase;letter-spacing:.5px">${p.first} ${p.last}</div>
+        <div class="muted" style="font-size:12px">#${p.num} · ${p.pos}${age?` · ${age} ans`:""}</div>
+      </div>
+      <div style="text-align:right"><div class="badgepos">Passeport</div><div style="font-family:'Oswald',sans-serif;font-size:13px">${p.passportId}</div></div>
+    </div>
+    <div class="sub">Profil portable du joueur. Il le suit d'une saison et d'un club à l'autre.</div>
+
+    <div class="card"><h3>Parcours actuel</h3>
+      <div class="row between" style="font-size:13px"><span class="muted">Équipe</span><span>${T().name}</span></div>
+      <div class="row between" style="font-size:13px;margin-top:4px"><span class="muted">Catégorie et niveau</span><span>${T().category||"-"} · ${T().level||"-"}</span></div>
+      <div class="row between" style="font-size:13px;margin-top:4px"><span class="muted">Saison</span><span>${T().season}</span></div>
+    </div>
+
+    <div class="card"><h3>🧭 Compétences</h3>
+      <div class="hint" style="margin-bottom:8px">Évaluation du coach, ajuste avec + et −.</div>
+      ${bars}
+    </div>
+
+    <div class="grid3">
+      <div class="kpi"><div class="n">${bs.pts||0}</div><div class="l">Pts dernier match</div></div>
+      <div class="kpi"><div class="n">${bs.reb||0}</div><div class="l">Rebonds</div></div>
+      <div class="kpi"><div class="n">${bs.ast||0}</div><div class="l">Passes</div></div>
+    </div>
+
+    <div class="card"><h3>🎯 Objectif</h3>
+      <div class="reco">Monter le pourcentage aux lancers francs de <b>55%</b> à <b>70%</b> d'ici décembre.</div>
+    </div>
+
+    <div class="card"><h3>📈 Travail personnel</h3>
+      ${shared ? (solos.length? solos.map(s=>`<div class="row between" style="font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--line)"><span>${s.focus}<br><span class="muted" style="font-size:11px">${s.note}</span></span><span class="badgepos">${s.date}</span></div>`).join("") : `<div class="hint">Aucune séance solo enregistrée.</div>`) : `<div class="hint">🔒 Partage non autorisé par le joueur.</div>`}
+    </div>
+
+    <button class="btn block" onclick="exportPassportPDF('${id}')">📄 Exporter le passeport en PDF</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="playerDetail('${id}')">← Retour à la fiche</button>
+  `);
+}
+function exportPassportPDF(id){
+  if(!window.jspdf){ flash("Chargement, réessaie"); return; }
+  const p=T().players.find(x=>x.id===id); if(!p)return;
+  const bs=boxScore().players[id]||{pts:0,reb:0,ast:0};
+  const skills=Object.entries(p.skills||{}).map(([k,v])=>k+" : "+v+"/5").join("\n");
+  const solos=(DB.continuity[id]||[]);
+  const secs=[
+    {h:"Identité sportive", body:`${p.first} ${p.last}\nNuméro ${p.num}, poste ${p.pos}\nPasseport ${p.passportId}`},
+    {h:"Parcours actuel", body:`Équipe ${T().name}\nCatégorie ${T().category||""}, niveau ${T().level||""}\nSaison ${T().season}`},
+    {h:"Compétences, évaluation du coach", body:skills},
+    {h:"Statistiques récentes", body:`Points ${bs.pts||0}, rebonds ${bs.reb||0}, passes ${bs.ast||0}`},
+    {h:"Objectif en cours", body:"Monter le pourcentage aux lancers francs de 55% à 70% d'ici décembre."},
+  ];
+  if(DB.consentShare[id] && solos.length) secs.push({h:"Travail personnel", body:solos.map(s=>s.date+" - "+s.focus+" : "+s.note).join("\n")});
+  const pdf=textPDF("Passeport joueur PIVOT, "+p.first+" "+p.last, secs);
+  sharePDF(pdf,"passeport_"+p.last.toLowerCase()+".pdf","Passeport de "+p.first+" "+p.last);
+}
+
+/* ============ SÉANCE ============ */
+function sessionDuration(){return T().session.blocks.reduce((s,b)=>s+b.dur,0);}
+function renderSession(){
+  main.innerHTML=`
+    <h2 class="view-title">Constructeur de séance</h2>
+    <div class="sub">${T().session.title} · ${sessionDuration()} min · ${T().session.blocks.length} blocs</div>
+    <button class="btn block" style="margin-bottom:8px" onclick="openResources()">📚 Piocher dans la bibliothèque d'exercices</button>
+    <div class="row between" style="margin-bottom:10px">
+      <button class="btn sm sec" onclick="addBlockModal()">＋ Bloc rapide</button>
+      <button class="btn sm sec" onclick="generateSession()">✨ Générer par IA</button>
+      <button class="btn sm ghost" onclick="terrainView()">▶ Vue terrain</button>
+    </div>
+    <div id="blocks"></div>
+    ${T().session.blocks.length===0?`<div class="card muted" style="text-align:center;font-size:13px">Séance vide. Ajoute des blocs ou laisse l'IA en générer une.</div>`:""}
+  `;
+  drawBlocks();
+}
+function drawBlocks(){
+  const c=document.getElementById("blocks");
+  c.innerHTML=T().session.blocks.map((b,i)=>`
+    <div class="block-item">
+      <div class="num" style="background:var(--panel);border:1px solid var(--line);color:var(--muted)">${i+1}</div>
+      <div class="bt"><b>${b.title}</b><br><small>${b.cat} · ${b.dur} min · intensité ${b.intensity}</small></div>
+      <button class="iconbtn" onclick="moveBlock(${i},-1)">↑</button>
+      <button class="iconbtn" onclick="moveBlock(${i},1)">↓</button>
+      <button class="iconbtn" onclick="delBlock(${i})">🗑</button>
+    </div>`).join("");
+}
+function moveBlock(i,d){const n=i+d;if(n<0||n>=T().session.blocks.length)return;const a=T().session.blocks;[a[i],a[n]]=[a[n],a[i]];save();drawBlocks();}
+function delBlock(i){T().session.blocks.splice(i,1);save();renderSession();}
+function addBlockModal(){
+  openModal(`
+    <h3>Ajouter un bloc</h3>
+    <div class="sub">Depuis la bibliothèque d'exercices</div>
+    ${DB.drills.map(d=>`
+      <div class="block-item" onclick="addBlock('${d.id}')">
+        <div class="bt"><b>${d.title}</b><br><small>${d.cat} · ${d.dur} min · ${d.intensity}</small></div>
+        <span class="btn sm">＋</span>
+      </div>`).join("")}
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+  `);
+}
+function addBlock(did){
+  const d=DB.drills.find(x=>x.id===did);
+  T().session.blocks.push({title:d.title,cat:d.cat,dur:d.dur,intensity:d.intensity,points:""});
+  save();closeModal();renderSession();flash("Bloc ajouté");
+}
+function generateSession(){
+  // simple "IA" : compose une séance équilibrée à partir de la bibliothèque
+  const pick=(cat)=>DB.drills.find(d=>d.cat===cat);
+  const plan=["Échauffement","Maniement","Tir","Jeu collectif","Défense","Situation match","Tir"];
+  const blocks=[];
+  plan.forEach(cat=>{const d=DB.drills.find(x=>x.cat===cat);if(d)blocks.push({title:d.title,cat:d.cat,dur:d.dur,intensity:d.intensity,points:""});});
+  T().session.blocks=blocks;save();sfx("ok");renderSession();flash("Séance générée par l'IA");
+}
+/* Vue terrain avec minuteur */
+let timerState=null;
+function terrainView(){
+  if(T().session.blocks.length===0){flash("Ajoute d'abord des blocs");return;}
+  timerState={idx:0,remaining:T().session.blocks[0].dur*60,running:false,iv:null};
+  drawTerrain();
+}
+function drawTerrain(){
+  const b=T().session.blocks[timerState.idx];
+  const mm=String(Math.floor(timerState.remaining/60)).padStart(2,"0");
+  const ss=String(timerState.remaining%60).padStart(2,"0");
+  openModal(`
+    <h3>Vue terrain</h3>
+    <div class="sub">Bloc ${timerState.idx+1}/${T().session.blocks.length}</div>
+    <div class="card" style="text-align:center">
+      <div class="tag" style="margin-bottom:6px">${b.cat}</div>
+      <div style="font-size:19px;font-weight:800;margin-bottom:4px">${b.title}</div>
+      <div class="muted" style="font-size:12px;margin-bottom:10px">Intensité ${b.intensity} · ${b.dur} min prévues</div>
+      <div class="timerbig" id="tbig">${mm}:${ss}</div>
+      <div class="hint">💬 Temps de parole conseillé : 2 min max avant de lancer</div>
+    </div>
+    <div class="grid2">
+      <button class="btn" id="tbtn" onclick="toggleTimer()">${timerState.running?'⏸ Pause':'▶ Démarrer'}</button>
+      <button class="btn sec" onclick="nextBlock()">Bloc suivant →</button>
+    </div>
+    <div style="height:8px"></div>
+    <button class="btn ghost block" onclick="stopTimer();closeModal()">Fermer</button>
+  `);
+}
+function toggleTimer(){
+  timerState.running=!timerState.running;
+  if(timerState.running){timerState.iv=setInterval(()=>{
+    timerState.remaining--;
+    if(timerState.remaining<=0){clearInterval(timerState.iv);timerState.running=false;flash("Bloc terminé");nextBlock();return;}
+    const el=document.getElementById("tbig");
+    if(el){el.textContent=String(Math.floor(timerState.remaining/60)).padStart(2,"0")+":"+String(timerState.remaining%60).padStart(2,"0");}
+  },1000);}
+  else clearInterval(timerState.iv);
+  const btn=document.getElementById("tbtn");if(btn)btn.textContent=timerState.running?'⏸ Pause':'▶ Démarrer';
+}
+function stopTimer(){if(timerState&&timerState.iv)clearInterval(timerState.iv);}
+function nextBlock(){stopTimer();if(timerState.idx<T().session.blocks.length-1){timerState.idx++;timerState.remaining=T().session.blocks[timerState.idx].dur*60;timerState.running=false;drawTerrain();}else{flash("Séance terminée 💪");closeModal();}}
+
+/* ============ MATCH / STATS EN DIRECT ============ */
+function matchIsPlayed(){return T().match.events.length>0;}
+function boxScore(){
+  const players={}, team={pts:0,fg2m:0,fg2a:0,fg3m:0,fg3a:0,ftm:0,fta:0,reb:0,ast:0,stl:0,tov:0,blk:0,foul:0};
+  let opp=0;
+  T().players.forEach(p=>players[p.id]={pts:0,fg2m:0,fg2a:0,fg3m:0,fg3a:0,ftm:0,fta:0,reb:0,ast:0,stl:0,tov:0,blk:0,foul:0});
+  T().match.events.forEach(e=>{
+    if(e.side==="opp"){opp+=e.pts||0;return;}
+    const s=players[e.pid]; if(!s)return;
+    switch(e.type){
+      case"fg2":s.fg2a++;if(e.made){s.fg2m++;s.pts+=2;}break;
+      case"fg3":s.fg3a++;if(e.made){s.fg3m++;s.pts+=3;}break;
+      case"ft":s.fta++;if(e.made){s.ftm++;s.pts+=1;}break;
+      case"reb":s.reb++;break; case"ast":s.ast++;break; case"stl":s.stl++;break;
+      case"tov":s.tov++;break; case"blk":s.blk++;break; case"foul":s.foul++;break;
+    }
+  });
+  Object.values(players).forEach(s=>{team.pts+=s.pts;team.reb+=s.reb;team.ast+=s.ast;team.fg2m+=s.fg2m;team.fg3m+=s.fg3m;team.ftm+=s.ftm;});
+  return {players,team,opp};
+}
+let selPlayer=null, pendingShot=null;
+let voiceOn=false, voiceRec=null, voiceLog=[];
+function renderMatch(){
+  const bs=boxScore();
+  const onCourt = T().players.filter(p=>p.present).slice(0,5);
+  main.innerHTML=`
+    <h2 class="view-title">Match en direct</h2>
+    <div class="scorebar">
+      <div style="text-align:center"><div class="muted" style="font-size:11px">Nous</div><div class="s">${bs.team.pts}</div></div>
+      <div class="muted">vs</div>
+      <div style="text-align:center"><div class="muted" style="font-size:11px">${T().match.opponent}</div><div class="s">${bs.opp}</div></div>
+    </div>
+
+    <div class="card">
+      <h3>Sur le terrain <span class="muted" style="font-weight:400;font-size:11px"># choisis un joueur</span></h3>
+      <div class="court-players">
+        ${onCourt.map(p=>`<div class="pchip ${selPlayer===p.id?'sel':''}" onclick="selectPlayer('${p.id}')"><span class="pn">${p.num}</span>${p.first}</div>`).join("")}
+      </div>
+      ${pendingShot?`
+        <div class="hint">Tir de ${plName(pendingShot.pid)}, réussi ou manqué ?</div>
+        <div class="actions">
+          <button class="abtn" style="background:var(--ok);color:#062">✓ Réussi</button>
+          <button class="abtn" style="background:var(--bad);color:#fff">✗ Manqué</button>
+          <button class="abtn" onclick="cancelShot()">Annuler</button>
+        </div>`
+      :`
+        <div class="actions">
+          <button class="abtn" onclick="act('fg2')">Tir 2 pts</button>
+          <button class="abtn" onclick="act('fg3')">Tir 3 pts</button>
+          <button class="abtn" onclick="act('ft')">Lancer</button>
+          <button class="abtn" onclick="rec('reb')">Rebond</button>
+          <button class="abtn" onclick="rec('ast')">Passe D.</button>
+          <button class="abtn" onclick="rec('stl')">Interception</button>
+          <button class="abtn" onclick="rec('tov')">Perte</button>
+          <button class="abtn" onclick="rec('blk')">Contre</button>
+          <button class="abtn" onclick="rec('foul')">Faute</button>
+        </div>`}
+      <div class="pill-row" style="margin-top:10px">
+        <button class="btn sm sec" onclick="oppScore(2)">Adv +2</button>
+        <button class="btn sm sec" onclick="oppScore(3)">Adv +3</button>
+        <button class="btn sm sec" onclick="oppScore(1)">Adv +1</button>
+        <button class="btn sm ghost" onclick="undo()">↩ Annuler dernière</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🎤 Saisie vocale <span class="levelchip pro" style="margin-left:4px">Nouveau</span></h3>
+      <div class="row" style="gap:8px;margin-bottom:8px">
+        <button class="btn" id="micBtn" onclick="toggleVoice()" style="white-space:nowrap">🎤 Dicter</button>
+        <input id="voiceText" placeholder='Ex : "numéro 7 trois points réussi"' onkeydown="if(event.key==='Enter'){applyVoicePhrase(this.value);this.value='';}">
+      </div>
+      <div class="hint">Dis le numéro, l'action, et réussi ou manqué. Ça marche aussi en tapant la phrase.</div>
+      ${voiceLog.slice(0,4).map(l=>'<div class="reco" style="margin-top:6px">'+l+'</div>').join("")}
+    </div>
+
+    <div class="card">
+      <h3>📊 Box score en direct</h3>
+      <table class="box">
+        <thead><tr><th class="name" style="text-align:left">Joueur</th><th>PTS</th><th>2pts</th><th>3pts</th><th>LF</th><th>REB</th><th>PD</th><th>INT</th><th>BP</th><th>F</th></tr></thead>
+        <tbody>
+          ${onCourt.map(p=>{const s=bs.players[p.id];return `<tr><td class="name">${p.num} ${p.first}</td><td><b>${s.pts}</b></td><td>${s.fg2m}/${s.fg2a}</td><td>${s.fg3m}/${s.fg3a}</td><td>${s.ftm}/${s.fta}</td><td>${s.reb}</td><td>${s.ast}</td><td>${s.stl}</td><td>${s.tov}</td><td>${s.foul}</td></tr>`;}).join("")}
+        </tbody>
+      </table>
+      <div class="hint">Sélection joueur puis action = 2 gestes. Fonctionne hors-ligne dans la vraie app.</div>
+    </div>
+    <button class="btn sec block" onclick="reportModal()">📄 Générer le rapport de match</button>
+  `;
+  // bind shot result buttons if pending
+  if(pendingShot){
+    const btns=main.querySelectorAll(".actions .abtn");
+    if(btns[0])btns[0].onclick=()=>shotResult(true);
+    if(btns[1])btns[1].onclick=()=>shotResult(false);
+  }
+}
+function plName(id){const p=T().players.find(x=>x.id===id);return p?p.first:"";}
+function selectPlayer(id){selPlayer=(selPlayer===id?null:id);renderMatch();}
+function act(type){ // shot: needs made/missed
+  if(!selPlayer){flash("Choisis d'abord un joueur");return;}
+  pendingShot={pid:selPlayer,type};renderMatch();
+}
+function shotResult(made){
+  T().match.events.push({id:uid(),pid:pendingShot.pid,type:pendingShot.type,made,side:"us"});
+  pendingShot=null;save();if(made)sfx("swish");renderMatch();flash(made?"Panier ✓":"Tir manqué");
+}
+function cancelShot(){pendingShot=null;renderMatch();}
+function rec(type){
+  if(!selPlayer){flash("Choisis d'abord un joueur");return;}
+  T().match.events.push({id:uid(),pid:selPlayer,type,side:"us"});save();renderMatch();
+}
+function oppScore(n){T().match.events.push({id:uid(),side:"opp",pts:n,type:"opp"});save();renderMatch();}
+function undo(){if(T().match.events.length){T().match.events.pop();save();renderMatch();flash("Dernière action annulée");}}
+function reportModal(){
+  const bs=boxScore();
+  const top=Object.entries(bs.players).map(([id,s])=>({id,...s})).sort((a,b)=>b.pts-a.pts)[0];
+  const topName=top?plName(top.id):"-";
+  openModal(`
+    <h3>Rapport de match</h3>
+    <div class="sub">Nous ${bs.team.pts}, ${bs.opp} ${T().match.opponent}</div>
+    <div class="card">
+      <div class="reco">Résultat : <b>${bs.team.pts>bs.opp?"victoire":bs.team.pts<bs.opp?"défaite":"nul"}</b> ${bs.team.pts}-${bs.opp}.</div>
+      <div class="reco">Meilleur marqueur : <b>${topName}</b> avec ${top?top.pts:0} points.</div>
+      <div class="reco">Rebonds équipe : <b>${bs.team.reb}</b> · Passes décisives : <b>${bs.team.ast}</b>.</div>
+      <div class="hint">Dans la vraie app, ce rapport est rédigé par l'IA et met à jour les stats de saison.</div>
+    </div>
+    <button class="btn block" onclick="closeModal()">OK</button>
+  `);
+}
+
+/* ============ TABLEAU TACTIQUE ============ */
+/* Coordonnées dans le viewBox 0..500 (x) 0..470 (y). Demi-terrain, panier en haut. */
+const CW=500, CH=470;
+let tac={ frames:[ blankFrame() ], cur:0, tool:"pen", drag:null, drawing:null, playing:false, court:"half", penColor:"#ffffff" };
+let tacReveal=false;
+function blankFrame(){
+  // 5 attaquants + ballon par défaut
+  return {tokens:[
+    {id:"o1",kind:"off",label:"1",x:250,y:400},
+    {id:"o2",kind:"off",label:"2",x:110,y:300},
+    {id:"o3",kind:"off",label:"3",x:390,y:300},
+    {id:"o4",kind:"off",label:"4",x:170,y:180},
+    {id:"o5",kind:"off",label:"5",x:330,y:180},
+    {id:"ball",kind:"ball",label:"",x:250,y:388},
+  ], paths:[]};
+}
+function curFrame(){return tac.frames[tac.cur];}
+function renderTactics(){
+  tacReveal=true;
+  main.innerHTML=`
+    <h2 class="view-title">Plaquette tactique</h2>
+    <div class="sub">Dessine à main levée comme sur une plaquette. Choisis ton fond, ta couleur, tes joueurs.</div>
+    <div class="toolbar" id="courtmodes">
+      <button class="tool ${tac.court==='half'?'active':''}" data-c="half">Demi-terrain</button>
+      <button class="tool ${tac.court==='full'?'active':''}" data-c="full">Terrain plein</button>
+      <button class="tool ${tac.court==='blank'?'active':''}" data-c="blank">Plaquette vierge</button>
+    </div>
+    <div class="toolbar" id="toolbar">
+      <button class="tool" data-t="pen">🖊 Stylo</button>
+      <button class="tool" data-t="select">✋ Déplacer</button>
+      <button class="tool" data-t="add-off">🔴 Attaquant</button>
+      <button class="tool" data-t="add-def">🔵 Défenseur</button>
+      <button class="tool" data-t="add-ball">🏀 Ballon</button>
+      <button class="tool" data-t="move">➜ Course</button>
+      <button class="tool" data-t="dribble">〰 Dribble</button>
+      <button class="tool" data-t="pass">┈ Passe</button>
+      <button class="tool" data-t="screen">⊥ Écran</button>
+      <button class="tool" data-t="erase">🧽 Gomme</button>
+    </div>
+    <div class="toolbar" id="pencolors" style="align-items:center">
+      <span style="font-size:11px;color:var(--muted);margin-right:2px">Couleur</span>
+      ${["#ffffff","#e8631f","#ffd23f","#3a86ff","#111111"].map(c=>`<button class="pcolor" data-col="${c}" style="width:26px;height:26px;border-radius:50%;border:2px solid ${tac.penColor===c?'#fff':'rgba(0,0,0,.2)'};background:${c};cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.3)"></button>`).join("")}
+    </div>
+    <div id="courtWrap"></div>
+    <div class="row between" style="margin-top:8px">
+      <div class="row" style="gap:6px">
+        <button class="btn sm sec" onclick="addFrame()">＋ Image</button>
+        <button class="btn sm sec" onclick="playAnim()">▶ Lire</button>
+      </div>
+      <div class="row" style="gap:6px">
+        <button class="btn sm ghost" onclick="undoDraw()">↩ Annuler</button>
+        <button class="btn sm ghost" onclick="clearFrame()">Vider</button>
+        <button class="btn sm" onclick="savePlay()">💾 Enregistrer</button>
+      </div>
+    </div>
+    <div class="frames" id="framesStrip"></div>
+    <div class="row" style="gap:6px;margin-top:6px">
+      <button class="btn sm sec" style="flex:1" onclick="exportPDF()">📄 PDF</button>
+      <button class="btn sm sec" style="flex:1" onclick="exportVideo()">🎞 Vidéo</button>
+      <button class="btn sm" style="flex:1" onclick="shareSystem()">📤 Partager</button>
+    </div>
+    <div class="hint">Stylo pour dessiner librement. Ajoute des joueurs et le ballon, puis relie-les avec course, passe ou écran. Plusieurs images pour animer.</div>
+    ${DB.plays.length?`<div class="card" style="margin-top:12px"><h3>📁 Mes systèmes (${DB.plays.length})</h3>${DB.plays.map((pl,i)=>`<div class="listitem"><div class="num" style="background:var(--panel2);border:1px solid var(--line);color:var(--muted)">▶</div><div style="flex:1" onclick="loadPlay(${i})"><b>${pl.title}</b><br><small class="muted">${pl.frames.length} image(s)</small></div><button class="iconbtn" onclick="delPlay(${i})">🗑</button></div>`).join("")}</div>`:""}
+  `;
+  document.querySelectorAll("#toolbar .tool").forEach(b=>{
+    b.classList.toggle("active",b.dataset.t===tac.tool);
+    b.onclick=()=>{tac.tool=b.dataset.t;document.querySelectorAll("#toolbar .tool").forEach(x=>x.classList.toggle("active",x===b));};
+  });
+  document.querySelectorAll("#courtmodes .tool").forEach(b=>{
+    b.onclick=()=>{tac.court=b.dataset.c; renderTactics();};
+  });
+  document.querySelectorAll("#pencolors .pcolor").forEach(b=>{
+    b.onclick=()=>{tac.penColor=b.dataset.col; tac.tool="pen"; renderTactics();};
+  });
+  drawCourt();drawFramesStrip();
+}
+function undoDraw(){ const f=curFrame(); if(f.paths.length){f.paths.pop();drawPaths();} }
+function courtMarkings(){
+  if(tac.court==="blank"){
+    return `<g stroke="rgba(255,255,255,.35)" stroke-width="2" fill="none"><rect x="10" y="8" width="480" height="454" rx="6"/></g>`;
+  }
+  if(tac.court==="full"){
+    return `<g stroke="#eaeaea" stroke-width="2.5" fill="none" opacity=".85">
+      <rect x="10" y="8" width="480" height="454" rx="4"/>
+      <line x1="10" y1="235" x2="490" y2="235"/>
+      <circle cx="250" cy="235" r="42"/>
+      <!-- haut -->
+      <rect x="180" y="8" width="140" height="130"/>
+      <circle cx="250" cy="138" r="42"/>
+      <path d="M78,8 L78,70 A176,176 0 0 0 422,70 L422,8"/>
+      <circle cx="250" cy="46" r="10" stroke="#ff8a4c" stroke-width="4"/>
+      <!-- bas -->
+      <rect x="180" y="332" width="140" height="130"/>
+      <circle cx="250" cy="332" r="42"/>
+      <path d="M78,462 L78,400 A176,176 0 0 1 422,400 L422,462"/>
+      <circle cx="250" cy="424" r="10" stroke="#ff8a4c" stroke-width="4"/>
+    </g>`;
+  }
+  // half court (default)
+  return `<g stroke="#eaeaea" stroke-width="2.5" fill="none" opacity=".85">
+      <rect x="10" y="8" width="480" height="454" rx="4"/>
+      <path d="M70,8 L70,120 A180,180 0 0 0 430,120 L430,8"/>
+      <rect x="180" y="8" width="140" height="190"/>
+      <circle cx="250" cy="198" r="60"/>
+      <line x1="180" y1="198" x2="320" y2="198"/>
+      <circle cx="250" cy="60" r="12" stroke="#ff8a4c" stroke-width="4"/>
+      <line x1="220" y1="42" x2="280" y2="42" stroke="#fff" stroke-width="4"/>
+    </g>`;
+}
+function courtSVG(){
+  return `
+  <svg class="court" id="courtSVG" viewBox="0 0 ${CW} ${CH}" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#fff"/></marker>
+      <marker id="arrowb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--ball)"/></marker>
+    </defs>
+    ${courtMarkings()}
+    <g id="pathsLayer"></g>
+    <g id="tokensLayer"></g>
+  </svg>`;
+}
+function drawCourt(){
+  const wrap=document.getElementById("courtWrap");
+  wrap.innerHTML=courtSVG();
+  const svg=document.getElementById("courtSVG");
+  drawTokens();drawPaths();
+  svg.addEventListener("pointerdown",onDown);
+  svg.addEventListener("pointermove",onMove);
+  svg.addEventListener("pointerup",onUp);
+  svg.addEventListener("pointerleave",onUp);
+}
+function svgPt(evt){
+  const svg=document.getElementById("courtSVG");
+  const r=svg.getBoundingClientRect();
+  const x=(evt.clientX-r.left)/r.width*CW;
+  const y=(evt.clientY-r.top)/r.height*CH;
+  return {x:Math.max(6,Math.min(CW-6,x)),y:Math.max(6,Math.min(CH-6,y))};
+}
+function tokenAt(pt){
+  const f=curFrame();let best=null,bd=1e9;
+  f.tokens.forEach(t=>{const d=Math.hypot(t.x-pt.x,t.y-pt.y);if(d<24&&d<bd){bd=d;best=t;}});
+  return best;
+}
+function onDown(e){
+  if(tac.playing)return;
+  const pt=svgPt(e);const t=tac.tool;
+  if(t==="select"){const tk=tokenAt(pt);if(tk)tac.drag=tk;return;}
+  if(t==="add-off"||t==="add-def"||t==="add-ball"){
+    const f=curFrame();
+    if(t==="add-ball"){f.tokens=f.tokens.filter(x=>x.kind!=="ball");f.tokens.push({id:"ball",kind:"ball",label:"",x:pt.x,y:pt.y});}
+    else{const kind=t==="add-off"?"off":"def";const n=f.tokens.filter(x=>x.kind===kind).length+1;
+      f.tokens.push({id:kind[0]+uid().slice(0,4),kind,label:String(n),x:pt.x,y:pt.y});}
+    drawTokens();return;
+  }
+  if(t==="erase"){const tk=tokenAt(pt);const f=curFrame();
+    if(tk){f.tokens=f.tokens.filter(x=>x!==tk);drawTokens();}
+    else{ // erase nearest path
+      if(f.paths.length){f.paths.pop();drawPaths();}
+    }return;
+  }
+  if(t==="pen"){
+    tac.drawing={type:"pen",color:tac.penColor,points:[pt]};
+    return;
+  }
+  if(["move","dribble","pass","screen"].includes(t)){
+    const tk=tokenAt(pt);
+    tac.drawing={type:t,from:tk?tk.id:null,points:[tk?{x:tk.x,y:tk.y}:pt]};
+  }
+}
+function onMove(e){
+  if(tac.playing)return;
+  const pt=svgPt(e);
+  if(tac.drag){tac.drag.x=pt.x;tac.drag.y=pt.y;
+    if(tac.drag.kind!=="ball"){/* rien */}
+    drawTokens();
+    return;}
+  if(tac.drawing){const last=tac.drawing.points[tac.drawing.points.length-1];
+    const th=tac.drawing.type==="pen"?3:8;
+    if(Math.hypot(pt.x-last.x,pt.y-last.y)>th){tac.drawing.points.push(pt);drawPaths(true);}
+  }
+}
+function onUp(e){
+  if(tac.drag){tac.drag=null;save?save():0;return;}
+  if(tac.drawing){
+    if(tac.drawing.points.length>1){curFrame().paths.push(tac.drawing);}
+    tac.drawing=null;drawPaths();
+  }
+}
+function tokensMarkup(f){
+  return f.tokens.map(t=>{
+    if(t.kind==="ball") return `<g><circle cx="${t.x}" cy="${t.y}" r="9" fill="#e6a700" stroke="#8a5a00" stroke-width="1.5"/><path d="M${t.x-9},${t.y} h18 M${t.x},${t.y-9} v18" stroke="#8a5a00" stroke-width="1"/></g>`;
+    const col=t.kind==="off"?"#e8631f":"#2f6bd6";
+    return `<g><circle cx="${t.x}" cy="${t.y}" r="15" fill="${col}" stroke="#0b0e12" stroke-width="2"/><text x="${t.x}" y="${t.y+5}" text-anchor="middle" font-size="15" font-weight="800" fill="#ffffff">${t.label}</text></g>`;
+  }).join("");
+}
+function drawTokens(){
+  const layer=document.getElementById("tokensLayer");if(!layer)return;
+  layer.innerHTML=tokensMarkup(curFrame());
+}
+function pathD(pts){return "M"+pts.map(p=>`${p.x},${p.y}`).join(" L");}
+function renderPath(p,temp){
+  const rc=(!temp && tacReveal)?'class="pdraw" pathLength="1"':'';
+  if(p.type==="pen"){
+    return `<path ${rc} d="${pathD(p.points)}" fill="none" stroke="${p.color||'#ffffff'}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity="${temp?.75:1}"/>`;
+  }
+  const col = p.type==="pass"?"#ffffff":p.type==="screen"?"#ffd23f":p.type==="dribble"?"#8ef2c0":"#ffffff";
+  const dash = p.type==="pass"?'stroke-dasharray="2 7"':p.type==="dribble"?'stroke-dasharray="1 5"':"";
+  const marker = 'marker-end="url(#arrow)"';
+  let extra="";
+  if(p.type==="screen"){const a=p.points[p.points.length-1],b=p.points[p.points.length-2]||a;
+    const ang=Math.atan2(a.y-b.y,a.x-b.x)+Math.PI/2;const l=11;
+    extra=`<line x1="${a.x-Math.cos(ang)*l}" y1="${a.y-Math.sin(ang)*l}" x2="${a.x+Math.cos(ang)*l}" y2="${a.y+Math.sin(ang)*l}" stroke="${col}" stroke-width="3"/>`;
+  }
+  return `<path d="${pathD(p.points)}" fill="none" stroke="${col}" stroke-width="3" ${dash} ${p.type==="screen"?"":marker} opacity="${temp?.6:.95}"/>${extra}`;
+}
+function drawPaths(withTemp){
+  const layer=document.getElementById("pathsLayer");if(!layer)return;
+  let html=curFrame().paths.map(p=>renderPath(p,false)).join("");
+  if(withTemp&&tac.drawing)html+=renderPath(tac.drawing,true);
+  layer.innerHTML=html;
+  tacReveal=false;
+}
+function drawFramesStrip(){
+  const s=document.getElementById("framesStrip");if(!s)return;
+  s.innerHTML=tac.frames.map((f,i)=>`<div class="frame-thumb ${i===tac.cur?'active':''}" onclick="gotoFrame(${i})"><small>${i+1}</small>🏀</div>`).join("")
+    + `<div class="frame-thumb" onclick="addFrame()">＋</div>`;
+}
+function gotoFrame(i){if(tac.playing)return;tac.cur=i;tacReveal=true;drawTokens();drawPaths();drawFramesStrip();}
+function addFrame(){
+  const copy=JSON.parse(JSON.stringify(curFrame()));copy.paths=[]; // nouvelle image: garde positions, efface tracés
+  tac.frames.splice(tac.cur+1,0,copy);tac.cur++;drawTokens();drawPaths();drawFramesStrip();flash("Image ajoutée");
+}
+function clearFrame(){curFrame().tokens=[];curFrame().paths=[];drawTokens();drawPaths();}
+function playAnim(){
+  if(tac.frames.length<2){flash("Ajoute une 2e image pour animer");return;}
+  if(tac.playing)return;tac.playing=true;
+  const layerP=document.getElementById("pathsLayer");if(layerP)layerP.innerHTML="";
+  let seg=0;
+  const step=()=>{
+    if(seg>=tac.frames.length-1){tac.playing=false;tac.cur=tac.frames.length-1;drawTokens();drawPaths();return;}
+    const A=tac.frames[seg],B=tac.frames[seg+1];const dur=900;let t0=null;
+    const frame=(ts)=>{
+      if(!t0)t0=ts;const k=Math.min(1,(ts-t0)/dur);
+      const layer=document.getElementById("tokensLayer");
+      layer.innerHTML=A.tokens.map(a=>{
+        const b=B.tokens.find(x=>x.id===a.id)||a;
+        const x=a.x+(b.x-a.x)*k, y=a.y+(b.y-a.y)*k;
+        if(a.kind==="ball")return `<g><circle cx="${x}" cy="${y}" r="9" fill="var(--ball)" stroke="#b8860b" stroke-width="1.5"/></g>`;
+        const col=a.kind==="off"?"var(--off)":"var(--def)";
+        return `<g><circle cx="${x}" cy="${y}" r="15" fill="${col}" stroke="#0b0e12" stroke-width="2"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="15" font-weight="800" fill="#0b0e12">${a.label}</text></g>`;
+      }).join("");
+      if(k<1)requestAnimationFrame(frame);else{seg++;setTimeout(step,120);}
+    };
+    requestAnimationFrame(frame);
+  };
+  step();
+}
+/* ---- Export PDF / Vidéo / Partage ---- */
+function frameStandaloneSVG(f){
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${CW} ${CH}" width="${CW}" height="${CH}">
+    <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ffffff"/></marker></defs>
+    <rect x="0" y="0" width="${CW}" height="${CH}" fill="#14572b"/>
+    ${courtMarkings()}
+    ${f.paths.map(p=>renderPath(p,false)).join("")}
+    ${tokensMarkup(f)}
+  </svg>`;
+}
+function svgToImage(svgStr){
+  return new Promise((res,rej)=>{
+    const blob=new Blob([svgStr],{type:"image/svg+xml;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const img=new Image();
+    img.onload=()=>{URL.revokeObjectURL(url);res(img);};
+    img.onerror=(e)=>{URL.revokeObjectURL(url);rej(e);};
+    img.src=url;
+  });
+}
+async function buildPDFBlob(title){
+  const { jsPDF }=window.jspdf;
+  const pdf=new jsPDF({orientation:"portrait",unit:"pt",format:"a4"});
+  const pw=pdf.internal.pageSize.getWidth(), ph=pdf.internal.pageSize.getHeight();
+  for(let i=0;i<tac.frames.length;i++){
+    if(i>0) pdf.addPage();
+    pdf.setFontSize(16); pdf.setTextColor(20,24,34);
+    pdf.text(title+"   image "+(i+1)+" sur "+tac.frames.length, 40, 46);
+    const img=await svgToImage(frameStandaloneSVG(tac.frames[i]));
+    const c=document.createElement("canvas"); c.width=CW*2; c.height=CH*2;
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    const iw=pw-80;
+    pdf.addImage(c.toDataURL("image/png"),"PNG",40,64,iw,iw*(CH/CW));
+    pdf.setFontSize(9); pdf.setTextColor(150,150,150);
+    pdf.text("Fait avec PIVOT", 40, ph-28);
+  }
+  return pdf;
+}
+async function exportPDF(){
+  if(!window.jspdf){ flash("Export PDF en cours de chargement, réessaie"); return; }
+  flash("Génération du PDF...");
+  try{ const pdf=await buildPDFBlob("Système PIVOT"); pdf.save("systeme_pivot.pdf"); flash("PDF exporté"); }
+  catch(e){ flash("Souci pendant l'export PDF"); }
+}
+function circleC(ctx,x,y,r,stroke,lw){ ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2); ctx.strokeStyle=stroke||"#eaeaea"; ctx.lineWidth=lw||2.5; ctx.stroke(); }
+function drawCourtCanvas(ctx){
+  ctx.globalAlpha=1; ctx.fillStyle="#14572b"; ctx.fillRect(0,0,CW,CH);
+  ctx.globalAlpha=0.85; ctx.strokeStyle="#eaeaea"; ctx.lineWidth=2.5;
+  if(tac.court==="blank"){ ctx.globalAlpha=0.4; ctx.strokeRect(10,8,480,454); ctx.globalAlpha=1; return; }
+  ctx.strokeRect(10,8,480,454);
+  if(tac.court==="full"){
+    ctx.beginPath();ctx.moveTo(10,235);ctx.lineTo(490,235);ctx.stroke();
+    circleC(ctx,250,235,42);
+    ctx.strokeRect(180,8,140,130); circleC(ctx,250,138,42); circleC(ctx,250,46,10,"#ff8a4c",4);
+    ctx.strokeRect(180,332,140,130); circleC(ctx,250,332,42); circleC(ctx,250,424,10,"#ff8a4c",4);
+  } else {
+    ctx.strokeRect(180,8,140,190); circleC(ctx,250,198,60);
+    ctx.beginPath();ctx.moveTo(180,198);ctx.lineTo(320,198);ctx.stroke();
+    circleC(ctx,250,60,12,"#ff8a4c",4);
+  }
+  ctx.globalAlpha=1;
+}
+function drawPathsCanvas(ctx,paths){
+  paths.forEach(p=>{
+    if(!p.points||p.points.length<2)return;
+    ctx.beginPath(); p.points.forEach((pt,i)=>i?ctx.lineTo(pt.x,pt.y):ctx.moveTo(pt.x,pt.y));
+    ctx.lineWidth=3.5; ctx.lineCap="round"; ctx.lineJoin="round";
+    ctx.strokeStyle = p.type==="pen"?(p.color||"#ffffff"):p.type==="screen"?"#ffd23f":p.type==="dribble"?"#8ef2c0":"#ffffff";
+    if(p.type==="pass") ctx.setLineDash([2,7]); else if(p.type==="dribble") ctx.setLineDash([1,5]); else ctx.setLineDash([]);
+    ctx.stroke(); ctx.setLineDash([]);
+  });
+}
+function drawTokensCanvas(ctx,tokens){
+  tokens.forEach(t=>{
+    if(t.kind==="ball"){ ctx.beginPath();ctx.arc(t.x,t.y,9,0,Math.PI*2);ctx.fillStyle="#e6a700";ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle="#8a5a00";ctx.stroke(); return; }
+    ctx.beginPath();ctx.arc(t.x,t.y,15,0,Math.PI*2);ctx.fillStyle=t.kind==="off"?"#e8631f":"#2f6bd6";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="#0b0e12";ctx.stroke();
+    ctx.fillStyle="#ffffff";ctx.font="bold 15px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(t.label,t.x,t.y);
+  });
+}
+function exportVideo(){
+  if(tac.frames.length<2){ flash("Ajoute une 2e image pour la vidéo"); return; }
+  const canvas=document.createElement("canvas"); canvas.width=CW; canvas.height=CH;
+  const ctx=canvas.getContext("2d");
+  let stream, rec; const chunks=[];
+  try{ stream=canvas.captureStream(30); rec=new MediaRecorder(stream,{mimeType:"video/webm"}); }
+  catch(e){ flash("Vidéo non supportée sur ce navigateur"); return; }
+  rec.ondataavailable=e=>{ if(e.data && e.data.size) chunks.push(e.data); };
+  rec.onstop=()=>{
+    const blob=new Blob(chunks,{type:"video/webm"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a"); a.href=url; a.download="systeme_pivot.webm"; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+    flash("Vidéo exportée");
+  };
+  flash("Enregistrement de la vidéo...");
+  rec.start();
+  const holdMs=500, moveMs=1000;
+  let seg=0, phase="hold", t0=performance.now();
+  function tick(now){
+    const A=tac.frames[seg], B=tac.frames[Math.min(seg+1,tac.frames.length-1)];
+    drawCourtCanvas(ctx);
+    if(phase==="hold"){
+      drawPathsCanvas(ctx,A.paths); drawTokensCanvas(ctx,A.tokens);
+      if(now-t0>=holdMs){ phase="move"; t0=now; }
+    } else {
+      const k=Math.min(1,(now-t0)/moveMs);
+      drawTokensCanvas(ctx, A.tokens.map(a=>{ const b=B.tokens.find(x=>x.id===a.id)||a; return {kind:a.kind,label:a.label,x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k}; }));
+      if(k>=1){
+        seg++;
+        if(seg>=tac.frames.length-1){
+          drawCourtCanvas(ctx); drawPathsCanvas(ctx,B.paths); drawTokensCanvas(ctx,B.tokens);
+          setTimeout(()=>{ try{rec.stop();}catch(e){} }, 700);
+          return;
+        }
+        phase="hold"; t0=now;
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+async function shareSystem(){
+  if(!window.jspdf){ flash("Partage en préparation, réessaie"); return; }
+  flash("Préparation du partage...");
+  try{
+    const pdf=await buildPDFBlob("Système PIVOT");
+    const blob=pdf.output("blob");
+    const file=new File([blob],"systeme_pivot.pdf",{type:"application/pdf"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file], title:"Système de jeu", text:"Voici le système à revoir avant l'entraînement."}); flash("Partagé"); return; }
+      catch(e){ if(e && e.name==="AbortError") return; }
+    }
+    const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="systeme_pivot.pdf"; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+    flash("PDF prêt, envoie-le à ton groupe");
+  }catch(e){ flash("Souci pendant le partage"); }
+}
+function savePlay(){
+  openModal(`
+    <h3>Enregistrer le système</h3>
+    <label class="fld">Titre</label><input id="pl_title" placeholder="Ex : Pick and roll aile droite">
+    <div style="height:12px"></div>
+    <button class="btn block" onclick="confirmSavePlay()">Enregistrer (${tac.frames.length} image(s))</button>
+    <div style="height:8px"></div><button class="btn sec block" onclick="closeModal()">Annuler</button>
+  `);
+}
+function confirmSavePlay(){
+  const t=val("pl_title")||("Système "+(DB.plays.length+1));
+  DB.plays.push({title:t,frames:JSON.parse(JSON.stringify(tac.frames))});
+  save();closeModal();sfx("ok");renderTactics();flash("Système enregistré");
+}
+function loadPlay(i){tac.frames=JSON.parse(JSON.stringify(DB.plays[i].frames));tac.cur=0;tac.playing=false;renderTactics();flash("Système chargé");}
+function delPlay(i){DB.plays.splice(i,1);save();renderTactics();}
+
+/* ============ UTILS ============ */
+function val(id){const e=document.getElementById(id);return e?e.value.trim():"";}
+
+/* ============ SAISIE VOCALE ============ */
+const VLABEL={fg2:"Tir 2",fg3:"Tir 3",ft:"Lancer",reb:"Rebond",ast:"Passe D.",stl:"Interception",tov:"Perte",blk:"Contre",foul:"Faute"};
+function parseVoice(raw){
+  let t=(raw||"").toLowerCase();
+  let type=null, made;
+  if(/(3|trois)\s*(points?|pts?)|(à|a)\s*(3|trois)\b/.test(t)){type="fg3";t=t.replace(/(3|trois)\s*(points?|pts?)/g," ");}
+  else if(/(2|deux)\s*(points?|pts?)|panier/.test(t)){type="fg2";t=t.replace(/(2|deux)\s*(points?|pts?)/g," ");}
+  else if(/lancer/.test(t)){type="ft";}
+  else if(/rebond/.test(t)){type="reb";}
+  else if(/passe|caviar|d[ée]cisive/.test(t)){type="ast";}
+  else if(/interception|\binter\b/.test(t)){type="stl";}
+  else if(/perte|perdue|perdu/.test(t)){type="tov";}
+  else if(/contre/.test(t)){type="blk";}
+  else if(/faute/.test(t)){type="foul";}
+  if(["fg2","fg3","ft"].includes(type)){ made = !/rat[ée]|manqu[ée]|loup[ée]|dehors|hors|pas dedans/.test(t); }
+  const words={zero:0,un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,onze:11,douze:12,treize:13,quatorze:14,quinze:15};
+  let num=null;
+  const m=t.match(/num[ée]ro\s*(\d+)/)||t.match(/\b(\d{1,2})\b/);
+  if(m) num=parseInt(m[1]);
+  if(num===null){ for(const w in words){ if(new RegExp("\\b"+w+"\\b").test(t)){num=words[w];break;} } }
+  if(type===null||num===null) return null;
+  const p=T().players.find(x=>x.num===num);
+  if(!p) return {error:"Numéro "+num+" introuvable dans l'effectif"};
+  return {pid:p.id, num, type, made};
+}
+function applyVoicePhrase(text){
+  text=(text||"").trim(); if(!text) return;
+  const r=parseVoice(text);
+  if(!r){ voiceLog.unshift('❓ "'+text+'" · non compris'); renderMatch(); flash("Non compris, réessaie"); return; }
+  if(r.error){ voiceLog.unshift('⚠️ "'+text+'" · '+r.error); renderMatch(); flash(r.error); return; }
+  T().match.events.push({id:uid(),pid:r.pid,type:r.type,made:r.made,side:"us"});
+  const res = (["fg2","fg3","ft"].includes(r.type)) ? (r.made?" réussi":" manqué") : "";
+  voiceLog.unshift('✅ #'+r.num+' '+plName(r.pid)+' · '+VLABEL[r.type]+res);
+  save(); renderMatch(); flash("Ajouté par la voix");
+}
+function toggleVoice(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ flash("Micro non dispo sur ce navigateur, tape la phrase"); return; }
+  if(voiceOn){ if(voiceRec) voiceRec.stop(); voiceOn=false; return; }
+  voiceRec=new SR(); voiceRec.lang="fr-FR"; voiceRec.continuous=true; voiceRec.interimResults=false;
+  voiceRec.onresult=(e)=>{ const tr=e.results[e.results.length-1][0].transcript; applyVoicePhrase(tr); };
+  voiceRec.onend=()=>{ voiceOn=false; const b=document.getElementById("micBtn"); if(b)b.textContent="🎤 Dicter"; };
+  voiceRec.onerror=()=>{ voiceOn=false; flash("Micro interrompu"); };
+  try{ voiceRec.start(); voiceOn=true; const b=document.getElementById("micBtn"); if(b)b.textContent="⏹ Écoute..."; flash("Parle : numéro, action, réussi ou manqué"); }
+  catch(err){ flash("Impossible de démarrer le micro"); }
+}
+
+/* ============ CONTINUITÉ JOUEUR ============ */
+function toggleShare(id){ DB.consentShare[id]=!DB.consentShare[id]; save(); playerDetail(id); }
+function addSolo(id){
+  if(!DB.continuity[id]) DB.continuity[id]=[];
+  const opts=[
+    {focus:"Tir extérieur",note:"60 tirs, 38 réussis (63%)"},
+    {focus:"Lancers francs",note:"40 lancers, 29 réussis (72%)"},
+    {focus:"Maniement main faible",note:"15 min, parcours réussi"},
+    {focus:"Finitions au cercle",note:"30 finitions, 24 réussies"},
+  ];
+  const o=opts[Math.floor(Math.random()*opts.length)];
+  const d=new Date(); const dd=String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0");
+  DB.continuity[id].unshift({date:dd,focus:o.focus,note:o.note});
+  save(); playerDetail(id); flash("Séance solo du joueur ajoutée");
+}
+
+/* ============ BIBLIOTHÈQUE DE RESSOURCES (exercices clairs) ============ */
+const EXO=[
+  {id:"e1",title:"Le miroir",cat:"Échauffement",age:"Baby à U11",players:"Paires",dur:8,intensity:"Faible",material:"Aucun",
+   objectif:"Réveiller le corps et l'attention en s'amusant.",
+   setup:"Les joueurs par deux, face à face, un meneur et un copieur.",
+   steps:["Le meneur bouge lentement, bras, appuis, sauts.","Le copieur reproduit comme un miroir.","On inverse les rôles au signal."],
+   keys:"Regard sur le partenaire, gestes lents au début.", vEasy:"Sans ballon.", vHard:"Chacun avec un ballon en dribble."},
+  {id:"e2",title:"Chaque main compte",cat:"Maniement",age:"U9 à U15",players:"Individuel",dur:10,intensity:"Moyenne",material:"1 ballon par joueur",
+   objectif:"Améliorer le dribble des deux mains.",
+   setup:"Un joueur, un ballon, un espace de 3 mètres.",
+   steps:["30 secondes dribble main forte, regard levé.","30 secondes main faible.","30 secondes en alternant à chaque rebond."],
+   keys:"Pousser le ballon vers le sol, ne pas le taper. Regard devant.", vEasy:"Sur place.", vHard:"En avançant sur un parcours de plots."},
+  {id:"e3",title:"Feu rouge feu vert",cat:"Maniement",age:"Baby à U11",players:"Groupe",dur:10,intensity:"Moyenne",material:"1 ballon par joueur",
+   objectif:"Dribbler en contrôlant la vitesse et l'arrêt.",
+   setup:"Tous alignés sur une ligne, ballon en main.",
+   steps:["Feu vert, ils avancent en dribble.","Feu rouge, ils s'arrêtent ballon tenu.","Le dernier à s'arrêter recommence."],
+   keys:"S'arrêter équilibré, ballon protégé.", vEasy:"Marche.", vHard:"Course et changement de main au feu orange."},
+  {id:"e4",title:"Tir en étoile",cat:"Tir",age:"U11 à Senior",players:"Petit groupe",dur:15,intensity:"Moyenne",material:"1 ou 2 ballons",
+   objectif:"Répéter le tir depuis 5 positions.",
+   setup:"Cinq plots autour de la raquette, un rebondeur sous le cercle.",
+   steps:["Tir au plot 1, le rebondeur récupère et rend la balle.","On enchaîne les 5 plots.","Compter les paniers, refaire un tour."],
+   keys:"Même geste à chaque tir, équilibre avant de tirer.", vEasy:"Distance réduite.", vHard:"Tir après un dribble puis arrêt."},
+  {id:"e5",title:"Lancers en duel",cat:"Tir",age:"U11 à Senior",players:"Paires",dur:8,intensity:"Faible",material:"1 ballon",
+   objectif:"Tenir sa routine de lancer franc sous un léger enjeu.",
+   setup:"Deux joueurs, une ligne de lancers, chacun son tour.",
+   steps:["Chacun tire 5 lancers avec sa routine.","On compte les réussites.","Le perdant fait 3 appuis, on rejoue."],
+   keys:"Même routine à chaque tir, respiration avant de lâcher.", vEasy:"Sans compter.", vHard:"Après un sprint aller-retour."},
+  {id:"e6",title:"La passe qui traverse",cat:"Passe",age:"U9 à U15",players:"Paires",dur:10,intensity:"Faible",material:"1 ballon par paire",
+   objectif:"Passer vite et juste, à hauteur de poitrine.",
+   setup:"Deux joueurs face à face, 4 mètres d'écart.",
+   steps:["Passe à deux mains à hauteur de poitrine.","10 passes sans faute, puis on recule d'un pas.","Ajouter une passe à terre en alternance."],
+   keys:"Viser la poitrine du copain, mains prêtes à recevoir.", vEasy:"Rapprochés.", vHard:"En se déplaçant latéralement."},
+  {id:"e7",title:"Trois passes puis panier",cat:"Passe",age:"U11 à Senior",players:"Trios",dur:12,intensity:"Moyenne",material:"1 ballon",
+   objectif:"Faire circuler la balle avant de conclure.",
+   setup:"Trois joueurs, une moitié de terrain, un cercle.",
+   steps:["Obligation de faire trois passes avant de tirer.","Personne ne dribble, seulement des passes et des déplacements.","On conclut par un tir proche."],
+   keys:"Bouger après la passe, ne pas rester immobile.", vEasy:"Sans défenseur.", vHard:"Avec un défenseur passif."},
+  {id:"e8",title:"Deux contre un",cat:"Jeu collectif",age:"U11 à Senior",players:"Trios",dur:12,intensity:"Forte",material:"1 ballon",
+   objectif:"Profiter d'une supériorité pour marquer facilement.",
+   setup:"Deux attaquants, un défenseur, demi-terrain.",
+   steps:["Les deux attaquants montent vers le cercle.","Fixer le défenseur puis servir le copain démarqué.","Conclure au plus près du cercle."],
+   keys:"Fixer avant de passer, courir dans son couloir.", vEasy:"Défenseur passif.", vHard:"Retour d'un deuxième défenseur."},
+  {id:"e9",title:"Le cône du meneur",cat:"Jeu collectif",age:"U13 à Senior",players:"Petit groupe",dur:12,intensity:"Moyenne",material:"1 plot, 1 ballon",
+   objectif:"Comprendre l'écran et l'utilisation de l'écran.",
+   setup:"Un plot au poste haut simule l'écran, un porteur, un finisseur.",
+   steps:["Le porteur passe collé au plot.","Il attaque le cercle ou ressort.","On ajoute ensuite un vrai poseur d'écran."],
+   keys:"Passer épaule contre l'écran, lire l'espace libre.", vEasy:"Sans défense.", vHard:"Deux défenseurs qui changent."},
+  {id:"e10",title:"Cinq arrêts de suite",cat:"Défense",age:"U11 à Senior",players:"Groupe",dur:12,intensity:"Forte",material:"1 ballon",
+   objectif:"Défendre avec intensité et communiquer.",
+   setup:"Cinq contre cinq, on ne compte que la défense.",
+   steps:["L'équipe qui défend doit réussir cinq stops d'affilée.","Un panier encaissé remet le compteur à zéro.","On inverse les rôles."],
+   keys:"Parler, aider, sécuriser le rebond.", vEasy:"Trois stops.", vHard:"Sept stops, sans faute."},
+  {id:"e11",title:"Glisse défensive",cat:"Défense",age:"U9 à Senior",players:"Groupe",dur:8,intensity:"Forte",material:"Plots",
+   objectif:"Travailler les appuis défensifs sans croiser les jambes.",
+   setup:"Un parcours en zigzag avec des plots.",
+   steps:["Position basse, mains actives.","Glisser d'un plot à l'autre sans croiser les pieds.","Toucher chaque plot de la main."],
+   keys:"Rester bas, poids sur la plante des pieds.", vEasy:"Lentement.", vHard:"Avec un miroir d'un attaquant."},
+  {id:"e12",title:"Réaction au signal",cat:"Physique",age:"U11 à Senior",players:"Groupe",dur:8,intensity:"Forte",material:"Aucun",
+   objectif:"Vitesse de réaction et premier appui.",
+   setup:"Joueurs en position de fente, prêts.",
+   steps:["Au signal visuel, sprint de 5 mètres.","Retour en marche pour récupérer.","Varier le signal, main gauche ou droite."],
+   keys:"Premier appui explosif, regard sur le signal.", vEasy:"Départ debout.", vHard:"Départ assis ou allongé."},
+  {id:"e13",title:"Gainage du panier",cat:"Physique",age:"U13 à Senior",players:"Individuel",dur:6,intensity:"Moyenne",material:"Aucun",
+   objectif:"Renforcer le tronc, prévention.",
+   setup:"Chacun sur un tapis ou au sol.",
+   steps:["Gainage ventral 20 secondes.","Gainage sur chaque côté 15 secondes.","Deux tours, récupération entre les deux."],
+   keys:"Corps aligné, ne pas creuser le dos.", vEasy:"Sur les genoux.", vHard:"Ajouter un lever de bras."},
+  {id:"e14",title:"Un contre un du milieu",cat:"Situation",age:"U11 à Senior",players:"Paires",dur:12,intensity:"Forte",material:"1 ballon",
+   objectif:"Attaquer et défendre un face à face.",
+   setup:"Attaquant balle au milieu, défenseur devant, un cercle.",
+   steps:["Deux dribbles maximum pour attaquer.","Le défenseur essaie d'interdire la ligne directe.","On change de rôle à chaque possession."],
+   keys:"Attaquant, changement de rythme. Défenseur, rester bas.", vEasy:"Départ plus loin.", vHard:"Un seul dribble autorisé."},
+  {id:"e15",title:"Dernière minute",cat:"Situation",age:"U13 à Senior",players:"Deux équipes",dur:10,intensity:"Forte",material:"1 ballon",
+   objectif:"Gérer une fin de match sous pression.",
+   setup:"Cinq contre cinq, une minute au chrono, deux points d'écart.",
+   steps:["L'équipe menée doit revenir.","Gestion des fautes et du temps.","On rejoue en inversant le scénario."],
+   keys:"Bon choix de tir, ne pas paniquer.", vEasy:"Deux minutes.", vHard:"Une possession, un point d'écart."},
+  {id:"e16",title:"La rivière aux ballons",cat:"Baby",age:"Baby à U9",players:"Groupe",dur:10,intensity:"Moyenne",material:"1 ballon par enfant",
+   objectif:"Découvrir le dribble en jouant.",
+   setup:"Deux lignes, une rivière au milieu, un attrapeur sans ballon.",
+   steps:["Les enfants traversent en dribble.","L'attrapeur touche les ballons non contrôlés.","Celui qui perd son ballon aide à attraper."],
+   keys:"Regarder devant, protéger son ballon.", vEasy:"En marchant.", vHard:"Deux attrapeurs."},
+  {id:"e17",title:"Les couleurs",cat:"Baby",age:"Baby à U9",players:"Groupe",dur:8,intensity:"Moyenne",material:"Plots de couleur, ballons",
+   objectif:"Associer écoute et dribble.",
+   setup:"Des plots de couleurs autour du terrain.",
+   steps:["Le coach annonce une couleur.","Les enfants dribblent vers le plot de cette couleur.","On enchaîne les couleurs."],
+   keys:"Écouter puis dribbler, tête haute.", vEasy:"Sans ballon.", vHard:"Deux couleurs à la suite à mémoriser."},
+  {id:"e18",title:"Rebond et relance",cat:"Jeu collectif",age:"U11 à Senior",players:"Groupe",dur:10,intensity:"Forte",material:"1 ballon",
+   objectif:"Sécuriser le rebond puis partir vite.",
+   setup:"Un tireur, un rebondeur, deux couloirs.",
+   steps:["Le tir est volontairement manqué.","Le rebondeur prend et fait une première passe rapide.","Contre-attaque à deux vers l'autre cercle."],
+   keys:"Prendre le rebond à deux mains, relancer vite.", vEasy:"Sans opposition.", vHard:"Un adversaire au rebond."},
+  {id:"e19",title:"Shooting minute",cat:"Tir",age:"U13 à Senior",players:"Paires",dur:10,intensity:"Moyenne",material:"1 ballon",
+   objectif:"Enchaîner les tirs avec un rebondeur.",
+   setup:"Un tireur se déplace, un rebondeur sert.",
+   steps:["Une minute, le tireur enchaîne réception puis tir.","Le rebondeur rend la balle vite.","Compter les paniers, inverser."],
+   keys:"Mains prêtes, arrêt équilibré avant le tir.", vEasy:"Distance courte.", vHard:"Tir à trois points."},
+  {id:"e20",title:"Attaque placée simple",cat:"Jeu collectif",age:"U13 à Senior",players:"Cinq",dur:14,intensity:"Moyenne",material:"1 ballon",
+   objectif:"Poser un premier système à cinq.",
+   setup:"Cinq attaquants, positions de départ claires.",
+   steps:["Passe puis coupe vers le cercle.","Le poste haut relaie.","On termine par un tir proche ou un une-deux."],
+   keys:"Bouger sans ballon, occuper les espaces.", vEasy:"Sans défense.", vHard:"Défense qui suit."},
+  {id:"e21",title:"Requins et sardines",cat:"Baby",age:"Baby à U11",players:"Groupe",dur:8,intensity:"Forte",material:"1 ballon par sardine",
+   objectif:"Dribbler vite en gardant le contrôle, sous pression d'un attrapeur.",
+   setup:"Les sardines dribblent d'une ligne à l'autre, un ou deux requins sans ballon au milieu.",
+   steps:["Au signal, les sardines traversent en dribble.","Le requin touche le ballon d'une sardine, qui devient requin.","On rejoue jusqu'à la dernière sardine."],
+   keys:"Protéger le ballon, regard levé, changer de main.", vEasy:"En marchant, un seul requin.", vHard:"Main faible imposée, deux requins."},
+  {id:"e22",title:"21 plots",cat:"Tir",age:"U11 à Senior",players:"Deux équipes",dur:12,intensity:"Moyenne",material:"Des plots, ballons",
+   objectif:"Enchaîner les tirs dans un jeu par équipes.",
+   setup:"Deux équipes, une réserve de plots au centre.",
+   steps:["Chaque panier marqué donne le droit d'aller chercher un plot pour son équipe.","On tire, on récupère son rebond, on retire.","L'équipe avec le plus de plots gagne."],
+   keys:"Vite mais équilibré, chacun tire à son tour.", vEasy:"Distance courte.", vHard:"Zone de tir imposée à trois points."},
+  {id:"e23",title:"Échelle de rythme",cat:"Physique",age:"U9 à Senior",players:"Groupe",dur:8,intensity:"Forte",material:"Échelle de rythme ou plots",
+   objectif:"Coordination et vitesse de pieds.",
+   setup:"Une échelle au sol, une file de joueurs.",
+   steps:["Un pied dans chaque case, aller simple.","Puis deux pieds par case.","Enfin un motif dedans-dedans-dehors-dehors."],
+   keys:"Appuis rapides sur l'avant du pied, bras qui accompagnent.", vEasy:"Lentement, sans erreur.", vHard:"Ajoute un dribble pendant le parcours."},
+  {id:"e24",title:"Réception et tir express",cat:"Tir",age:"U13 à Senior",players:"Petit groupe",dur:12,intensity:"Moyenne",material:"1 ballon, un passeur",
+   objectif:"Tirer aussitôt après la réception, comme en match.",
+   setup:"Un passeur au sommet, des spots de tir autour.",
+   steps:["Le tireur court vers un spot.","Il reçoit et tire dans la foulée, sans dribble.","Il enchaîne les spots dans l'ordre."],
+   keys:"Mains prêtes avant la balle, arrêt équilibré.", vEasy:"Un dribble autorisé.", vHard:"Un défenseur qui vient contester."},
+  {id:"e25",title:"Finitions variées",cat:"Tir",age:"U13 à Senior",players:"File",dur:12,intensity:"Moyenne",material:"1 ballon",
+   objectif:"Enrichir le répertoire de finition près du cercle.",
+   setup:"Une file côté droit, puis côté gauche.",
+   steps:["Layup classique en course.","Puis layup à l'envers de l'autre côté du cercle.","Puis un pas décalé, euro-step, pour éviter un plot défenseur."],
+   keys:"Regarder la cible sur la planche, protéger le ballon.", vEasy:"À l'arrêt sous le cercle.", vHard:"Avec un défenseur passif qui gêne."},
+  {id:"e26",title:"Relais dribble",cat:"Maniement",age:"U9 à U15",players:"Deux équipes",dur:10,intensity:"Forte",material:"Plots, 1 ballon par équipe",
+   objectif:"Dribbler vite et juste dans une course par équipes.",
+   setup:"Deux équipes en colonne, un parcours de plots devant chacune.",
+   steps:["Le premier fait le parcours en dribble et revient.","Il passe le ballon au suivant.","La première équipe qui a fait passer tout le monde gagne."],
+   keys:"Contrôle avant vitesse, changement de main à chaque plot.", vEasy:"Parcours court.", vHard:"Main faible ou deux ballons."},
+];
+const VARIANTS_BY_CAT={
+  "Échauffement":["Ajoute un ballon à chaque joueur.","Impose un signal visuel pour changer de sens.","Monte l'intensité progressivement."],
+  "Maniement":["Main faible uniquement.","Deux ballons en même temps.","Ajoute un défenseur passif puis actif.","Regard sur un repère au mur, jamais sur le ballon."],
+  "Tir":["Rapproche ou éloigne la distance.","Ajoute un temps limité et un score à atteindre.","Tir après un déplacement ou un dribble.","Transforme-le en défi par équipes."],
+  "Passe":["Impose la main faible.","Ajoute un défenseur sur la ligne de passe.","Alterne passe à terre et passe directe.","En mouvement plutôt qu'à l'arrêt."],
+  "Jeu collectif":["Interdis le dribble pendant un temps.","Impose un nombre de passes avant de tirer.","Passe de la supériorité à l'égalité numérique.","Oblige à finir au plus près du cercle."],
+  "Défense":["Passe de passif à actif.","Rends la communication à voix haute obligatoire.","Réduis l'espace pour densifier.","Compte les stops d'affilée."],
+  "Physique":["Varie le signal de départ, visuel puis sonore.","Ajoute un ballon à manier.","Change les temps d'effort et de récupération.","Passe en relais par équipes."],
+  "Situation":["Change l'écart au score.","Réduis le temps restant.","Impose une consigne offensive ou défensive.","Rejoue en inversant les rôles."],
+  "Baby":["En marchant puis en courant.","Sans ballon puis avec.","Ajoute une couleur ou un signal à écouter.","Transforme-le en petite compétition amicale."],
+};
+const EXO_CATS=["Tous","Échauffement","Maniement","Tir","Passe","Jeu collectif","Défense","Physique","Situation","Baby"];
+let resCat="Tous";
+function openResources(){
+  const list = resCat==="Tous" ? EXO : EXO.filter(e=>e.cat===resCat);
+  openModal(`
+    <h3>📚 Bibliothèque d'exercices</h3>
+    <div class="sub">Choisis, lis, ajoute à ta séance. Simple et clair.</div>
+    <div class="chips" style="margin-bottom:8px">
+      ${EXO_CATS.map(c=>`<span class="chip" style="${resCat===c?'background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600':''}" onclick="resSet('${c}')">${c}</span>`).join("")}
+    </div>
+    ${list.map(e=>`<div class="sysrow" onclick="exoDetail('${e.id}')" style="cursor:pointer">
+      <div style="flex:1"><div style="font-weight:700;font-size:13.5px">${e.title}</div>
+        <div class="badgepos">${e.cat} · ${e.age}</div>
+        <div class="muted" style="font-size:11.5px;margin-top:3px">${e.objectif}</div></div>
+      <span class="tag">${e.dur} min</span>
+    </div>`).join("")}
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+  `);
+}
+function resSet(c){ resCat=c; openResources(); }
+function exoDetail(id){
+  const e=EXO.find(x=>x.id===id);
+  openModal(`
+    <h3>${e.title}</h3>
+    <div class="sub">${e.cat} · ${e.age} · ${e.players} · ${e.dur} min · intensité ${e.intensity}</div>
+    <div class="card"><h3>🎯 Objectif</h3><div style="font-size:13px">${e.objectif}</div></div>
+    <div class="card"><h3>📍 Mise en place</h3><div style="font-size:13px">${e.setup}</div>
+      <div class="hint" style="margin-top:6px">Matériel : ${e.material}</div></div>
+    <div class="card"><h3>▶ Déroulé</h3>
+      <ol style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${e.steps.map(s=>`<li>${s}</li>`).join("")}</ol></div>
+    <div class="card"><h3>🔑 Points clés</h3><div style="font-size:13px">${e.keys}</div></div>
+    <div class="grid2">
+      <div class="kpi" style="text-align:left"><div class="l">Plus facile</div><div style="font-size:12px;margin-top:3px">${e.vEasy}</div></div>
+      <div class="kpi" style="text-align:left"><div class="l">Plus dur</div><div style="font-size:12px;margin-top:3px">${e.vHard}</div></div>
+    </div>
+    <div class="card"><h3>🔀 Variantes ${e.cat}</h3>
+      <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${(VARIANTS_BY_CAT[e.cat]||[]).map(v=>`<li>${v}</li>`).join("")}${(e.variants||[]).map(v=>`<li>${v}</li>`).join("")}</ul>
+    </div>
+    <button class="btn block" style="margin-top:10px" onclick="addExoToSession('${e.id}')">＋ Ajouter à ma séance</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="openResources()">← Retour à la liste</button>
+  `);
+}
+function addExoToSession(id){
+  const e=EXO.find(x=>x.id===id);
+  T().session.blocks.push({title:e.title,cat:e.cat,dur:e.dur,intensity:e.intensity,points:e.objectif});
+  save(); closeModal(); sfx("ok");
+  if(view==="session") renderSession();
+  flash("Ajouté à la séance");
+}
+
+/* ============ RÉFÉRENCES DE HAUT NIVEAU ============ */
+// Systèmes prêts, animés, chargeables dans le tableau tactique.
+// Coordonnées dans le repère 0..500 x, 0..470 y, panier en haut.
+const SYSTEMS=[
+  {
+    title:"Pick and roll côté droit", cat:"Attaque placée", level:"pro",
+    desc:"Le meneur utilise l'écran du pivot côté droit, tourne le coin et lit l'aide. Le pivot plonge au cercle, les extérieurs écartent l'espace.",
+    frames:[
+      {tokens:[
+        {id:"o1",kind:"off",label:"1",x:250,y:340},{id:"ball",kind:"ball",label:"",x:250,y:332},
+        {id:"o2",kind:"off",label:"2",x:440,y:290},{id:"o3",kind:"off",label:"3",x:70,y:300},
+        {id:"o5",kind:"off",label:"5",x:320,y:235},{id:"o4",kind:"off",label:"4",x:150,y:150}],paths:[]},
+      {tokens:[
+        {id:"o1",kind:"off",label:"1",x:320,y:210},{id:"ball",kind:"ball",label:"",x:322,y:206},
+        {id:"o2",kind:"off",label:"2",x:440,y:290},{id:"o3",kind:"off",label:"3",x:70,y:300},
+        {id:"o5",kind:"off",label:"5",x:300,y:120},{id:"o4",kind:"off",label:"4",x:150,y:150}],
+       paths:[
+        {from:"o5",type:"screen",points:[{x:320,y:235},{x:315,y:212}]},
+        {from:"o1",type:"dribble",points:[{x:250,y:340},{x:320,y:210}]},
+        {from:"o5",type:"move",points:[{x:315,y:212},{x:300,y:120}]}]}
+    ]
+  },
+  {
+    title:"Horns (attaque en cornes)", cat:"Attaque placée", level:"pro",
+    desc:"Deux intérieurs aux coudes, deux tireurs dans les coins. Le meneur attaque un écran, l'intérieur opposé ouvre au poste haut. Beaucoup de lectures.",
+    frames:[
+      {tokens:[
+        {id:"o1",kind:"off",label:"1",x:250,y:345},{id:"ball",kind:"ball",label:"",x:250,y:337},
+        {id:"o4",kind:"off",label:"4",x:195,y:225},{id:"o5",kind:"off",label:"5",x:305,y:225},
+        {id:"o2",kind:"off",label:"2",x:60,y:120},{id:"o3",kind:"off",label:"3",x:440,y:120}],paths:[]},
+      {tokens:[
+        {id:"o1",kind:"off",label:"1",x:305,y:270},{id:"ball",kind:"ball",label:"",x:305,y:262},
+        {id:"o5",kind:"off",label:"5",x:305,y:238},{id:"o4",kind:"off",label:"4",x:250,y:300},
+        {id:"o2",kind:"off",label:"2",x:60,y:120},{id:"o3",kind:"off",label:"3",x:440,y:120}],
+       paths:[
+        {from:"o5",type:"screen",points:[{x:305,y:225},{x:305,y:248}]},
+        {from:"o1",type:"dribble",points:[{x:250,y:345},{x:305,y:270}]},
+        {from:"o4",type:"move",points:[{x:195,y:225},{x:250,y:300}]}]}
+    ]
+  },
+  {
+    title:"Sortie de presse (press break)", cat:"Transition", level:"formation",
+    desc:"Structure pour remonter le ballon contre une défense tout terrain. Un relais central, deux couloirs, une passe qui casse la première ligne.",
+    frames:[
+      {tokens:[
+        {id:"o1",kind:"off",label:"1",x:250,y:410},{id:"ball",kind:"ball",label:"",x:250,y:402},
+        {id:"o2",kind:"off",label:"2",x:110,y:360},{id:"o3",kind:"off",label:"3",x:390,y:360},
+        {id:"o4",kind:"off",label:"4",x:250,y:300},{id:"o5",kind:"off",label:"5",x:250,y:170}],paths:[]},
+      {tokens:[
+        {id:"o1",kind:"off",label:"1",x:250,y:360},{id:"ball",kind:"ball",label:"",x:250,y:262},
+        {id:"o2",kind:"off",label:"2",x:110,y:290},{id:"o3",kind:"off",label:"3",x:390,y:290},
+        {id:"o4",kind:"off",label:"4",x:250,y:250},{id:"o5",kind:"off",label:"5",x:250,y:150}],
+       paths:[
+        {from:"o1",type:"pass",points:[{x:250,y:402},{x:250,y:255}]},
+        {from:"o4",type:"move",points:[{x:250,y:300},{x:250,y:250}]}]}
+    ]
+  },
+  {
+    title:"Défense de zone 2-3", cat:"Défense", level:"formation",
+    desc:"Deux défenseurs en tête, trois en fond. Le bloc glisse du côté du ballon. Base solide pour protéger la raquette et le rebond.",
+    frames:[
+      {tokens:[
+        {id:"d1",kind:"def",label:"x1",x:200,y:235},{id:"d2",kind:"def",label:"x2",x:300,y:235},
+        {id:"d3",kind:"def",label:"x3",x:110,y:150},{id:"d4",kind:"def",label:"x4",x:390,y:150},
+        {id:"d5",kind:"def",label:"x5",x:250,y:105},{id:"ball",kind:"ball",label:"",x:250,y:330}],paths:[]},
+      {tokens:[
+        {id:"d1",kind:"def",label:"x1",x:250,y:240},{id:"d2",kind:"def",label:"x2",x:350,y:218},
+        {id:"d3",kind:"def",label:"x3",x:150,y:150},{id:"d4",kind:"def",label:"x4",x:410,y:155},
+        {id:"d5",kind:"def",label:"x5",x:285,y:110},{id:"ball",kind:"ball",label:"",x:420,y:285}],
+       paths:[{from:"ball",type:"pass",points:[{x:250,y:330},{x:420,y:285}]}]}
+    ]
+  }
+];
+function openSystems(){
+  openModal(`
+    <h3>🏀 Systèmes de jeu de référence</h3>
+    <div class="sub">Charge un système animé, lis-le, puis enregistre-le dans ton playbook</div>
+    ${SYSTEMS.map((sy,i)=>`
+      <div class="sysrow">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13.5px">${sy.title}</div>
+          <div class="badgepos">${sy.cat}</div>
+          <div class="muted" style="font-size:11.5px;margin-top:3px;line-height:1.35">${sy.desc}</div>
+        </div>
+        <div style="text-align:center;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          <span class="levelchip ${sy.level==='pro'?'pro':'form'}">${sy.level==='pro'?'Pro':'Formation'}</span>
+          <button class="btn sm" onclick="loadSystem(${i})">Charger ▶</button>
+        </div>
+      </div>`).join("")}
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+  `);
+}
+function loadSystem(i){
+  const sy=SYSTEMS[i];
+  tac.frames=JSON.parse(JSON.stringify(sy.frames));tac.cur=0;tac.playing=false;
+  closeModal();
+  view='tactics';
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x.dataset.v==='tactics'));
+  render();
+  flash('Système chargé, appuie sur Lire');
+}
+const DRILL_REF=[
+  {t:"Shooting à contraintes (make-it-take-it)",cat:"Tir",level:"pro",d:"Séries de tirs où le joueur ne progresse qu'en réussissant. Ajoute une contrainte de temps et un score cible. Développe le tir sous pression et la routine stable."},
+  {t:"Closeout 1 contre 1 depuis l'aide",cat:"Défense",level:"pro",d:"Le défenseur part d'une position d'aide, réalise un closeout contrôlé puis défend un contre un. Travaille l'équilibre à l'approche et l'interdiction de la ligne de fond."},
+  {t:"Lecture du pick and roll 2 contre 2",cat:"Jeu collectif",level:"pro",d:"Porteur et poseur d'écran contre deux défenseurs qui varient leur couverture. Le porteur lit show, drop ou switch et choisit la bonne réponse."},
+  {t:"Transition 3 contre 2 puis 2 contre 1",cat:"Transition",level:"formation",d:"Enchaînement de supériorités en continu. Décision rapide, occupation des couloirs, dernière passe. Retour défensif immédiat sur la vague suivante."},
+  {t:"Finitions sous le cercle avec contact",cat:"Tir",level:"formation",d:"Finir au contact d'un plot ou d'un coéquipier passif. Travaille l'appui, la protection du ballon et la finition des deux mains."},
+  {t:"Rebond de boîte et sortie de balle",cat:"Défense",level:"formation",d:"Prise d'écran au rebond puis première passe rapide pour lancer la transition. Sécuriser avant de relancer."},
+  {t:"Situations de fin de match",cat:"Situation match",level:"pro",d:"Dernière possession, un point d'écart, gestion du temps et des fautes. Exécuter un système sous pression réelle."},
+];
+function openDrillsRef(){
+  openModal(`
+    <h3>🎯 Exercices experts</h3>
+    <div class="sub">Fonds de référence, classé par niveau</div>
+    ${DRILL_REF.map(dr=>`
+      <div class="sysrow">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13.5px">${dr.t}</div>
+          <div class="badgepos">${dr.cat}</div>
+          <div class="muted" style="font-size:11.5px;margin-top:3px;line-height:1.35">${dr.d}</div>
+        </div>
+        <span class="levelchip ${dr.level==='pro'?'pro':'form'}">${dr.level==='pro'?'Pro':'Formation'}</span>
+      </div>`).join("")}
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+  `);
+}
+
+/* ============ INCLINAISON 3D DES CARTES (style Apple) ============ */
+(function(){
+  if(!window.matchMedia || !matchMedia('(hover:hover)').matches) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let raf=null, cur=null;
+  document.addEventListener('pointermove',function(e){
+    const card=(e.target && e.target.closest)?e.target.closest('.card'):null;
+    if(cur && cur!==card){ cur.classList.remove('tilted'); cur.style.transform=''; cur=null; }
+    if(!card) return;
+    cur=card; card.classList.add('tilted');
+    const r=card.getBoundingClientRect();
+    const px=(e.clientX-r.left)/r.width-0.5, py=(e.clientY-r.top)/r.height-0.5;
+    if(raf)cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(function(){ card.style.transform='perspective(820px) rotateY('+(px*7).toFixed(2)+'deg) rotateX('+(-py*7).toFixed(2)+'deg) translateZ(8px)'; });
+  },{passive:true});
+  document.addEventListener('pointerdown',function(){ if(cur){cur.classList.remove('tilted');cur.style.transform='';cur=null;} },{passive:true});
+})();
+
+/* ============ GO ============ */
+render();
+/* Lottie, ballon animé sur l'écran d'ouverture (avec repli CSS si indisponible) */
+const PIVOT_BALL_LOTTIE={"v":"5.9.0","fr":30,"ip":0,"op":45,"w":120,"h":120,"nm":"ball","ddd":0,"assets":[],"layers":[{
+  "ddd":0,"ind":1,"ty":4,"nm":"b","sr":1,
+  "ks":{"o":{"a":0,"k":100},"r":{"a":0,"k":0},
+    "p":{"a":1,"k":[{"t":0,"s":[60,24,0]},{"t":22,"s":[60,92,0]},{"t":45,"s":[60,24,0]}]},
+    "a":{"a":0,"k":[0,0,0]},
+    "s":{"a":1,"k":[{"t":18,"s":[100,100,100]},{"t":22,"s":[122,80,100]},{"t":26,"s":[100,100,100]}]}},
+  "shapes":[{"ty":"gr","it":[
+    {"ty":"el","p":{"a":0,"k":[0,0]},"s":{"a":0,"k":[44,44]}},
+    {"ty":"fl","c":{"a":0,"k":[0.902,0.655,0,1]},"o":{"a":0,"k":100}},
+    {"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}
+  ]}],
+  "ip":0,"op":45,"st":0
+}]};
+try{
+  if(window.lottie){
+    var _la=lottie.loadAnimation({container:document.getElementById('spLottie'),renderer:'svg',loop:true,autoplay:true,animationData:PIVOT_BALL_LOTTIE});
+    _la.addEventListener('DOMLoaded',function(){ var b=document.getElementById('spBall'); if(b) b.style.display='none'; });
+  }
+}catch(e){}
+setTimeout(function(){ var s=document.getElementById('splash'); if(s){ s.classList.add('gone'); setTimeout(function(){ if(s&&s.parentNode) s.parentNode.removeChild(s); },500);} },1600);
+</script>
+</body>
+</html>
