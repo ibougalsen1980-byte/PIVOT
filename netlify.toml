@@ -1,0 +1,22 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# Garde l'adresse /api/coach utilisée par l'application (index.html appelle fetch('/api/coach')).
+# Netlify sert ses fonctions sous /.netlify/functions/, cette redirection fait le lien sans toucher au code de l'app.
+[[redirects]]
+  from = "/api/coach"
+  to = "/.netlify/functions/coach"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type = "application/manifest+json"
