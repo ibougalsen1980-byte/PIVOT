@@ -3967,29 +3967,21 @@ function exportBoxCSV(){
 }
 let selPlayer=null, pendingShot=null;
 let voiceLog=[];
-function renderMatch(){
-  const bs=boxScore();
-  const onCourt = T().players.filter(p=>p.present).slice(0,5);
-  main.innerHTML=`
-    <h2 class="view-title">Match en direct</h2>
-    <div class="scorebar">
-      <div style="text-align:center"><div class="muted" style="font-size:11px">Nous</div><div class="s">${bs.team.pts}</div></div>
-      <div class="muted">vs</div>
-      <div style="text-align:center"><div class="muted" style="font-size:11px">${T().match.opponent}</div><div class="s">${bs.opp}</div></div>
-    </div>
-
-    ${onCourt.length===0?`<div class="card" style="text-align:center;padding:16px 10px">
-      <div style="font-size:34px">🏀</div>
-      <div style="font-weight:700;margin-top:6px">Personne sur le terrain</div>
-      <div class="muted" style="font-size:12.5px;margin:4px 0 12px">Ajoute tes joueurs et marque les présents dans l'effectif. Les cinq premiers présents apparaîtront ici pour la saisie en direct.</div>
-      <button class="btn block" onclick="goStep('roster')">Aller à l'effectif</button>
-    </div>`:""}
-    <div class="card">
-      <h3>Sur le terrain <span class="muted" style="font-weight:400;font-size:11px"># choisis un joueur</span></h3>
-      <div class="court-players">
-        ${onCourt.map(p=>`<div class="pchip ${selPlayer===p.id?'sel':''}" onclick="selectPlayer('${p.id}')"><span class="pn">${p.num}</span>${p.first}</div>`).join("")}
-      </div>
-      ${pendingShot?`
+// Chaque geste pendant un match (tir, rebond, perte de balle...) est fréquent et rapproché dans le temps.
+// Reconstruire tout l'écran (score, terrain, box score à neuf colonnes) à chaque tap donne un effet de
+// clignotement. Ces quatre fonctions génèrent chacune un seul bloc de l'écran ; renderMatch() les assemble
+// à l'ouverture de l'onglet, et refreshMatchLive() ne redessine que ces blocs-là à chaque action, sans
+// toucher au reste de la page (titre, cartes, boutons de rapport).
+function matchScoreHTML(bs){
+  return `<div style="text-align:center"><div class="muted" style="font-size:11px">Nous</div><div class="s">${bs.team.pts}</div></div>
+    <div class="muted">vs</div>
+    <div style="text-align:center"><div class="muted" style="font-size:11px">${T().match.opponent}</div><div class="s">${bs.opp}</div></div>`;
+}
+function courtPlayersHTML(onCourt){
+  return onCourt.map(p=>`<div class="pchip ${selPlayer===p.id?'sel':''}" onclick="selectPlayer('${p.id}')"><span class="pn">${p.num}</span>${p.first}</div>`).join("");
+}
+function matchActionsHTML(){
+  return pendingShot?`
         <div class="hint">Tir de ${plName(pendingShot.pid)}, réussi ou manqué ?</div>
         <div class="actions">
           <button class="abtn" style="background:var(--ok);color:#062">✓ Réussi</button>
@@ -4007,7 +3999,47 @@ function renderMatch(){
           <button class="abtn" onclick="rec('tov')">Perte</button>
           <button class="abtn" onclick="rec('blk')">Contre</button>
           <button class="abtn" onclick="rec('foul')">Faute</button>
-        </div>`}
+        </div>`;
+}
+function voiceLogHTML(){
+  return voiceLog.slice(0,4).map(l=>'<div class="reco" style="margin-top:6px">'+l+'</div>').join("");
+}
+function boxScoreRowsHTML(onCourt,bs){
+  return onCourt.map(p=>{const s=bs.players[p.id];return `<tr><td class="name">${p.num} ${p.first}</td><td><b>${s.pts}</b></td><td>${s.fg2m}/${s.fg2a}</td><td>${s.fg3m}/${s.fg3a}</td><td>${s.ftm}/${s.fta}</td><td>${s.reb}</td><td>${s.ast}</td><td>${s.stl}</td><td>${s.tov}</td><td>${s.foul}</td></tr>`;}).join("");
+}
+function bindMatchShotButtons(){
+  if(!pendingShot)return;
+  const btns=main.querySelectorAll(".actions .abtn");
+  if(btns[0])btns[0].onclick=()=>shotResult(true);
+  if(btns[1])btns[1].onclick=()=>shotResult(false);
+}
+function refreshMatchLive(){
+  const bs=boxScore();
+  const onCourt = T().players.filter(p=>p.present).slice(0,5);
+  const scoreEl=document.getElementById("matchScore"); if(scoreEl) scoreEl.innerHTML=matchScoreHTML(bs);
+  const cpEl=document.getElementById("courtPlayers"); if(cpEl) cpEl.innerHTML=courtPlayersHTML(onCourt);
+  const actEl=document.getElementById("matchActions"); if(actEl) actEl.innerHTML=matchActionsHTML();
+  const vlEl=document.getElementById("voiceLogRow"); if(vlEl) vlEl.innerHTML=voiceLogHTML();
+  const tbEl=document.getElementById("boxScoreBody"); if(tbEl) tbEl.innerHTML=boxScoreRowsHTML(onCourt,bs);
+  bindMatchShotButtons();
+}
+function renderMatch(){
+  const bs=boxScore();
+  const onCourt = T().players.filter(p=>p.present).slice(0,5);
+  main.innerHTML=`
+    <h2 class="view-title">Match en direct</h2>
+    <div class="scorebar" id="matchScore">${matchScoreHTML(bs)}</div>
+
+    ${onCourt.length===0?`<div class="card" style="text-align:center;padding:16px 10px">
+      <div style="font-size:34px">🏀</div>
+      <div style="font-weight:700;margin-top:6px">Personne sur le terrain</div>
+      <div class="muted" style="font-size:12.5px;margin:4px 0 12px">Ajoute tes joueurs et marque les présents dans l'effectif. Les cinq premiers présents apparaîtront ici pour la saisie en direct.</div>
+      <button class="btn block" onclick="goStep('roster')">Aller à l'effectif</button>
+    </div>`:""}
+    <div class="card">
+      <h3>Sur le terrain <span class="muted" style="font-weight:400;font-size:11px"># choisis un joueur</span></h3>
+      <div class="court-players" id="courtPlayers">${courtPlayersHTML(onCourt)}</div>
+      <div id="matchActions">${matchActionsHTML()}</div>
       <div class="pill-row" style="margin-top:10px">
         <button class="btn sm sec" onclick="oppScore(2)">Adv +2</button>
         <button class="btn sm sec" onclick="oppScore(3)">Adv +3</button>
@@ -4023,46 +4055,39 @@ function renderMatch(){
         <button class="btn" onclick="const i=document.getElementById('voiceText');applyVoicePhrase(i.value);i.value='';" style="white-space:nowrap">Valider</button>
       </div>
       <div class="hint">Tape le numéro, l'action, et réussi ou manqué. Exemples : "12 rebond", "4 lancer manqué", "9 passe".</div>
-      ${voiceLog.slice(0,4).map(l=>'<div class="reco" style="margin-top:6px">'+l+'</div>').join("")}
+      <div id="voiceLogRow">${voiceLogHTML()}</div>
     </div>
 
     <div class="card">
       <h3>📊 Box score en direct</h3>
       <table class="box">
         <thead><tr><th class="name" style="text-align:left">Joueur</th><th>PTS</th><th>2pts</th><th>3pts</th><th>LF</th><th>REB</th><th>PD</th><th>INT</th><th>BP</th><th>F</th></tr></thead>
-        <tbody>
-          ${onCourt.map(p=>{const s=bs.players[p.id];return `<tr><td class="name">${p.num} ${p.first}</td><td><b>${s.pts}</b></td><td>${s.fg2m}/${s.fg2a}</td><td>${s.fg3m}/${s.fg3a}</td><td>${s.ftm}/${s.fta}</td><td>${s.reb}</td><td>${s.ast}</td><td>${s.stl}</td><td>${s.tov}</td><td>${s.foul}</td></tr>`;}).join("")}
-        </tbody>
+        <tbody id="boxScoreBody">${boxScoreRowsHTML(onCourt,bs)}</tbody>
       </table>
       <div class="hint">Sélection joueur puis action = 2 gestes. Fonctionne aussi sans connexion.</div>
     </div>
     <button class="btn sec block" onclick="reportModal()">📄 Générer le rapport de match</button>
     <button class="btn sec block" style="margin-top:8px" onclick="exportBoxCSV()">⬇️ Télécharger la box score complète (CSV)</button>
   `;
-  // bind shot result buttons if pending
-  if(pendingShot){
-    const btns=main.querySelectorAll(".actions .abtn");
-    if(btns[0])btns[0].onclick=()=>shotResult(true);
-    if(btns[1])btns[1].onclick=()=>shotResult(false);
-  }
+  bindMatchShotButtons();
 }
 function plName(id){const p=T().players.find(x=>x.id===id);return p?p.first:"";}
-function selectPlayer(id){selPlayer=(selPlayer===id?null:id);renderMatch();}
+function selectPlayer(id){selPlayer=(selPlayer===id?null:id);refreshMatchLive();}
 function act(type){ // shot: needs made/missed
   if(!selPlayer){flash("Choisis d'abord un joueur");return;}
-  pendingShot={pid:selPlayer,type};renderMatch();
+  pendingShot={pid:selPlayer,type};refreshMatchLive();
 }
 function shotResult(made){
   T().match.events.push({id:uid(),pid:pendingShot.pid,type:pendingShot.type,made,side:"us"});
-  pendingShot=null;save();sfx(made?"net":"bounce");renderMatch();flash(made?"Panier ✓":"Tir manqué");
+  pendingShot=null;save();sfx(made?"net":"bounce");refreshMatchLive();flash(made?"Panier ✓":"Tir manqué");
 }
-function cancelShot(){pendingShot=null;renderMatch();}
+function cancelShot(){pendingShot=null;refreshMatchLive();}
 function rec(type){
   if(!selPlayer){flash("Choisis d'abord un joueur");return;}
-  T().match.events.push({id:uid(),pid:selPlayer,type,side:"us"});save();sfx("bounce");renderMatch();
+  T().match.events.push({id:uid(),pid:selPlayer,type,side:"us"});save();sfx("bounce");refreshMatchLive();
 }
-function oppScore(n){T().match.events.push({id:uid(),side:"opp",pts:n,type:"opp"});save();sfx("tap");renderMatch();}
-function undo(){if(T().match.events.length){T().match.events.pop();save();renderMatch();flash("Dernière action annulée");}}
+function oppScore(n){T().match.events.push({id:uid(),side:"opp",pts:n,type:"opp"});save();sfx("tap");refreshMatchLive();}
+function undo(){if(T().match.events.length){T().match.events.pop();save();refreshMatchLive();flash("Dernière action annulée");}}
 function reportModal(){
   const bs=boxScore();
   const top=Object.entries(bs.players).map(([id,s])=>({id,...s})).sort((a,b)=>b.pts-a.pts)[0];
@@ -4650,12 +4675,12 @@ function parseVoice(raw){
 function applyVoicePhrase(text){
   text=(text||"").trim(); if(!text) return;
   const r=parseVoice(text);
-  if(!r){ voiceLog.unshift('❓ "'+text+'" · non compris'); renderMatch(); flash("Non compris, réessaie"); return; }
-  if(r.error){ voiceLog.unshift('⚠️ "'+text+'" · '+r.error); renderMatch(); flash(r.error); return; }
+  if(!r){ voiceLog.unshift('❓ "'+text+'" · non compris'); refreshMatchLive(); flash("Non compris, réessaie"); return; }
+  if(r.error){ voiceLog.unshift('⚠️ "'+text+'" · '+r.error); refreshMatchLive(); flash(r.error); return; }
   T().match.events.push({id:uid(),pid:r.pid,type:r.type,made:r.made,side:"us"});
   const res = (["fg2","fg3","ft"].includes(r.type)) ? (r.made?" réussi":" manqué") : "";
   voiceLog.unshift('✅ #'+r.num+' '+plName(r.pid)+' · '+VLABEL[r.type]+res);
-  save(); renderMatch(); flash("Action ajoutée");
+  save(); refreshMatchLive(); flash("Action ajoutée");
 }
 
 /* ============ CONTINUITÉ JOUEUR ============ */
