@@ -4161,11 +4161,22 @@ function renderTactics(){
     b.classList.toggle("active",b.dataset.t===tac.tool);
     b.onclick=()=>{tac.tool=b.dataset.t;document.querySelectorAll("#toolbar .tool").forEach(x=>x.classList.toggle("active",x===b));};
   });
+  // Changer de fond de terrain ou de couleur de stylo ne touche ni les joueurs ni les étapes déjà tracées :
+  // pas besoin de reconstruire tout l'écran (renderTactics()) et de provoquer un flash. On met à jour l'état,
+  // on redessine juste ce qui doit changer, et le reste de l'écran (barre d'outils, systèmes enregistrés) ne bouge pas.
   document.querySelectorAll("#courtmodes .tool").forEach(b=>{
-    b.onclick=()=>{tac.court=b.dataset.c; renderTactics();};
+    b.onclick=()=>{
+      tac.court=b.dataset.c;
+      document.querySelectorAll("#courtmodes .tool").forEach(x=>x.classList.toggle("active",x===b));
+      drawCourt();
+    };
   });
   document.querySelectorAll("#pencolors .pcolor").forEach(b=>{
-    b.onclick=()=>{tac.penColor=b.dataset.col; tac.tool="pen"; renderTactics();};
+    b.onclick=()=>{
+      tac.penColor=b.dataset.col; tac.tool="pen";
+      document.querySelectorAll("#pencolors .pcolor").forEach(x=>{x.style.border="2px solid "+(x.dataset.col===tac.penColor?"#fff":"rgba(0,0,0,.2)");});
+      document.querySelectorAll("#toolbar .tool").forEach(x=>x.classList.toggle("active",x.dataset.t==="pen"));
+    };
   });
   drawCourt();drawFramesStrip();
   if(tac.full){ const st=document.getElementById("tacStage"); if(st)st.classList.add("tac-full"); const b=document.getElementById("tacFullBtn"); if(b)b.textContent="⤢ Réduire la plaquette"; }
@@ -4269,16 +4280,31 @@ function onDown(e){
     tac.drawing={type:t,from:tk?tk.id:null,points:[tk?{x:tk.x,y:tk.y}:pt]};
   }
 }
+// Le pointeur peut envoyer bien plus d'événements que l'écran n'affiche d'images (jusqu'à 120 par seconde
+// sur certains téléphones et trackpads). Redessiner toute la couche SVG à chaque événement fait ramer le
+// tracé et le déplacement des joueurs sur une plaquette bien remplie. Ici, la position ou le tracé sont mis
+// à jour à chaque événement comme avant, mais le redessin réel (drawTokens/drawPaths) est regroupé sur une
+// seule image par requestAnimationFrame : même résultat visuel, beaucoup moins de reconstructions SVG.
+let tacDragDirty=false, tacDrawDirty=false, tacRafPending=false;
+function tacScheduleRedraw(){
+  if(tacRafPending)return;
+  tacRafPending=true;
+  requestAnimationFrame(()=>{
+    tacRafPending=false;
+    if(tacDragDirty){tacDragDirty=false;drawTokens();}
+    if(tacDrawDirty){tacDrawDirty=false;drawPaths(true);}
+  });
+}
 function onMove(e){
   if(tac.playing)return;
   const pt=svgPt(e);
   if(tac.drag){tac.drag.x=pt.x;tac.drag.y=pt.y;
     if(tac.drag.kind!=="ball"){/* rien */}
-    drawTokens();
+    tacDragDirty=true;tacScheduleRedraw();
     return;}
   if(tac.drawing){const last=tac.drawing.points[tac.drawing.points.length-1];
     const th=tac.drawing.type==="pen"?3:8;
-    if(Math.hypot(pt.x-last.x,pt.y-last.y)>th){tac.drawing.points.push(pt);drawPaths(true);}
+    if(Math.hypot(pt.x-last.x,pt.y-last.y)>th){tac.drawing.points.push(pt);tacDrawDirty=true;tacScheduleRedraw();}
   }
 }
 function onUp(e){
