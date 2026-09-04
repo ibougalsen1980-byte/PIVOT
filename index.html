@@ -864,6 +864,7 @@ let _recoveryMode=/type=recovery/.test(_bootHash);
 let _recoveryError=/(error_code=otp_expired|error=access_denied|error_code=expired)/.test(_bootHash);
 try{ if(SUPA_URL && SUPA_ANON && window.supabase){ supa=window.supabase.createClient(SUPA_URL, SUPA_ANON); } }catch(e){}
 function supaOn(){ return !!supa; }
+let _cloudSyncFailed=false;
 function cloudSave(){
   if(!supa || !supaUser || !_cloudLoaded) return;
   clearTimeout(_cloudTimer);
@@ -875,7 +876,12 @@ function cloudSave(){
         trial_used: !!DB.trialUsed,
         updated_at: new Date().toISOString()
       });
-    }catch(e){}
+      if(_cloudSyncFailed){ _cloudSyncFailed=false; try{flash("Synchronisation rétablie");}catch(e){} }
+    }catch(e){
+      // Échec réseau ou session expirée : on prévient une seule fois par coupure, pas à chaque tentative,
+      // pour ne pas noyer l'utilisateur de messages si la coupure dure. La donnée reste sauvegardée en local.
+      if(!_cloudSyncFailed){ _cloudSyncFailed=true; try{flash("Sauvegarde locale ok, synchronisation en ligne en attente de réseau");}catch(e2){} }
+    }
   },1500);
 }
 async function cloudLoad(){
@@ -933,7 +939,9 @@ function renderCloudAuth(recovery){
 async function cloudLogin(){
   const em=val("ca_email"), pw=(document.getElementById("ca_pw")||{}).value||"";
   if(!em||!pw){ flash("Email et mot de passe requis"); return; }
-  const {data,error}=await supa.auth.signInWithPassword({email:em,password:pw});
+  let data,error;
+  try{ ({data,error}=await supa.auth.signInWithPassword({email:em,password:pw})); }
+  catch(e){ flash("Connexion impossible, vérifie ta connexion internet"); return; }
   if(error){
     const m=(error.message||"").toLowerCase();
     let msg="Connexion impossible, vérifie ta connexion";
@@ -949,7 +957,9 @@ async function cloudSignup(){
   if(!em||!pw){ flash("Email et mot de passe requis"); return; }
   if(pw.length<6){ flash("Mot de passe trop court, 6 caractères minimum"); return; }
   if(pw!==pw2){ flash("Les deux mots de passe ne correspondent pas"); return; }
-  const {data,error}=await supa.auth.signUp({email:em,password:pw,options:{emailRedirectTo:location.origin}});
+  let data,error;
+  try{ ({data,error}=await supa.auth.signUp({email:em,password:pw,options:{emailRedirectTo:location.origin}})); }
+  catch(e){ flash("Création impossible, vérifie ta connexion internet"); return; }
   if(error){ flash(/already/i.test(error.message)?"Un compte existe déjà avec cet email":"Création impossible pour le moment"); return; }
   if(data.user && !data.session){ flash("Compte créé. Confirme ton email puis connecte-toi."); _authMode="login"; renderCloudAuth(); return; }
   supaUser=data.user; DB.demo=false; await cloudLoad(); sfx("ok"); flash("Compte créé, bienvenue"); render();
@@ -957,14 +967,16 @@ async function cloudSignup(){
 async function cloudForgot(){
   const em=val("ca_email")||prompt("Ton email de compte");
   if(!em) return;
-  try{ await supa.auth.resetPasswordForEmail(em,{redirectTo:location.origin}); }catch(e){}
-  flash("Email envoyé si le compte existe. Ouvre le lien reçu.");
+  try{ await supa.auth.resetPasswordForEmail(em,{redirectTo:location.origin}); flash("Email envoyé si le compte existe. Ouvre le lien reçu."); }
+  catch(e){ flash("Envoi impossible, vérifie ta connexion internet et réessaie"); }
 }
 async function cloudSetNewPw(){
   const pw=(document.getElementById("ca_pw")||{}).value||"", pw2=(document.getElementById("ca_pw2")||{}).value||"";
   if(pw.length<6){ flash("Mot de passe trop court, 6 caractères minimum"); return; }
   if(pw!==pw2){ flash("Les deux mots de passe ne correspondent pas"); return; }
-  const {error}=await supa.auth.updateUser({password:pw});
+  let error;
+  try{ ({error}=await supa.auth.updateUser({password:pw})); }
+  catch(e){ flash("Changement impossible, vérifie ta connexion internet"); return; }
   if(error){ flash("Changement impossible pour le moment"); return; }
   _recoveryMode=false;
   try{ if(location.hash){ history.replaceState(null,"",location.pathname+location.search); } }catch(e){}
@@ -1816,9 +1828,9 @@ function homeRecosHTML(){
     const fortes=blocks.filter(b=>b.intensity==="Forte").length;
     if(fortes>=4) recos.push(`${fortes} blocs à intensité forte dans la séance : prévois des temps de récupération entre les blocs ou allège la fin.`);
   }
-  const absents=T().players.filter(p=>!p.present).length;
+  const absents=(T().players||[]).filter(p=>!p.present).length;
   if(absents>0) recos.push(`${absents} joueur${absents>1?'s':''} indisponible${absents>1?'s':''} : pense à adapter les effectifs de tes exercices avant la séance.`);
-  if(T().match.opponent) recos.push(`Match contre <b>${T().match.opponent}</b> à venir : si tu peux les observer avant, note qui crée le danger et comment ils marquent, on en fera un plan.`);
+  if((T().match||{}).opponent) recos.push(`Match contre <b>${T().match.opponent}</b> à venir : si tu peux les observer avant, note qui crée le danger et comment ils marquent, on en fera un plan.`);
   if(!recos.length) recos.push(`Ta séance est équilibrée et ton effectif au complet. Bonne préparation.`);
   return recos.slice(0,3).map(r=>`<div class="reco">${r}</div>`).join("");
 }
@@ -4586,7 +4598,7 @@ function exportVideo(){
         seg++;
         if(seg>=tac.frames.length-1){
           drawCourtCanvas(ctx); drawPathsCanvas(ctx,B.paths); drawTokensCanvas(ctx,B.tokens); videoStepLabel(ctx,tac.frames.length-1);
-          setTimeout(()=>{ try{rec.stop();}catch(e){} }, 700);
+          setTimeout(()=>{ try{rec.stop();}catch(e){ flash("L'enregistrement a échoué, réessaie ou utilise l'export PDF"); } }, 700);
           return;
         }
         phase="hold"; t0=now;
@@ -5315,7 +5327,8 @@ function libExtraHTML(e){
 }
 function addExoToSession(id){
   const e=allExos().find(x=>x.id===id); if(!e) return;
-  T().session.blocks.push({title:e.title,cat:e.cat,dur:e.dur,intensity:e.intensity,points:e.objectif,exoId:e.id});
+  const t=T(); if(!t.session) t.session={title:"",blocks:[]}; if(!t.session.blocks) t.session.blocks=[];
+  t.session.blocks.push({title:e.title,cat:e.cat,dur:e.dur,intensity:e.intensity,points:e.objectif,exoId:e.id});
   save(); closeModal(); sfx("ok");
   if(view==="session") renderSession();
   flash("Ajouté à la séance");
@@ -5865,7 +5878,20 @@ function finishFrames(frames,cat){
   return frames;
 }
 let _finDone=false;
-function finishAllSystems(){ if(_finDone)return; _finDone=true; try{ SYSTEMS.forEach(function(s){ finishFrames(s.frames,s.cat); if(s.steps&&s.frames.length>s.steps.length) s.steps=s.steps.concat(["Finition, le ballon conclut au cercle."]); }); DRILL_REF.forEach(function(d){ finishFrames(d.frames,d.cat); if(d.steps&&d.frames.length>d.steps.length) d.steps=d.steps.concat(["Finition, le ballon conclut au cercle."]); }); }catch(e){} }
+function finishAllSystems(){
+  if(_finDone)return; _finDone=true;
+  // Chaque liste a sa propre protection : une entrée malformée dans l'une n'empêche pas
+  // le traitement de l'autre, et une entrée malformée dans une liste n'empêche pas les
+  // suivantes dans la même liste.
+  SYSTEMS.forEach(function(s){
+    try{ finishFrames(s.frames,s.cat); if(s.steps&&s.frames.length>s.steps.length) s.steps=s.steps.concat(["Finition, le ballon conclut au cercle."]); }
+    catch(e){}
+  });
+  DRILL_REF.forEach(function(d){
+    try{ finishFrames(d.frames,d.cat); if(d.steps&&d.frames.length>d.steps.length) d.steps=d.steps.concat(["Finition, le ballon conclut au cercle."]); }
+    catch(e){}
+  });
+}
 function animateSystemFrames(frames,id,capId){
   finishAllSystems();
   const tokG=document.getElementById(id+'_tokens'); const cap=capId&&document.getElementById(capId);
@@ -5879,15 +5905,20 @@ function animateSystemFrames(frames,id,capId){
   let seg=0,t0=null; const hold=350,move=950;
   drawTok(frames[0].tokens); if(cap)cap.textContent='Étape 1 sur '+frames.length;
   function step(ts){
-    if(!t0)t0=ts; const el=ts-t0;
-    const A=frames[seg], B=frames[Math.min(seg+1,frames.length-1)];
-    if(el<hold){ drawTok(A.tokens); }
-    else{
-      const k=Math.min(1,(el-hold)/move);
-      drawTok(A.tokens.map(function(a){ const b=(B.tokens.find(function(x){return x.id===a.id;}))||a; return {kind:a.kind,label:a.label,x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k}; }));
-      if(k>=1){ seg++; if(seg>=frames.length-1){ drawTok(B.tokens); if(cap)cap.textContent='Étape '+frames.length+' sur '+frames.length; sysAnimRaf=null; return; } if(cap)cap.textContent='Étape '+(seg+1)+' sur '+frames.length; t0=ts; }
+    try{
+      if(!t0)t0=ts; const el=ts-t0;
+      const A=frames[seg], B=frames[Math.min(seg+1,frames.length-1)];
+      if(el<hold){ drawTok(A.tokens); }
+      else{
+        const k=Math.min(1,(el-hold)/move);
+        drawTok(A.tokens.map(function(a){ const b=(B.tokens.find(function(x){return x.id===a.id;}))||a; return {kind:a.kind,label:a.label,x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k}; }));
+        if(k>=1){ seg++; if(seg>=frames.length-1){ drawTok(B.tokens); if(cap)cap.textContent='Étape '+frames.length+' sur '+frames.length; sysAnimRaf=null; return; } if(cap)cap.textContent='Étape '+(seg+1)+' sur '+frames.length; t0=ts; }
+      }
+      sysAnimRaf=requestAnimationFrame(step);
+    }catch(err){
+      sysAnimRaf=null;
+      try{ flash("Animation indisponible pour ce système"); }catch(e2){}
     }
-    sysAnimRaf=requestAnimationFrame(step);
   }
   sysAnimRaf=requestAnimationFrame(step);
 }
@@ -6323,23 +6354,31 @@ function animateExo(e,id){
   if(capEl)capEl.textContent=data.cap[0]; if(stepEl)stepEl.textContent='1';
   let t0=null,curPh=-1;
   function frame(ts){
-    if(!t0)t0=ts; const el=ts-t0; const gph=Math.floor(el/PH);
-    if(gph>=totalPhases){ const lastFlip=(sides>1)&&((Math.floor((totalPhases-1)/phases))%2===1);
-      drawActors(data.actors.map(function(a){return a.keys[Math.min(phases,a.keys.length-1)];}),lastFlip);
-      if(pathsG) pathsG.innerHTML='';
-      if(data.ballArcLast&&showBall){ ballEl.setAttribute('cx',fx(150,lastFlip)); ballEl.setAttribute('cy',44); swish.setAttribute('opacity','1'); }
-      exoAnimRaf=null; return; }
-    const flip=(Math.floor(gph/phases)%2===1); const ph=gph%phases;
-    if(gph!==curPh){ curPh=gph; if(capEl)capEl.textContent=data.cap[ph]+(flip?' · autre côté':''); if(stepEl)stepEl.textContent=(ph+1);
-      if(pathsG) pathsG.innerHTML=(data.segPaths&&data.segPaths[ph])?data.segPaths[ph].map(function(p){return renderSegPath(p,flip);}).join(''):''; }
-    const k=(el-gph*PH)/PH;
-    drawActors(data.actors.map(function(a){ const A=a.keys[Math.min(ph,a.keys.length-1)], B=a.keys[Math.min(ph+1,a.keys.length-1)]; return [A[0]+(B[0]-A[0])*k, A[1]+(B[1]-A[1])*k]; }),flip);
-    if(showBall){ const A=data.ball.keys[Math.min(ph,data.ball.keys.length-1)], B=data.ball.keys[Math.min(ph+1,data.ball.keys.length-1)];
-      let bx=A[0]+(B[0]-A[0])*k, by=A[1]+(B[1]-A[1])*k;
-      if(data.ballArcLast&&ph===phases-1){ by-=Math.sin(Math.PI*k)*55; if(k>0.9)swish.setAttribute('opacity','1'); }
-      ballEl.setAttribute('cx',fx(bx,flip)); ballEl.setAttribute('cy',by);
+    // Toute la boucle est protégée : une donnée d'animation incomplète (acteur manquant,
+    // clé de position absente) arrêtait auparavant l'animation net, sans aucun signal.
+    // Elle s'arrête maintenant proprement et prévient, plutôt que de figer l'écran en silence.
+    try{
+      if(!t0)t0=ts; const el=ts-t0; const gph=Math.floor(el/PH);
+      if(gph>=totalPhases){ const lastFlip=(sides>1)&&((Math.floor((totalPhases-1)/phases))%2===1);
+        drawActors(data.actors.map(function(a){return a.keys[Math.min(phases,a.keys.length-1)];}),lastFlip);
+        if(pathsG) pathsG.innerHTML='';
+        if(data.ballArcLast&&showBall){ ballEl.setAttribute('cx',fx(150,lastFlip)); ballEl.setAttribute('cy',44); swish.setAttribute('opacity','1'); }
+        exoAnimRaf=null; return; }
+      const flip=(Math.floor(gph/phases)%2===1); const ph=gph%phases;
+      if(gph!==curPh){ curPh=gph; if(capEl)capEl.textContent=data.cap[ph]+(flip?' · autre côté':''); if(stepEl)stepEl.textContent=(ph+1);
+        if(pathsG) pathsG.innerHTML=(data.segPaths&&data.segPaths[ph])?data.segPaths[ph].map(function(p){return renderSegPath(p,flip);}).join(''):''; }
+      const k=(el-gph*PH)/PH;
+      drawActors(data.actors.map(function(a){ const A=a.keys[Math.min(ph,a.keys.length-1)], B=a.keys[Math.min(ph+1,a.keys.length-1)]; return [A[0]+(B[0]-A[0])*k, A[1]+(B[1]-A[1])*k]; }),flip);
+      if(showBall){ const A=data.ball.keys[Math.min(ph,data.ball.keys.length-1)], B=data.ball.keys[Math.min(ph+1,data.ball.keys.length-1)];
+        let bx=A[0]+(B[0]-A[0])*k, by=A[1]+(B[1]-A[1])*k;
+        if(data.ballArcLast&&ph===phases-1){ by-=Math.sin(Math.PI*k)*55; if(k>0.9)swish.setAttribute('opacity','1'); }
+        ballEl.setAttribute('cx',fx(bx,flip)); ballEl.setAttribute('cy',by);
+      }
+      exoAnimRaf=requestAnimationFrame(frame);
+    }catch(err){
+      exoAnimRaf=null;
+      try{ flash("Animation indisponible pour cet exercice"); }catch(e2){}
     }
-    exoAnimRaf=requestAnimationFrame(frame);
   }
   exoAnimRaf=requestAnimationFrame(frame);
 }
