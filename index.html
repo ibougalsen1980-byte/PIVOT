@@ -1818,7 +1818,7 @@ function editProfile(){
 /* Recommandations construites sur les données réelles de l'équipe, jamais inventées. */
 function homeRecosHTML(){
   const recos=[];
-  const blocks=T().session.blocks||[];
+  const blocks=(T().session||{}).blocks||[];
   const cats=blocks.map(b=>b.cat);
   if(!blocks.length){
     recos.push(`Aucune séance préparée. Demande-moi une séance par thème, défense, tir, maniement, et je la construis depuis la bibliothèque.`);
@@ -5903,7 +5903,12 @@ function animateSystemFrames(frames,id,capId){
     return playerFig(t.x,t.y,t.kind,t.label);
   }).join(''); }
   let seg=0,t0=null; const hold=350,move=950;
-  drawTok(frames[0].tokens); if(cap)cap.textContent='Étape 1 sur '+frames.length;
+  try{
+    drawTok(frames[0].tokens); if(cap)cap.textContent='Étape 1 sur '+frames.length;
+  }catch(err){
+    try{ flash("Animation indisponible pour ce système"); }catch(e2){}
+    return;
+  }
   function step(ts){
     try{
       if(!t0)t0=ts; const el=ts-t0;
@@ -6348,10 +6353,18 @@ function animateExo(e,id){
     const pts=p.points.map(function(pt){return fx(pt[0],flip)+','+pt[1];}).join(' L');
     return '<path d="M'+pts+'" fill="none" stroke="'+col+'" stroke-width="2.5" '+dash+' marker-end="url(#'+id+'_arrow)" opacity=".9"/>';
   }
-  ballEl.setAttribute('opacity',showBall?'1':'0'); swish.setAttribute('opacity','0');
-  drawActors(data.actors.map(function(a){return a.keys[0];}),false);
-  if(showBall){ const b0=data.ball.keys[0]; ballEl.setAttribute('cx',b0[0]); ballEl.setAttribute('cy',b0[1]); }
-  if(capEl)capEl.textContent=data.cap[0]; if(stepEl)stepEl.textContent='1';
+  // Le tracé initial peut échouer sur des données d'animation incomplètes (acteur sans
+  // position de départ, ballon sans clé), avant même que la boucle ne démarre. Protégé de la
+  // même façon que la boucle elle-même, plutôt que de laisser passer une exception non gérée.
+  try{
+    ballEl.setAttribute('opacity',showBall?'1':'0'); swish.setAttribute('opacity','0');
+    drawActors(data.actors.map(function(a){return a.keys[0];}),false);
+    if(showBall){ const b0=data.ball.keys[0]; ballEl.setAttribute('cx',b0[0]); ballEl.setAttribute('cy',b0[1]); }
+    if(capEl)capEl.textContent=data.cap[0]; if(stepEl)stepEl.textContent='1';
+  }catch(err){
+    try{ flash("Animation indisponible pour cet exercice"); }catch(e2){}
+    return;
+  }
   let t0=null,curPh=-1;
   function frame(ts){
     // Toute la boucle est protégée : une donnée d'animation incomplète (acteur manquant,
