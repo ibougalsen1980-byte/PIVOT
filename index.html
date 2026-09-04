@@ -2882,6 +2882,29 @@ function askSession(){
   askAI(q);
 }
 let _pendingAiSession=null;
+/* Contrôle de cohérence après génération IA, inspiré de la pratique observée chez un concurrent :
+   ne bloque jamais le chargement, mais prévient si la séance proposée s'écarte visiblement
+   de la demande, plutôt que de laisser l'écart passer inaperçu. */
+function parseDureeDemandee(q){
+  const s=String(q||"").toLowerCase();
+  let m=s.match(/(\d+)\s*h\s*(\d{1,2})?\b/);
+  if(m){ const h=parseInt(m[1],10)||0; const mn=m[2]?parseInt(m[2],10):0; return h*60+mn; }
+  m=s.match(/(\d+)\s*(?:min|minutes)\b/);
+  if(m) return parseInt(m[1],10);
+  m=s.match(/(\d+)\s*heures?\b/);
+  if(m) return parseInt(m[1],10)*60;
+  return null;
+}
+function qaCheckSession(blocks, dureeDemandee){
+  const total=(blocks||[]).reduce(function(s,b){return s+(b.dur||0);},0);
+  const problems=[];
+  if(!blocks||blocks.length<2) problems.push("moins de deux blocs, la séance paraît incomplète");
+  if(dureeDemandee){
+    const ecart=Math.abs(total-dureeDemandee);
+    if(ecart>15) problems.push("durée totale de "+total+" min assez éloignée des "+dureeDemandee+" min demandées");
+  }
+  return {total:total, problems:problems};
+}
 function _findExoLoose(title){
   const t=(title||"").toLowerCase().trim(); if(!t) return null;
   const pool=allExos();
@@ -3017,7 +3040,9 @@ async function askAI(q){
       await typeText(i, shown);
       chatLog[i].txt=linkifyExos(chatLog[i].txt);
       if(sess){ _pendingAiSession=sess;
-        chatLog.push({who:"ai",txt:'🗒️ Séance prête, '+sess.blocks.length+' blocs.<br><button class="btn sm block" style="margin-top:6px" onclick="loadPendingAiSession()">＋ Charger dans le constructeur</button><button class="btn sm sec block" style="margin-top:6px" onclick="saveAiSession()">💾 Enregistrer dans Mes séances</button>'});
+        const _qa=qaCheckSession(sess.blocks, parseDureeDemandee(q));
+        const _qaAlert=_qa.problems.length ? ('<div style="color:#c0392b;font-size:12px;margin:4px 0 2px">⚠️ '+_qa.problems.join(", ")+', vérifie avant de charger.</div>') : '';
+        chatLog.push({who:"ai",txt:'🗒️ Séance prête, '+sess.blocks.length+' blocs, '+_qa.total+' min au total.'+_qaAlert+'<br><button class="btn sm block" style="margin-top:6px" onclick="loadPendingAiSession()">＋ Charger dans le constructeur</button><button class="btn sm sec block" style="margin-top:6px" onclick="saveAiSession()">💾 Enregistrer dans Mes séances</button>'});
       }
       if(isSession&&isReprise){ chatLog.push({who:"ai",txt:'⚡ Séance de reprise chargée, foncier, prévention, technique et collectif léger.<br><button class="btn sm block" style="margin-top:6px" onclick="closeModal();view=\'session\';render()">Ouvrir la séance de reprise</button>'}); }
       drawChat();
