@@ -20,3 +20,16 @@
   for = "/manifest.json"
   [headers.values]
     Content-Type = "application/manifest+json"
+
+# Content-Security-Policy ajoutee le 2026-09-05 : PIVOT est un fichier unique avec du JS et du CSS
+# inline partout, donc 'unsafe-inline' reste necessaire sur script-src et style-src (une reecriture
+# avec des nonces serait un chantier a part, pas fait ici). Ce que cette politique bloque quand meme :
+# le chargement de scripts ou de frames depuis un domaine qui n'est pas explicitement autorise,
+# et l'injection d'objets/plugins. Origines autorisees : les deux CDN de script deja utilises
+# (cdnjs, jsdelivr), Google Fonts, et Supabase pour les appels reseau (auth, données cloud).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://wgqepkqythrisgwlfvco.supabase.co https://formsubmit.co; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
