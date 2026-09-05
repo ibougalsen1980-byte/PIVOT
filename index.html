@@ -5163,7 +5163,7 @@ const VARIANTS_BY_CAT={
   "Baby":["En marchant puis en courant.","Sans ballon puis avec.","Ajoute une couleur ou un signal à écouter.","Transforme-le en petite compétition amicale."],
 };
 const EXO_CATS=["Tous","Échauffement","Maniement","Tir","Passe","Jeu collectif","Défense","Physique","Situation","Baby"];
-let resCat="Tous", resQuery="", resLevel="Tous", resMaxPlayers=0, resMaxDur=0;
+let resCat="Tous", resQuery="", resLevel="Tous", resMaxPlayers=0, resMaxDur=0, resTheme="Tous";
 const EXO_LEVELS=["Tous","Initiation","Débutant","Intermédiaire","Avancé"];
 
 /* ====== Bibliothèque externe (fichier JSON chargé à la demande) ====== */
@@ -5211,8 +5211,15 @@ function exoLevel(e){
 }
 function levelColor(l){ return l==="Avancé"?"#d64545":l==="Intermédiaire"?"#c98a12":l==="Débutant"?"#1a9e6a":l==="Perso"?"#e8631f":"#6a7178"; }
 function allExos(){ return EXO.concat(LIB_EXOS).concat(DB.customDrills||[]); }
+function themesForCat(cat){
+  if(cat==="Tous") return [];
+  const seen={};
+  allExos().forEach(function(e){ if(e.cat===cat && e.theme) seen[e.theme]=1; });
+  return Object.keys(seen).sort(function(a,b){ return a.localeCompare(b,'fr'); });
+}
 function exoMatches(e){
   if(resCat!=="Tous" && e.cat!==resCat) return false;
+  if(resTheme!=="Tous" && e.theme!==resTheme) return false;
   if(resLevel!=="Tous" && exoLevel(e)!==resLevel) return false;
   if(resMaxPlayers>0 && e.joueursMin && e.joueursMin>resMaxPlayers) return false;
   if(resMaxDur>0 && e.dur && e.dur>resMaxDur) return false;
@@ -5239,6 +5246,12 @@ function openResources(){
     <div class="chips" style="margin-bottom:8px">
       ${EXO_CATS.map(c=>`<span class="chip" style="${resCat===c?'background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600':''}" onclick="resSet('${c}')">${c==='Tous'?tr('Toutes'):dCat(c)}</span>`).join("")}
     </div>
+    ${(function(){ const th=themesForCat(resCat); if(!th.length) return ''; return `
+    <div style="font-size:11px;color:var(--muted);margin:2px 0 5px">Thème</div>
+    <div class="chips" style="margin-bottom:8px">
+      <span class="chip" style="${resTheme==='Tous'?'background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600':''}" onclick="resThemeSet('Tous')">${tr('Tous')}</span>
+      ${th.map(t=>`<span class="chip" style="${resTheme===t?'background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600':''}" onclick="resThemeSet('${t.replace(/'/g,"\\'")}')">${dTheme(t)}</span>`).join("")}
+    </div>`; })()}
     <div style="font-size:11px;color:var(--muted);margin:2px 0 5px">Niveau</div>
     <div class="chips" style="margin-bottom:8px">
       ${EXO_LEVELS.map(l=>`<span class="chip" style="${resLevel===l?('background:'+(l==='Tous'?'var(--accent)':levelColor(l))+';color:#fff;border-color:transparent;font-weight:600'):''}" onclick="resLevelSet('${l}')">${l}</span>`).join("")}
@@ -5262,7 +5275,8 @@ function resRefreshList(){ const el=document.getElementById("resList"); if(el) e
 function resQueryInput(v){ resQuery=v; resRefreshList(); }
 function resPlayersInput(v){ resMaxPlayers=parseInt(v)||0; resRefreshList(); }
 function resDurInput(v){ resMaxDur=parseInt(v)||0; resRefreshList(); }
-function resSet(c){ resCat=c; openResources(); }
+function resSet(c){ resCat=c; resTheme="Tous"; openResources(); }
+function resThemeSet(t){ resTheme=t; openResources(); }
 function resLevelSet(l){ resLevel=l; openResources(); }
 function createExoModal(){
   openModal(`
