@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generatedAt": "2026-09-04T00:00:00.000Z",
-  "note": "Bibliothèque PIVOT, fournées 1 à 3, 150 exercices (x1 à x150). Exercices originaux inspirés des principes techniques universels du basketball, terminologie FIBA. Aucune reproduction de source protégée. | Fournée 4 : x151 à x180. | Baby basket : x181 à x192. | Fournee 5, x203 a x238, 36 exercices issus de la collection Basket Pret : Systeme 365 (tomes 1 a 6). Fournee 6, x239 a x258, 20 exercices supplementaires des tomes 1 a 5. 56 exercices ajoutes au total, dont le nouveau theme Preparation mentale (x203 a x218).",
+  "note": "Bibliothèque PIVOT, fournées 1 à 3, 150 exercices (x1 à x150). Exercices originaux inspirés des principes techniques universels du basketball, terminologie FIBA. Aucune reproduction de source protégée. | Fournée 4 : x151 à x180. | Baby basket : x181 à x192. | Fournee 5, x203 a x238, 36 exercices issus de la collection Basket Pret : Systeme 365 (tomes 1 a 6). Fournee 6, x239 a x258, 20 exercices supplementaires des tomes 1 a 5. 56 exercices ajoutes au total, dont le nouveau theme Preparation mentale (x203 a x218). | Correction du 5 septembre : reassignation de l'animation de 4 exercices vers une famille plus fidele au contenu (x212, x213, x217, x234), et fixation deliberee (non aleatoire) de l'animation des 13 autres exercices du theme mental directement dans le code de l'application.",
   "exercises": [
     {
       "id": "x1",
@@ -9257,7 +9257,7 @@
         "écran",
         "fin de match"
       ],
-      "animFamily": "Mental"
+      "animFamily": "Pick and Roll"
     },
     {
       "id": "x213",
@@ -9297,7 +9297,7 @@
         "lancers francs",
         "fatigue"
       ],
-      "animFamily": "Mental"
+      "animFamily": "Tir"
     },
     {
       "id": "x214",
@@ -9455,7 +9455,7 @@
         "rebond",
         "cohésion"
       ],
-      "animFamily": "Mental"
+      "animFamily": "Rebond défensif"
     },
     {
       "id": "x218",
@@ -10106,7 +10106,7 @@
         "défense",
         "repli"
       ],
-      "animFamily": "Transition"
+      "animFamily": "Défense"
     },
     {
       "id": "x235",
