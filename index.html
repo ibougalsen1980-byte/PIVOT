@@ -4598,6 +4598,8 @@ function videoStepLabel(ctx,seg){
 }
 function exportVideo(){
   if(tac.frames.length<2){ flash("Ajoute une 2e étape pour la vidéo"); return; }
+  if(tac.exportingVideo){ flash("Un enregistrement vidéo est déjà en cours, attends qu'il se termine"); return; }
+  tac.exportingVideo=true;
   const canvas=document.createElement("canvas"); canvas.width=CW; canvas.height=CH;
   const ctx=canvas.getContext("2d");
   const mime=pickVideoMime();
@@ -4606,11 +4608,12 @@ function exportVideo(){
     stream=canvas.captureStream(30);
     rec = mime ? new MediaRecorder(stream,{mimeType:mime}) : new MediaRecorder(stream);
   }
-  catch(e){ flash("Vidéo non supportée sur ce navigateur, essaie l'export PDF"); return; }
+  catch(e){ tac.exportingVideo=false; flash("Vidéo non supportée sur ce navigateur, essaie l'export PDF"); return; }
   const outType = rec.mimeType || mime || "video/webm";
   const ext = outType.indexOf("mp4")>=0 ? "mp4" : "webm";
   rec.ondataavailable=e=>{ if(e.data && e.data.size) chunks.push(e.data); };
   rec.onstop=()=>{
+    tac.exportingVideo=false;
     const blob=new Blob(chunks,{type:outType});
     const url=URL.createObjectURL(blob);
     const base=(tac.playTitle||"systeme_pivot").toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"")||"systeme_pivot";
@@ -4636,7 +4639,7 @@ function exportVideo(){
         seg++;
         if(seg>=tac.frames.length-1){
           drawCourtCanvas(ctx); drawPathsCanvas(ctx,B.paths); drawTokensCanvas(ctx,B.tokens); videoStepLabel(ctx,tac.frames.length-1);
-          setTimeout(()=>{ try{rec.stop();}catch(e){ flash("L'enregistrement a échoué, réessaie ou utilise l'export PDF"); } }, 700);
+          setTimeout(()=>{ try{rec.stop();}catch(e){ tac.exportingVideo=false; flash("L'enregistrement a échoué, réessaie ou utilise l'export PDF"); } }, 700);
           return;
         }
         phase="hold"; t0=now;
