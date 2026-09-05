@@ -2,8 +2,11 @@
 // Deux rôles : garder l'application consultable sans réseau (exercices, plaquette, effectif déjà chargés),
 // et afficher les notifications poussées (le code d'abonnement existe déjà dans index.html, il ne lui manquait que ce fichier).
 
-const CACHE_NAME = 'pivot-cache-v1';
-const APP_SHELL = ['/', '/index.html', '/manifest.json', '/logo.png'];
+const CACHE_NAME = 'pivot-cache-v2';
+// v2 : ajout des deux fichiers de donnees (bibliotheque d'exercices et traductions) a l'app shell,
+// pour qu'un coach qui ouvre l'app hors ligne juste apres l'installation ait quand meme sa bibliotheque,
+// plutot que de dependre d'une premiere visite en ligne reussie.
+const APP_SHELL = ['/', '/index.html', '/manifest.json', '/logo.png', '/exercices-bibliotheque.json', '/exercices-i18n.json'];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
