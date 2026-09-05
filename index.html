@@ -847,10 +847,22 @@ function migrateDB(){
   save();
 }
 function load(){
-  try{const s=localStorage.getItem(LS_KEY); if(s) return JSON.parse(s);}catch(e){}
+  let raw=null;
+  try{ raw=localStorage.getItem(LS_KEY); if(raw) return JSON.parse(raw); }
+  catch(e){
+    // Donnee locale illisible (corruption, ecriture interrompue) : on la met de cote au lieu de
+    // l'ecraser sans rien dire, et on previent plutot que de laisser le coach croire que son
+    // equipe et ses seances existent encore alors qu'il vient de retomber sur les donnees vierges.
+    try{ if(raw) localStorage.setItem(LS_KEY+"_corrompu_"+Date.now(), raw); }catch(e2){}
+    try{ flash("Données locales illisibles, une équipe vierge a été rechargée, contacte le support si tu avais des données"); }catch(e2){}
+  }
   return JSON.parse(JSON.stringify(SEED));
 }
-function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(DB))}catch(e){} try{cloudSave();}catch(e){}}
+function save(){
+  try{ localStorage.setItem(LS_KEY,JSON.stringify(DB)); }
+  catch(e){ try{ flash("Sauvegarde locale impossible (espace de stockage plein ?), réessaie ou libère de la place"); }catch(e2){} }
+  try{cloudSave();}catch(e){}
+}
 
 /* ============ SUPABASE, comptes en ligne ============
    Deux valeurs à coller ci-dessous, récupérées dans Supabase, Settings puis API :
