@@ -5184,13 +5184,20 @@ function normalizeLib(x){
 async function loadLibrary(){
   try{ loadExoI18n(); }catch(e){}
   try{ const c=localStorage.getItem("pivot_lib_v1"); if(c){ LIB_RAW=JSON.parse(c); LIB_EXOS=LIB_RAW.map(normalizeLib); } }catch(e){}
+  let _libFetchOk=false;
   try{
     const r=await fetch("exercices-bibliotheque.json",{cache:"no-cache"});
     if(r.ok){ const d=await r.json(); if(d&&Array.isArray(d.exercises)){ LIB_RAW=d.exercises; LIB_EXOS=LIB_RAW.map(normalizeLib);
       try{ localStorage.setItem("pivot_lib_v1", JSON.stringify(LIB_RAW)); }catch(e){}
       if(document.getElementById("resList")) resRefreshList();
+      _libFetchOk=true;
     }}
   }catch(e){}
+  // Ne jamais laisser une bibliotheque vide passer inapercue : si ni le cache local ni le
+  // reseau n'ont pu la fournir, le coach doit le savoir plutot que de voir une liste vide sans explication.
+  if(!_libFetchOk && (!LIB_EXOS || !LIB_EXOS.length)){
+    try{ flash("Bibliothèque indisponible, connecte-toi une fois pour la télécharger"); }catch(e){}
+  }
 }
 function exoTitleById(id){ const e=allExos().find(x=>x.id===id); return e?e.title:null; }
 const EXO_PRO_IDS=["e10","e14","e31","e34","e35","e36","e37","e38","e39","e40","e47","e48"];
