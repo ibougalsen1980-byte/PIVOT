@@ -1,0 +1,814 @@
+{
+ "en": {
+ "x1": {
+ "titre": "Joint warm-up in a circle",
+ "objectif": "Prepare ankles, knees, hips and shoulders before the effort."
+ },
+ "x2": {
+ "titre": "Agility ladder and reaction",
+ "objectif": "Improve foot speed and the response to a signal."
+ },
+ "x3": {
+ "titre": "Movement mirror",
+ "objectif": "Work on reading the opponent and defensive footwork without the ball."
+ },
+ "x4": {
+ "titre": "Dynamic core near the basket",
+ "objectif": "Strengthen the trunk to stabilize the shot and balance on contact."
+ },
+ "x5": {
+ "titre": "Motor-skill course with a ball",
+ "objectif": "Combine jumps, footwork and dribbling in one task."
+ },
+ "x6": {
+ "titre": "Low dribble under pressure",
+ "objectif": "Protect the ball with a low dribble and change hands under light pressure."
+ },
+ "x7": {
+ "titre": "Two synchronized balls",
+ "objectif": "Make the weak hand as reliable as the strong hand by doubling the load."
+ },
+ "x8": {
+ "titre": "V change of direction",
+ "objectif": "Win the defender's shoulder with a sharp change of direction."
+ },
+ "x9": {
+ "titre": "Dribble on a color cue",
+ "objectif": "Dribble head up while reacting to an outside cue."
+ },
+ "x10": {
+ "titre": "Pick-up dribble and one-count stop",
+ "objectif": "Master a balanced stop after a burst of speed."
+ },
+ "x11": {
+ "titre": "Full-court ball transport",
+ "objectif": "Bring the ball up fast while keeping control, as in transition."
+ },
+ "x12": {
+ "titre": "Timed wall passes",
+ "objectif": "Repeat passing without a partner with instant feedback."
+ },
+ "x13": {
+ "titre": "Five-player passing star",
+ "objectif": "Pass and move at once, with no dead time."
+ },
+ "x14": {
+ "titre": "Three-player weave, full court",
+ "objectif": "Run, pass and finish without dribbling across the whole court."
+ },
+ "x15": {
+ "titre": "Pass after drawing the defender",
+ "objectif": "Draw a defender before serving the open player."
+ },
+ "x16": {
+ "titre": "Form shooting, isolated mechanics",
+ "objectif": "Build a clean shooting motion before talking about range."
+ },
+ "x17": {
+ "titre": "Catch, stop and spot shot",
+ "objectif": "Shoot right after the catch, as in a game."
+ },
+ "x18": {
+ "titre": "Lay-up on both sides",
+ "objectif": "Finish on the move with the right hand and left hand off the correct foot."
+ },
+ "x19": {
+ "titre": "Continuous Mikan",
+ "objectif": "Automate alternating finishes under the rim."
+ },
+ "x20": {
+ "titre": "Eurostep over a defender cone",
+ "objectif": "Avoid contact with an offset step before the finish."
+ },
+ "x21": {
+ "titre": "Floater over the help",
+ "objectif": "Score over a tall defender before he steps up."
+ },
+ "x22": {
+ "titre": "Post-up, reading the shoulder",
+ "objectif": "Set up a simple inside game by reading the defender's position."
+ },
+ "x23": {
+ "titre": "Around the world by teams",
+ "objectif": "Repeat shots from several spots in a motivating game."
+ },
+ "x24": {
+ "titre": "Spot shooting under fatigue",
+ "objectif": "Keep a stable shot as fatigue rises, as at the end of a game."
+ },
+ "x25": {
+ "titre": "Backdoor cut against overplay",
+ "objectif": "Punish a defender who overplays the passing lane with a cut behind his back."
+ },
+ "x26": {
+ "titre": "Setting and reading the ball screen",
+ "objectif": "Set a solid legal screen, then read the ball handler's exit."
+ },
+ "x27": {
+ "titre": "Pick and roll, 2-on-2 reads",
+ "objectif": "Teach the handler to read the coverage and choose the right response."
+ },
+ "x28": {
+ "titre": "Hand-off and follow-up",
+ "objectif": "Start a fluid attack with a hand-off."
+ },
+ "x29": {
+ "titre": "Spacing and use of the floor",
+ "objectif": "Keep proper distances between attackers to open passing lanes."
+ },
+ "x30": {
+ "titre": "Reading the help and the extra pass",
+ "objectif": "Punish every defensive help with one more pass to the open player."
+ },
+ "x31": {
+ "titre": "One on one, three dribbles",
+ "objectif": "Decide before dribbling, play smart rather than play a lot."
+ },
+ "x32": {
+ "titre": "Two on two with a screen",
+ "objectif": "Chain screen, read and defense in a small space."
+ },
+ "x33": {
+ "titre": "Three on three, half court",
+ "objectif": "Play as a team in a small space with clear rules."
+ },
+ "x34": {
+ "titre": "Continuous 4-on-3 advantage",
+ "objectif": "Decide fast with a man up and punish every help."
+ },
+ "x35": {
+ "titre": "Three-lane fast break",
+ "objectif": "Push fast in the lanes and finish close to the rim."
+ },
+ "x36": {
+ "titre": "Defensive transition after a shot",
+ "objectif": "Cut the opponent's run by getting back fast and talking."
+ },
+ "x37": {
+ "titre": "3-on-2 then 2-on-1",
+ "objectif": "Decide fast with a man up, then defend a man down."
+ },
+ "x38": {
+ "titre": "Offensive rebound and second effort",
+ "objectif": "Attack the offensive rebound and finish on the second effort."
+ },
+ "x39": {
+ "titre": "Check-and-crash rebound protection",
+ "objectif": "Make the delayed screen a reflex on every opponent shot."
+ },
+ "x40": {
+ "titre": "Defensive slide and closeout",
+ "objectif": "Work on the defensive slide and a broken-down closeout on the shooter."
+ },
+ "x41": {
+ "titre": "Four-on-four defensive shell",
+ "objectif": "Build a defense that sees the ball, helps early and recovers fast."
+ },
+ "x42": {
+ "titre": "Mobile 2-3 zone defense",
+ "objectif": "Shift a 2-3 zone according to the position of the ball."
+ },
+ "x43": {
+ "titre": "Full-court press and recovery",
+ "objectif": "Apply full-court pressure to force a turnover."
+ },
+ "x44": {
+ "titre": "Organized press break",
+ "objectif": "Break a full-court press without losing the ball."
+ },
+ "x45": {
+ "titre": "Contain without fouling",
+ "objectif": "Stay in front of your attacker without touching him."
+ },
+ "x46": {
+ "titre": "Baseline inbound play",
+ "objectif": "Set a simple inbound play under the basket."
+ },
+ "x47": {
+ "titre": "Last possession on the clock",
+ "objectif": "Manage the end of a game, one ball to win."
+ },
+ "x48": {
+ "titre": "Low plyometrics and landing",
+ "objectif": "Develop hops and above all the quality of the landing."
+ },
+ "x49": {
+ "titre": "Ankle and knee prevention",
+ "objectif": "Strengthen footing and balance to limit sprains."
+ },
+ "x50": {
+ "titre": "The ball castle",
+ "objectif": "Dribble while walking and set the ball down, building your castle."
+ },
+ "x51": {
+ "titre": "Triple threat and jab step",
+ "objectif": "Hold a credible triple-threat stance and fool the defender with a jab step."
+ },
+ "x52": {
+ "titre": "Shot fake then drive",
+ "objectif": "Lift the defender with a shot fake to attack the rim."
+ },
+ "x53": {
+ "titre": "Dribble hand-off",
+ "objectif": "Start an attack with a dribble hand-off."
+ },
+ "x54": {
+ "titre": "Catch and shoot off a screen",
+ "objectif": "Come off a screen, catch and shoot with no dead time."
+ },
+ "x55": {
+ "titre": "Controlled step back",
+ "objectif": "Create space for a shot with a controlled step back."
+ },
+ "x56": {
+ "titre": "Corner shot after a swing",
+ "objectif": "Be ready to shoot in the corner when the ball is swung."
+ },
+ "x57": {
+ "titre": "Free-throw routine",
+ "objectif": "Install a stable, repeatable free-throw routine."
+ },
+ "x58": {
+ "titre": "Reverse lay-up",
+ "objectif": "Finish on the far side of the rim to protect the ball from the block."
+ },
+ "x59": {
+ "titre": "Finishing through contact",
+ "objectif": "Finish despite contact and keep balance."
+ },
+ "x60": {
+ "titre": "Inside jump hook",
+ "objectif": "Set an unstoppable inside shot over the defender."
+ },
+ "x61": {
+ "titre": "Up and under at the post",
+ "objectif": "Lift the defender with a fake then finish underneath."
+ },
+ "x62": {
+ "titre": "Outlet pass and push",
+ "objectif": "Start the transition with a fast first pass after the rebound."
+ },
+ "x63": {
+ "titre": "Pass over the defense",
+ "objectif": "Swing the ball with a long pass once the help has committed."
+ },
+ "x64": {
+ "titre": "Give and go to the rim",
+ "objectif": "Chain a pass and an immediate cut to the rim."
+ },
+ "x65": {
+ "titre": "UCLA cut off a vertical screen",
+ "objectif": "Free a cut to the rim with a screen from the high-post big."
+ },
+ "x66": {
+ "titre": "Flex cut and continuity",
+ "objectif": "Set an offensive continuity with a baseline screen and a flex cut."
+ },
+ "x67": {
+ "titre": "Horns entry with two screens",
+ "objectif": "Create a choice for the guard between two screens at the top."
+ },
+ "x68": {
+ "titre": "Five-out motion, reading cuts",
+ "objectif": "Run a motion offense with no fixed set, on simple rules."
+ },
+ "x69": {
+ "titre": "Off-ball screen",
+ "objectif": "Free a shooter with a screen set away from the ball."
+ },
+ "x70": {
+ "titre": "Ball-screen defense, drop the big",
+ "objectif": "Defend the pick and roll by dropping the big to protect the rim."
+ },
+ "x71": {
+ "titre": "Ball-screen defense, short hedge",
+ "objectif": "Counter the pick and roll with a brief hedge then a recovery."
+ },
+ "x72": {
+ "titre": "Ball-screen defense, switch",
+ "objectif": "Switch cleanly on the screen without leaving space."
+ },
+ "x73": {
+ "titre": "Steer the handler away from the screen",
+ "objectif": "Push the handler to the side opposite the screen to reject the pick and roll."
+ },
+ "x74": {
+ "titre": "Denying the passing lane",
+ "objectif": "Deny the catch to an off-ball attacker near yours."
+ },
+ "x75": {
+ "titre": "Weak-side help and rotation",
+ "objectif": "Help on the drive then rotate to cover the open player."
+ },
+ "x76": {
+ "titre": "Closeout on a corner shooter",
+ "objectif": "Close out fast on a corner shooter without getting beaten baseline."
+ },
+ "x77": {
+ "titre": "Active hands and deflections",
+ "objectif": "Disrupt passes and dribbles with active hands without fouling."
+ },
+ "x78": {
+ "titre": "One on one, back to the rim",
+ "objectif": "Attack and defend an inside one on one."
+ },
+ "x79": {
+ "titre": "Two on two, help and recover",
+ "objectif": "Defend the drive with two, then recover to your man."
+ },
+ "x80": {
+ "titre": "Defending the three on two",
+ "objectif": "Buy time with two defenders against three attackers in transition."
+ },
+ "x81": {
+ "titre": "Defending the two on one",
+ "objectif": "Delay two attackers alone until a teammate gets back."
+ },
+ "x82": {
+ "titre": "Team box out and tag up",
+ "objectif": "Make the box out a team reflex on every opponent shot."
+ },
+ "x83": {
+ "titre": "Tip and second jump",
+ "objectif": "Extend an offensive rebound with a tip or a controlled second jump."
+ },
+ "x84": {
+ "titre": "Sideline inbound",
+ "objectif": "Set a sideline inbound that finds a safe option."
+ },
+ "x85": {
+ "titre": "Down three, last possession",
+ "objectif": "Manage the end of a game down three points."
+ },
+ "x86": {
+ "titre": "Managing fouls at game's end",
+ "objectif": "Foul fast and clean when ahead, or attack the opponent's foul calmly."
+ },
+ "x87": {
+ "titre": "Conditioning shuttle with a ball",
+ "objectif": "Build specific endurance while keeping ball control."
+ },
+ "x88": {
+ "titre": "Timed defensive slides",
+ "objectif": "Strengthen defensive footing and the lower body in a low stance."
+ },
+ "x89": {
+ "titre": "T agility",
+ "objectif": "Combine sprint, slide and backpedal in a quick course."
+ },
+ "x90": {
+ "titre": "Shoulder and wrist prevention",
+ "objectif": "Prepare shoulders and wrists for shooting repetitions."
+ },
+ "x91": {
+ "titre": "1-2-1-1 press",
+ "objectif": "Press full court in a diamond to force the ball up the sidelines."
+ },
+ "x92": {
+ "titre": "Attacking the zone through the middle",
+ "objectif": "Crack a zone by occupying the high post and the gaps."
+ },
+ "x93": {
+ "titre": "Set play, pass and screen",
+ "objectif": "Chain a pass then an off-ball screen in a simple set."
+ },
+ "x94": {
+ "titre": "Triple-threat footwork",
+ "objectif": "Master front and reverse pivots without traveling, ball protected."
+ },
+ "x95": {
+ "titre": "Shot off a side catch",
+ "objectif": "Turn and shoot after a catch coming from the side."
+ },
+ "x96": {
+ "titre": "The dribble hawk",
+ "objectif": "Dribble fast while keeping control, chased by a hawk."
+ },
+ "x97": {
+ "titre": "Musical statues with the ball",
+ "objectif": "Dribble on the move then stop balanced on the signal."
+ },
+ "x98": {
+ "titre": "The little passers' relay",
+ "objectif": "Discover passing and waiting your turn in a joyful relay."
+ },
+ "x99": {
+ "titre": "Wheelchair basketball, two-push rule",
+ "objectif": "Move in the chair, respecting the two-push rule before dribbling."
+ },
+ "x100": {
+ "titre": "Small game with no dribble",
+ "objectif": "Force passing and movement by banning the dribble."
+ },
+ "x101": {
+ "titre": "Running floater",
+ "objectif": "Score on the move over the help before it steps up."
+ },
+ "x102": {
+ "titre": "Mid-range shot off the dribble",
+ "objectif": "Set a stable shot after one or two dribbles."
+ },
+ "x103": {
+ "titre": "Trailer three in transition",
+ "objectif": "Shoot from deep arriving behind the transition play."
+ },
+ "x104": {
+ "titre": "Create your shot off the dribble",
+ "objectif": "Get free from a close defender to load up a shot."
+ },
+ "x105": {
+ "titre": "Free throws under pressure, game",
+ "objectif": "Hold your free-throw routine with something at stake."
+ },
+ "x106": {
+ "titre": "Timed multi-spot shooting circuit",
+ "objectif": "Chain shots at a high pace across several spots."
+ },
+ "x107": {
+ "titre": "Counter-foot finish",
+ "objectif": "Finish with the hand opposite the drive side to fool the defender."
+ },
+ "x108": {
+ "titre": "Finishing between two defenders",
+ "objectif": "Choose the right finish when two defenders protect the rim."
+ },
+ "x109": {
+ "titre": "Two-foot power lay-up",
+ "objectif": "Finish strong at the rim off two feet to withstand contact."
+ },
+ "x110": {
+ "titre": "Pocket pass on the pick and roll",
+ "objectif": "Serve the roller with a low, protected pass in the short space."
+ },
+ "x111": {
+ "titre": "Bounce pass in traffic",
+ "objectif": "Bounce pass to slip past defensive arms."
+ },
+ "x112": {
+ "titre": "Lob for the roller",
+ "objectif": "Loft a pass over the help for a roller running to the rim."
+ },
+ "x113": {
+ "titre": "Down screen, shooter's exit",
+ "objectif": "Free a shooter with a down screen toward the perimeter."
+ },
+ "x114": {
+ "titre": "Back screen to the rim",
+ "objectif": "Free a cut to the rim with a screen set behind the defender."
+ },
+ "x115": {
+ "titre": "Flare screen for a perimeter shot",
+ "objectif": "Free a shooter who flares away from the ball behind a screen."
+ },
+ "x116": {
+ "titre": "Double vertical screen",
+ "objectif": "Free a shooter with two successive screens along the lane."
+ },
+ "x117": {
+ "titre": "Getting open, V-cut and L-cut",
+ "objectif": "Create separation to receive with a V or L cut."
+ },
+ "x118": {
+ "titre": "Filling cut on a drive",
+ "objectif": "Occupy the right spaces when a teammate drives."
+ },
+ "x119": {
+ "titre": "Dribble drive and kick",
+ "objectif": "Drive to draw help then kick out to a spaced shooter."
+ },
+ "x120": {
+ "titre": "Draw the help and serve the corner",
+ "objectif": "Draw the corner help then serve the open shooter."
+ },
+ "x121": {
+ "titre": "Live one on one from triple threat",
+ "objectif": "Read the defender from triple threat and choose shot, drive or pass."
+ },
+ "x122": {
+ "titre": "Two on two off a screen, live",
+ "objectif": "Chain screen, offensive read and defensive coverage in free play."
+ },
+ "x123": {
+ "titre": "Three on three motion",
+ "objectif": "Play continuous three-man motion with pass, cut and screen."
+ },
+ "x124": {
+ "titre": "Live four-on-four shell",
+ "objectif": "Defend as a team in free play with help, closeout and rebound."
+ },
+ "x125": {
+ "titre": "Five on five with constraints",
+ "objectif": "Transfer the skills into full play with one targeted rule."
+ },
+ "x126": {
+ "titre": "Secondary fast break",
+ "objectif": "Flow from the break into a quick set when the easy basket is closed."
+ },
+ "x127": {
+ "titre": "Big's rim run",
+ "objectif": "Run the big to the rim to gain the edge in transition."
+ },
+ "x128": {
+ "titre": "Continuous 4-on-3 advantage",
+ "objectif": "Decide fast with a man up then defend the disadvantage in waves."
+ },
+ "x129": {
+ "titre": "Long rebound for the guards",
+ "objectif": "Anticipate the long rebounds of perimeter shots."
+ },
+ "x130": {
+ "titre": "Defensive rebound and outlet under pressure",
+ "objectif": "Secure the rebound then outlet despite immediate pressure."
+ },
+ "x131": {
+ "titre": "Wave of tips at the rim",
+ "objectif": "Repeat tipping the ball at the rim with a firm wrist."
+ },
+ "x132": {
+ "titre": "Fronting the post",
+ "objectif": "Deny an inside player the catch by standing in front of him."
+ },
+ "x133": {
+ "titre": "Deny and recover on a flash",
+ "objectif": "Deny the catch of a player flashing to the high post."
+ },
+ "x134": {
+ "titre": "Help the helper and stunt",
+ "objectif": "Fake a help to slow the drive without leaving your shooter."
+ },
+ "x135": {
+ "titre": "Guarding the roller",
+ "objectif": "Disrupt the pick-and-roll roller with a brief help before recovering."
+ },
+ "x136": {
+ "titre": "X-out rotation on a swing",
+ "objectif": "Rotate in an X to cover two shooters after a help."
+ },
+ "x137": {
+ "titre": "Defending the down screen",
+ "objectif": "Choose the right coverage of a down screen, over or under."
+ },
+ "x138": {
+ "titre": "Defending the flare and the backdoor",
+ "objectif": "Deny both the flare screen and the cut behind the back."
+ },
+ "x139": {
+ "titre": "Defending the backdoor cut",
+ "objectif": "Deny the passing lane without getting beaten backdoor."
+ },
+ "x140": {
+ "titre": "Defensive gap and closing the middle",
+ "objectif": "Sit in the gaps to close the middle of the floor."
+ },
+ "x141": {
+ "titre": "Attacking the zone high-low",
+ "objectif": "Crack a zone by linking the high post and the low post."
+ },
+ "x142": {
+ "titre": "1-3-1 zone, basic principles",
+ "objectif": "Set a 1-3-1 zone that pressures the wings and the high post."
+ },
+ "x143": {
+ "titre": "Progressive 2-2-1 press",
+ "objectif": "Slow the opponent's advance with a soft press that traps at half court."
+ },
+ "x144": {
+ "titre": "Press break against the 2-2-1",
+ "objectif": "Break a soft press by occupying the middle and the gaps."
+ },
+ "x145": {
+ "titre": "Up three, do not foul",
+ "objectif": "Defend a three-point lead without giving up the three or the foul."
+ },
+ "x146": {
+ "titre": "Need a basket, clock management",
+ "objectif": "Organize a last attack when one basket is enough to win."
+ },
+ "x147": {
+ "titre": "Hamstring prevention",
+ "objectif": "Strengthen the back of the thigh to limit injuries on acceleration."
+ },
+ "x148": {
+ "titre": "Reactive ankle proprioception",
+ "objectif": "Strengthen ankle balance to prevent sprains."
+ },
+ "x149": {
+ "titre": "The animal forest, U7 motor skills",
+ "objectif": "Discover movement and handling by imitating animals."
+ },
+ "x150": {
+ "titre": "The mailman, U9 passing game",
+ "objectif": "Discover accurate passing in a delivery game."
+ },
+ "x151": {
+ "titre": "Catch and shoot under fatigue",
+ "objectif": "Keep a stable shooting motion when the legs get tired."
+ },
+ "x152": {
+ "titre": "Shot off a screen, shoulders ready",
+ "objectif": "Come off a screen ready to shoot with no prep time."
+ },
+ "x153": {
+ "titre": "Forced weak hand, two balls",
+ "objectif": "Strengthen the weak hand without looking at the ball."
+ },
+ "x154": {
+ "titre": "Chain of tight changes at the cone",
+ "objectif": "Change hands fast and low at each cone, protecting the ball."
+ },
+ "x155": {
+ "titre": "Pass into the run in transition",
+ "objectif": "Serve a running teammate without breaking his stride."
+ },
+ "x156": {
+ "titre": "3-on-2 transition, quick decision",
+ "objectif": "Exploit the advantage before the opponent gets back."
+ },
+ "x157": {
+ "titre": "Defensive transition after a miss",
+ "objectif": "Protect the rim first, the ball second."
+ },
+ "x158": {
+ "titre": "Contain the handler, without dropping too far",
+ "objectif": "Contain the drive without getting beaten or fouling."
+ },
+ "x159": {
+ "titre": "Help and recover on a drive",
+ "objectif": "Help on the ball then recover to your man in time."
+ },
+ "x160": {
+ "titre": "Pick and roll, reading the big defender",
+ "objectif": "Read the screen defender's position to decide."
+ },
+ "x161": {
+ "titre": "Backdoor cut on a defender playing too high",
+ "objectif": "Punish the defender who overprotects the passing lane."
+ },
+ "x162": {
+ "titre": "Off-ball, repositioning after the screen",
+ "objectif": "Set a ball screen then make yourself available."
+ },
+ "x163": {
+ "titre": "One on one, back to the basket",
+ "objectif": "Score near the rim by reading the defender at your back."
+ },
+ "x164": {
+ "titre": "Fast swing for an open shot",
+ "objectif": "Move the ball faster than the defense can slide."
+ },
+ "x165": {
+ "titre": "Offensive rebound, position and tip",
+ "objectif": "Win the position and finish on the second rebound."
+ },
+ "x166": {
+ "titre": "Box out and clean outlet",
+ "objectif": "Lock up the rebound then start the transition."
+ },
+ "x167": {
+ "titre": "Full-court press, trap the inbound",
+ "objectif": "Force a turnover right off the inbound."
+ },
+ "x168": {
+ "titre": "Break the press through the middle",
+ "objectif": "Cross the press by finding the middle player."
+ },
+ "x169": {
+ "titre": "Eurostep to a contact finish",
+ "objectif": "Avoid the last defender's contact with an offset two-step."
+ },
+ "x170": {
+ "titre": "Weak-hand floater on a drive",
+ "objectif": "Finish from mid-range over a tall defender."
+ },
+ "x171": {
+ "titre": "Dynamic core and basketball footing",
+ "objectif": "Strengthen the trunk and footwork quality for changes of direction."
+ },
+ "x172": {
+ "titre": "Four-on-four shell, rotations",
+ "objectif": "Fine-tune the slides and rotations with four."
+ },
+ "x173": {
+ "titre": "2-3 zone defense, close the inside",
+ "objectif": "Protect the paint and contest shots without tearing apart."
+ },
+ "x174": {
+ "titre": "Attacking the zone through the high post",
+ "objectif": "Open the zone by playing the ball inside at the foul line."
+ },
+ "x175": {
+ "titre": "Inbound under the basket, lob option",
+ "objectif": "Create an easy shot on a baseline inbound."
+ },
+ "x176": {
+ "titre": "Last possession, playing eight seconds",
+ "objectif": "Build a good shot in the final seconds."
+ },
+ "x177": {
+ "titre": "Two on two with screen and read",
+ "objectif": "Decide fast with two according to the defensive coverage."
+ },
+ "x178": {
+ "titre": "Continuous half-court three on three",
+ "objectif": "Chain offense and defense with no mental let-up."
+ },
+ "x179": {
+ "titre": "Reading the closeout, drive or shoot",
+ "objectif": "Choose shot or drive according to the defender's closeout."
+ },
+ "x180": {
+ "titre": "Two-hand finishing circuit",
+ "objectif": "Finish cleanly on both sides of the rim with the right hand."
+ },
+ "x181": {
+ "titre": "The rabbits and their home",
+ "objectif": "Discover the ball while having fun and listen to the coach's signal."
+ },
+ "x182": {
+ "titre": "The traffic light",
+ "objectif": "Learn to dribble and to stop by playing with colors."
+ },
+ "x183": {
+ "titre": "The ball hunt",
+ "objectif": "Move, run and handle the ball in a gathering game."
+ },
+ "x184": {
+ "titre": "Walk your dog",
+ "objectif": "Control the low dribble, like a little dog on a leash."
+ },
+ "x185": {
+ "titre": "The big bad wolf",
+ "objectif": "Dribble on the move and keep your head up to avoid the wolf."
+ },
+ "x186": {
+ "titre": "Musical statues",
+ "objectif": "Dribble while the music plays, freeze when it stops."
+ },
+ "x187": {
+ "titre": "Pass to your friend",
+ "objectif": "Discover the two-hand pass to a friend, up close."
+ },
+ "x188": {
+ "titre": "Aim at the castle",
+ "objectif": "Discover shooting by aiming at a wide, easy target."
+ },
+ "x189": {
+ "titre": "The friends' tunnel",
+ "objectif": "Cooperate and pass the ball along, discovering the group."
+ },
+ "x190": {
+ "titre": "One, two, three, basket",
+ "objectif": "Move forward dribbling and freeze, like red light green light."
+ },
+ "x191": {
+ "titre": "The little mailman",
+ "objectif": "Carry the ball and pass it, like a mailman making a delivery."
+ },
+ "x192": {
+ "titre": "The crocodile river",
+ "objectif": "Cross while dribbling and avoid the crocodiles, having fun."
+ },
+ "x193": {
+ "titre": "Aerobic base, continuous run",
+ "objectif": "Rebuild the aerobic base, the foundation that delays fatigue and protects against injury on return."
+ },
+ "x194": {
+ "titre": "Short intervals 30-30",
+ "objectif": "Reintroduce intensity through intervals, close to the stop-start efforts of a game."
+ },
+ "x195": {
+ "titre": "Eccentric hamstrings, nordic protocol",
+ "objectif": "Strengthen the back of the thigh eccentrically, the best documented measure against hamstring strains."
+ },
+ "x196": {
+ "titre": "Adductor plank, copenhagen",
+ "objectif": "Strengthen the adductors to protect the groin and pelvis, heavily loaded by defensive slides."
+ },
+ "x197": {
+ "titre": "Plyometric progression, floor to box",
+ "objectif": "Reacclimate the body to jumps and landings in stages, from bodyweight to a height."
+ },
+ "x198": {
+ "titre": "Bodyweight Bulgarian split squats",
+ "objectif": "Strengthen each leg separately, the single-leg strength that protects knees and ankles on return."
+ },
+ "x199": {
+ "titre": "Eccentric calf strengthening",
+ "objectif": "Strengthen calves and Achilles tendon to absorb landings and protect the ankle."
+ },
+ "x200": {
+ "titre": "Intermittent shuttle by levels",
+ "objectif": "Develop sport-specific endurance through rising speed levels, like the field tests of physical trainers."
+ },
+ "x201": {
+ "titre": "Aerobic tempo run",
+ "objectif": "Maintain the aerobic base and aid recovery through moderate, steady-paced running."
+ },
+ "x202": {
+ "titre": "Anti-rotation core circuit",
+ "objectif": "Build a trunk that resists rotation, which stabilizes shots and footwork and protects the back."
+ }
+ },
+ "es": {},
+ "pt": {}
+}
