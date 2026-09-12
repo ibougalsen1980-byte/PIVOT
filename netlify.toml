@@ -10,6 +10,23 @@
   status = 200
   force = true
 
+# Confirmation de paiement Stripe (index.html appelle fetch('/api/verify')), ajoutée le 2026-09-12
+# pour que l'accès payant soit vérifié et écrit côté serveur, jamais fait confiance depuis le navigateur.
+[[redirects]]
+  from = "/api/verify"
+  to = "/.netlify/functions/verify"
+  status = 200
+  force = true
+
+# Vérification des codes d'accès manuels (index.html appelle fetch('/api/redeem-code')), ajoutée le
+# 2026-09-12 : les codes ne sont plus stockés en clair dans l'application, la fonction serveur seule les
+# connaît (variable d'environnement PIVOT_ACCESS_CODES).
+[[redirects]]
+  from = "/api/redeem-code"
+  to = "/.netlify/functions/redeem-code"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/sw.js"
   [headers.values]

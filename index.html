@@ -803,8 +803,10 @@ const STRIPE_LINKS={
   mois:{url:"https://buy.stripe.com/5kQ9AS5iRc0Z9bP3JN4sE04", prix:"8,99€", label:"Mois", sub:"Pass 30 jours", best:true},
   annee:{url:"https://buy.stripe.com/eVq3cu6mV7KJ0Fj1BF4sE05", prix:"79,99€", label:"Année", sub:"Pass 12 mois, environ 3 mois offerts"}
 };
-// Codes maîtres pour ton propre accès et tes accès manuels. Change-les, ajoutes-en si besoin.
-const ACCESS_CODES={"PIVOT-OWNER-2026":3650, "PIVOT-TESTEUR-2026":21};
+// Les codes d'accès maîtres ne sont plus stockés ici : un fichier envoyé à tout le monde qui visite le
+// site est lisible par n'importe qui (affichage du code source), un code d'accès qui y figure en clair
+// n'en est plus un. La vérification se fait maintenant côté serveur, voir tryAccessCode() et
+// netlify/functions/redeem-code.js (variable d'environnement Netlify PIVOT_ACCESS_CODES).
 
 function demoPlayers(){return [];}
 function newTeam(name,category,level,players){return {
@@ -904,10 +906,14 @@ async function cloudLoad(){
     const row=res&&res.data;
     if(row && row.data){
       const cloud=row.data;
-      // L'abonnement écrit côté serveur (Stripe) prime s'il va plus loin.
+      // Sécurité : l'accès payant ne doit jamais dépendre d'une valeur modifiable dans le navigateur.
+      // sub_until/sub_plan sont des colonnes à part, écrites uniquement côté serveur (Stripe, code d'accès
+      // validé par la fonction serveur). On les impose telles quelles, sans jamais comparer ni garder une
+      // valeur plus grande venant de cloud.sub (le blob JSON, lui, reste modifiable depuis la console du
+      // navigateur). Avant cette correction, une valeur fabriquée localement plus grande que sub_until
+      // survivait ici et donnait un accès illimité, y compris répliqué sur les autres appareils.
       const serverUntil=row.sub_until?new Date(row.sub_until).getTime():0;
-      const cloudUntil=(cloud.sub&&cloud.sub.until)||0;
-      if(serverUntil>cloudUntil){ cloud.sub={until:serverUntil, plan:row.sub_plan||"", since:(cloud.sub&&cloud.sub.since)||Date.now()}; }
+      cloud.sub={until:serverUntil, plan:row.sub_plan||"", since:(cloud.sub&&cloud.sub.since)||Date.now()};
       if(row.trial_used) cloud.trialUsed=true;
       DB=cloud; migrateDB();
       try{localStorage.setItem(LS_KEY,JSON.stringify(DB))}catch(e){}
@@ -1414,12 +1420,20 @@ async function checkStripeReturn(){
   try{ history.replaceState({}, document.title, location.pathname); }catch(e){}
   return ok;
 }
-function tryAccessCode(){
+async function tryAccessCode(){
   const c=prompt("Entre ton code d'accès");
-  if(c===null) return;
-  const days=ACCESS_CODES[String(c).trim()];
-  if(days){ grantAccess(days,'code'); sfx('ok'); flash('Accès activé'); render(); }
-  else flash('Code invalide');
+  if(c===null||!String(c).trim()) return;
+  if(!supaOn()||!supaUser){ flash("Connecte-toi d'abord pour activer un code"); return; }
+  flash("Vérification du code...");
+  try{
+    let authH={};
+    try{ const s=await supa.auth.getSession(); if(s&&s.data&&s.data.session) authH={'Authorization':'Bearer '+s.data.session.access_token}; }catch(e){}
+    const r=await fetch('/api/redeem-code',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authH),
+      body:JSON.stringify({code:String(c).trim()})});
+    const d=await r.json().catch(()=>null);
+    if(r.ok&&d&&d.ok&&d.days){ grantAccess(d.days,d.plan||'code'); await cloudLoad(); sfx('ok'); flash('Accès activé'); render(); }
+    else flash((d&&d.error)||'Code invalide');
+  }catch(e){ flash("Impossible de vérifier le code, réessaie"); }
 }
 function startFreeTrial(){
   if(DB.trialUsed){ flash("Ta semaine offerte a déjà été utilisée"); return; }
@@ -1707,10 +1721,12 @@ function openModal(html){
   if(!modalOpen){ modalOpen=true; try{ history.pushState({pvModal:true},""); }catch(e){} }
 }
 function closeModal(){
+  if(typeof terrainModalOpen!=="undefined" && terrainModalOpen){ terrainModalOpen=false; try{ stopTimer(); }catch(e){} timerState=null; }
   modalBg.classList.remove("on");
   if(modalOpen){ modalOpen=false; try{ if(history.state && history.state.pvModal){ history.back(); } }catch(e){} }
 }
 window.addEventListener('popstate', function(){
+  if(typeof terrainModalOpen!=="undefined" && terrainModalOpen){ terrainModalOpen=false; try{ stopTimer(); }catch(e){} timerState=null; }
   if(modalOpen){ modalOpen=false; modalBg.classList.remove("on"); }
 });
 modalBg.onclick=e=>{if(e.target===modalBg)closeModal();};
@@ -2532,6 +2548,8 @@ function addPhysToSession(i){
 }
 function physDetail(i){
   const p=PHYS[i]; if(!p){ openPhysique(); return; }
+  const cameFromTerrain=!!window._terrainReturn;
+  window._terrainReturn=false;
   openModal(`
     <h3>${p.t}</h3>
     <div class="sub">${p.g} · ${p.d} min · intensité ${p.intensity||'Moyenne'} · ${p.per}</div>
@@ -2539,7 +2557,8 @@ function physDetail(i){
     ${p.setup?`<div class="card"><h3>📍 Mise en place</h3><div style="font-size:13px">${p.setup}</div></div>`:''}
     <div class="card"><h3>▶ Déroulé</h3><ol style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${(p.steps||[]).map(s=>`<li>${s}</li>`).join("")}</ol></div>
     ${p.consignes?`<div class="card"><h3>🔑 Points clés</h3><div style="font-size:13px">${p.consignes}</div></div>`:''}
-    <button class="btn block" style="margin-top:10px" onclick="addPhysToSession(${i})">＋ Ajouter à la séance</button>
+    ${cameFromTerrain?'':'<button class="btn block" style="margin-top:10px" onclick="addPhysToSession('+i+')">＋ Ajouter à la séance</button>'}
+    ${cameFromTerrain?`<button class="btn block" style="margin-top:8px" onclick="drawTerrain()">▶ Reprendre le chrono</button>`:""}
     <button class="btn sec block" style="margin-top:8px" onclick="openPhysique()">← Retour à la préparation physique</button>
   `);
 }
@@ -3834,8 +3853,8 @@ function drawBlocks(){
       <button class="iconbtn" onclick="delBlock(${i})">🗑</button>
     </div>`).join("");
 }
-function moveBlock(i,d){const n=i+d;if(n<0||n>=T().session.blocks.length)return;const a=T().session.blocks;[a[i],a[n]]=[a[n],a[i]];save();drawBlocks();}
-function delBlock(i){T().session.blocks.splice(i,1);save();renderSession();}
+function moveBlock(i,d){const n=i+d;if(n<0||n>=T().session.blocks.length)return;const a=T().session.blocks;[a[i],a[n]]=[a[n],a[i]];save();timerState=null;drawBlocks();}
+function delBlock(i){T().session.blocks.splice(i,1);save();timerState=null;renderSession();}
 function addBlockModal(){
   openModal(`
     <h3>Ajouter un bloc</h3>
@@ -3933,16 +3952,22 @@ function sessionThemeModal(){
 }
 /* Vue terrain avec minuteur */
 let timerState=null;
+let terrainModalOpen=false;
 function terrainView(){
   if(T().session.blocks.length===0){flash("Ajoute d'abord des blocs");return;}
   sfx("whistle");
-  timerState={idx:0,remaining:T().session.blocks[0].dur*60,running:false,iv:null};
+  if(!timerState||timerState.blocksRef!==T().session.blocks||timerState.idx>=T().session.blocks.length){
+    timerState={idx:0,remaining:T().session.blocks[0].dur*60,running:false,iv:null,blocksRef:T().session.blocks};
+  }
   drawTerrain();
 }
 function drawTerrain(){
   const b=T().session.blocks[timerState.idx];
   const mm=String(Math.floor(timerState.remaining/60)).padStart(2,"0");
   const ss=String(timerState.remaining%60).padStart(2,"0");
+  const detailBtn=b.exoId?`<button class="btn ghost block" style="margin-top:8px" onclick="terrainShowDetail(${timerState.idx})">📋 Voir la fiche de l'exercice</button>`
+    :(b.physId!=null?`<button class="btn ghost block" style="margin-top:8px" onclick="terrainShowDetail(${timerState.idx})">📋 Voir la fiche</button>`
+    :`<button class="btn ghost block" style="margin-top:8px" onclick="terrainShowDetail(${timerState.idx})">📋 Voir les détails du bloc</button>`);
   openModal(`
     <h3>Vue terrain</h3>
     <div class="sub">Bloc ${timerState.idx+1}/${T().session.blocks.length}</div>
@@ -3957,8 +3982,27 @@ function drawTerrain(){
       <button class="btn" id="tbtn" onclick="toggleTimer()">${timerState.running?'⏸ Pause':'▶ Démarrer'}</button>
       <button class="btn sec" onclick="nextBlock()">Bloc suivant →</button>
     </div>
+    ${detailBtn}
     <div style="height:8px"></div>
-    <button class="btn ghost block" onclick="stopTimer();closeModal()">Fermer</button>
+    <button class="btn ghost block" onclick="stopTimer();timerState=null;closeModal()">Fermer</button>
+  `);
+  terrainModalOpen=true;
+}
+function terrainShowDetail(idx){
+  const b=T().session.blocks[idx];
+  terrainModalOpen=false;
+  window._terrainReturn=true;
+  if(b.exoId) exoDetail(b.exoId);
+  else if(b.physId!=null) physDetail(b.physId);
+  else terrainBlockDetail(idx);
+}
+function terrainBlockDetail(idx){
+  const b=T().session.blocks[idx];
+  openModal(`
+    <h3>${b.title}</h3>
+    <div class="sub">${b.cat} · ${b.dur} min · intensité ${b.intensity}</div>
+    ${b.points?`<div class="card"><h3>🔑 Points clés</h3><div style="font-size:13px">${b.points}</div></div>`:'<div class="hint">Aucun détail supplémentaire enregistré pour ce bloc.</div>'}
+    <button class="btn block" style="margin-top:10px" onclick="drawTerrain()">▶ Reprendre le chrono</button>
   `);
 }
 function toggleTimer(){
@@ -3973,7 +4017,7 @@ function toggleTimer(){
   const btn=document.getElementById("tbtn");if(btn)btn.textContent=timerState.running?'⏸ Pause':'▶ Démarrer';
 }
 function stopTimer(){if(timerState&&timerState.iv)clearInterval(timerState.iv);}
-function nextBlock(){stopTimer();if(timerState.idx<T().session.blocks.length-1){timerState.idx++;timerState.remaining=T().session.blocks[timerState.idx].dur*60;timerState.running=false;drawTerrain();}else{flash("Séance terminée 💪");closeModal();}}
+function nextBlock(){stopTimer();if(timerState.idx<T().session.blocks.length-1){timerState.idx++;timerState.remaining=T().session.blocks[timerState.idx].dur*60;timerState.running=false;drawTerrain();}else{flash("Séance terminée 💪");timerState=null;closeModal();}}
 
 /* ============ MATCH / STATS EN DIRECT ============ */
 function matchIsPlayed(){return T().match.events.length>0;}
@@ -4227,7 +4271,7 @@ function renderTactics(){
     <div class="row" style="gap:6px;margin-top:8px">
       <button class="btn sm sec" style="flex:1" onclick="exportPDF()">📄 PDF</button>
       <button class="btn sm sec" style="flex:1" onclick="exportVideo()">🎞 Vidéo</button>
-      <button class="btn sm" style="flex:1" onclick="shareSystem()">📤 Partager</button>
+      <button class="btn sm" style="flex:1" onclick="shareMyPlay()">📤 Partager</button>
     </div>
     <div class="hint">Stylo pour dessiner librement. Ajoute des joueurs et le ballon, puis relie-les avec course, passe ou écran. Ajoute une étape pour animer le mouvement.</div>
     ${DB.plays.length?`<div class="card" style="margin-top:12px"><h3>📁 Mes systèmes (${DB.plays.length})</h3>${DB.plays.map((pl,i)=>`<div class="listitem"><div class="num" style="background:var(--panel2);border:1px solid var(--line);color:var(--muted)">▶</div><div style="flex:1" onclick="loadPlay(${i})"><b>${pl.title}</b><br><small class="muted">${pl.frames.length} image(s)</small></div><button class="iconbtn" onclick="delPlay(${i})">🗑</button></div>`).join("")}</div>`:""}
@@ -4649,7 +4693,7 @@ function exportVideo(){
   }
   requestAnimationFrame(tick);
 }
-async function shareSystem(){
+async function shareMyPlay(){
   if(!window.jspdf){ flash("Partage en préparation, réessaie"); return; }
   flash("Préparation du partage...");
   try{
@@ -5335,6 +5379,8 @@ function delCustomExo(id){
 }
 function exoDetail(id){
   const e=allExos().find(x=>x.id===id); if(!e){ openResources(); return; }
+  const cameFromTerrain=!!window._terrainReturn;
+  window._terrainReturn=false;
   openModal(`
     <h3>${dTitle(e)}</h3>
     <div style="margin:2px 0 6px"><span class="tag" style="background:${levelColor(exoLevel(e))};color:#fff">${tr('Niveau')} ${dNiveau(exoLevel(e))}</span></div>
@@ -5362,8 +5408,9 @@ function exoDetail(id){
       <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${(VARIANTS_BY_CAT[e.cat]||[]).map(v=>`<li>${v}</li>`).join("")}${(e.variants||[]).map(v=>`<li>${v}</li>`).join("")}</ul>
     </div>
     ${e.lib?libExtraHTML(e):""}
-    <button class="btn block" style="margin-top:10px" onclick="addExoToSession('${e.id}')">＋ Ajouter à ma séance</button>
-    ${e.custom?`<button class="btn ghost block" style="margin-top:8px;color:var(--bad)" onclick="delCustomExo('${e.id}')">🗑 Supprimer cet exercice</button>`:''}
+    ${cameFromTerrain?'':`<button class="btn block" style="margin-top:10px" onclick="addExoToSession('${e.id}')">＋ Ajouter à ma séance</button>`}
+    ${(e.custom&&!cameFromTerrain)?`<button class="btn ghost block" style="margin-top:8px;color:var(--bad)" onclick="delCustomExo('${e.id}')">🗑 Supprimer cet exercice</button>`:''}
+    ${cameFromTerrain?`<button class="btn block" style="margin-top:8px" onclick="drawTerrain()">▶ Reprendre le chrono</button>`:""}
     <button class="btn sec block" style="margin-top:8px" onclick="openResources()">← Retour à la liste</button>
   `);
   window.EXO_CURRENT=e;
@@ -6841,6 +6888,22 @@ if(supaOn()){
 } else {
   render();
 }
+
+/* Sécurité accès : DB.sub reste modifiable depuis la console du navigateur tant que l'app tourne.
+   cloudLoad() impose désormais toujours la valeur écrite côté serveur, mais seulement quand elle
+   s'exécute. Pour réduire la fenêtre où une valeur fabriquée localement resterait active sans qu'un
+   rechargement complet ne la corrige, on revérifie périodiquement, et à chaque retour au premier plan. */
+let _lastAccessRefresh=Date.now();
+async function refreshAccessFromServer(){
+  if(!supaOn()||!supaUser) return;
+  if(Date.now()-_lastAccessRefresh<60000) return;
+  _lastAccessRefresh=Date.now();
+  const before=hasAccess();
+  try{ await cloudLoad(); }catch(e){}
+  if(before!==hasAccess()) render();
+}
+document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') refreshAccessFromServer(); });
+setInterval(refreshAccessFromServer, 5*60*1000);
 /* Lottie, ballon animé sur l'écran d'ouverture (avec repli CSS si indisponible) */
 const PIVOT_BALL_LOTTIE={"v":"5.9.0","fr":30,"ip":0,"op":45,"w":120,"h":120,"nm":"ball","ddd":0,"assets":[],"layers":[{
   "ddd":0,"ind":1,"ty":4,"nm":"b","sr":1,
