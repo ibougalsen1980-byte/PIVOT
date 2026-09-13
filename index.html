@@ -533,6 +533,11 @@
 const LS_KEY = "pivot_proto_v3";
 const POSITIONS = ["Meneur","Arrière","Ailier","Ailier fort","Pivot"];
 function uid(){return Math.random().toString(36).slice(2,9)}
+// Echappement HTML : toute donnée saisie par un coach ou reçue d'un lien de partage doit passer par
+// ici avant d'être injectée dans un template littéral, sinon un nom de joueur, un nom d'équipe ou le
+// contenu d'un lien de partage fabriqué peut exécuter du code dans l'application (faille XSS corrigée
+// le 2026-09-13, voir l'audit du même jour).
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 
 // Journal des nouveautés. Ajoute une entrée en tête à chaque amélioration.
 const UPDATES=[
@@ -1143,7 +1148,7 @@ function openTeamSwitcher(){
     <h3>Mes équipes</h3>
     <div class="sub">Change d'équipe ou ajoute-en une</div>
     ${DB.teams.map(t=>`<div class="sysrow" style="cursor:pointer">
-      <div style="flex:1" onclick="switchTeam('${t.id}')"><div style="font-weight:700;font-size:14px">${t.name}</div><div class="badgepos">${t.category} · ${t.level}</div></div>
+      <div style="flex:1" onclick="switchTeam('${t.id}')"><div style="font-weight:700;font-size:14px">${esc(t.name)}</div><div class="badgepos">${esc(t.category)} · ${esc(t.level)}</div></div>
       <button class="btn sm sec" style="margin-right:6px" onclick="event.stopPropagation();editTeamModal('${t.id}')">✎</button>
       ${t.id===DB.activeTeam?`<span class="levelchip pro">Active</span>`:`<span class="btn sm sec" onclick="switchTeam('${t.id}')">Ouvrir</span>`}
     </div>`).join("")}
@@ -1187,11 +1192,11 @@ function editTeamModal(id){
   const knownCat=CATS.includes(t.category);
   openModal(`
     <h3>Modifier l'équipe</h3>
-    <label class="fld">Nom de l'équipe</label><input id="et_name" value="${t.name}">
+    <label class="fld">Nom de l'équipe</label><input id="et_name" value="${esc(t.name)}">
     <div class="grid2" style="margin-top:8px">
       <div><label class="fld">Catégorie</label><select id="et_cat" onchange="handleCustomCat(this)">
         ${CATS.map(c=>`<option ${t.category===c?'selected':''}>${c}</option>`).join("")}
-        ${knownCat?"":`<option selected>${t.category}</option>`}
+        ${knownCat?"":`<option selected>${esc(t.category)}</option>`}
         <option value="__custom">Autre (préciser)…</option>
       </select></div>
       <div><label class="fld">Niveau</label><select id="et_lvl">${LEVELS.map(l=>`<option ${t.level===l?'selected':''}>${l}</option>`).join("")}</select></div>
@@ -3312,7 +3317,7 @@ function renderRoster(){
       <div class="num">${p.num}</div>
       <div class="avatar"${avatarBg(p.photo)}>${p.photo?'':initials(p)}</div>
       <div style="flex:1" onclick="playerDetail('${p.id}')">
-        <b>${p.first} ${p.last}</b><br><span class="pos">${p.pos}${p.licence?(' · Licence '+p.licence):''}${(p.injury&&p.injury.active&&p.injury.ret)?(' · reprise '+frDate(p.injury.ret)):''}</span>
+        <b>${esc(p.first)} ${esc(p.last)}</b><br><span class="pos">${esc(p.pos)}${p.licence?(' · Licence '+esc(p.licence)):''}${(p.injury&&p.injury.active&&p.injury.ret)?(' · reprise '+frDate(p.injury.ret)):''}</span>
       </div>
       ${(p.injury&&p.injury.active)?`<span class="badge" style="background:#7a52d1;color:#fff">BLESSÉ</span>`:`<span class="badge ${p.present?'ok':'bad'}">${p.present?'DISPO':'ABSENT'}</span>`}
       <button class="iconbtn" onclick="editPlayerModal('${p.id}')" title="Modifier">✏️</button>
@@ -4595,7 +4600,7 @@ function playerFig(x,y,kind,label){
     +`<ellipse cx="${x+15}" cy="${y+3}" rx="5" ry="8" fill="${jersey}" stroke="${line}" stroke-width="1.5"/>`
     +`<rect x="${x-16}" y="${y-4}" width="32" height="24" rx="9" fill="${jersey}" stroke="${line}" stroke-width="2"/>`
     +`<ellipse cx="${x}" cy="${y-11}" rx="8.5" ry="9" fill="#241c17" stroke="${line}" stroke-width="1.3"/>`
-    +`<text x="${x}" y="${y+13}" text-anchor="middle" font-size="13" font-weight="800" fill="${txt}">${label}</text>`
+    +`<text x="${x}" y="${y+13}" text-anchor="middle" font-size="13" font-weight="800" fill="${txt}">${esc(label)}</text>`
     +`</g>`;
 }
 function tokensMarkup(f){
@@ -6288,11 +6293,11 @@ function renderSharePlay(obj){
       <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px">PIVOT</div>
       <div class="sub">Système partagé par ton coach</div>
     </div>
-    <h2 class="view-title" style="text-align:center;margin:4px 0 10px">${obj.t||"Système"}</h2>
+    <h2 class="view-title" style="text-align:center;margin:4px 0 10px">${esc(obj.t||"Système")}</h2>
     ${systemCourtSVG("shareSvg")}
     <div id="shareCap" style="font-size:12px;font-weight:600;color:var(--accent);margin:8px 0 6px;text-align:center;min-height:18px"></div>
     <button class="btn block" onclick="animateSystemFrames(window.__shareFrames,'shareSvg','shareCap')">▶ Revoir l'animation</button>
-    ${steps.length?`<div class="card" style="margin-top:12px"><h3>Les étapes</h3><ol style="margin:0;padding-left:18px;line-height:1.6;font-size:13px">${steps.map(s=>`<li>${s}</li>`).join("")}</ol></div>`:""}
+    ${steps.length?`<div class="card" style="margin-top:12px"><h3>Les étapes</h3><ol style="margin:0;padding-left:18px;line-height:1.6;font-size:13px">${steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></div>`:""}
     <button class="btn sec block" style="margin-top:8px" onclick="location.hash='';location.reload()">Découvrir PIVOT</button>
   `;
   setTimeout(function(){ animateSystemFrames(frames,"shareSvg","shareCap"); },140);
