@@ -4066,6 +4066,54 @@ let voiceLog=[];
 // clignotement. Ces quatre fonctions génèrent chacune un seul bloc de l'écran ; renderMatch() les assemble
 // à l'ouverture de l'onglet, et refreshMatchLive() ne redessine que ces blocs-là à chaque action, sans
 // toucher au reste de la page (titre, cartes, boutons de rapport).
+function onCourtIds(){
+  const present = T().players.filter(p=>p.present);
+  const presentIds = present.map(p=>p.id);
+  let ids = (T().match.onCourt||[]).filter(id=>presentIds.includes(id));
+  if(ids.length===0 && present.length){
+    // Valeur de depart : les cinq premiers presents, comme avant. Ensuite modifiable via le banc.
+    ids = present.slice(0,5).map(p=>p.id);
+    T().match.onCourt = ids;
+  }
+  return ids;
+}
+function onCourtPlayers(){
+  const ids = onCourtIds();
+  return ids.map(id=>T().players.find(p=>p.id===id)).filter(Boolean);
+}
+function benchPlayers(){
+  const ids = onCourtIds();
+  return T().players.filter(p=>p.present && !ids.includes(p.id));
+}
+function benchPlayersHTML(){
+  const bench = benchPlayers();
+  if(!bench.length) return `<div class="hint">Personne sur le banc.</div>`;
+  return bench.map(p=>`<div class="pchip" onclick="enterPlayer('${p.id}')"><span class="pn">${p.num}</span>${p.first} <span class="muted" style="font-size:10px">entrer</span></div>`).join("");
+}
+function enterPlayer(benchId){
+  const ids = onCourtIds();
+  if(ids.length<5){
+    T().match.onCourt = ids.concat(benchId);
+    save();refreshMatchLive();flash("Joueur entre sur le terrain");
+    return;
+  }
+  openModal(`
+    <h3>Qui sort du terrain ?</h3>
+    <div class="sub">${plName(benchId)} entre a la place de :</div>
+    <div class="pill-row" style="flex-wrap:wrap;gap:8px;margin-top:8px">
+      ${ids.map(id=>`<button class="btn sm sec" onclick="swapPlayer('${id}','${benchId}')">${plName(id)}</button>`).join("")}
+    </div>
+    <button class="btn ghost block" style="margin-top:10px" onclick="closeModal()">Annuler</button>
+  `);
+}
+function swapPlayer(outId,inId){
+  const ids = onCourtIds();
+  const idx = ids.indexOf(outId);
+  if(idx>-1) ids[idx]=inId;
+  T().match.onCourt = ids;
+  if(selPlayer===outId) selPlayer=null;
+  save();closeModal();refreshMatchLive();flash("Changement effectue");
+}
 function matchScoreHTML(bs){
   return `<div style="text-align:center"><div class="muted" style="font-size:11px">Nous</div><div class="s">${bs.team.pts}</div></div>
     <div class="muted">vs</div>
@@ -4109,17 +4157,18 @@ function bindMatchShotButtons(){
 }
 function refreshMatchLive(){
   const bs=boxScore();
-  const onCourt = T().players.filter(p=>p.present).slice(0,5);
+  const onCourt = onCourtPlayers();
   const scoreEl=document.getElementById("matchScore"); if(scoreEl) scoreEl.innerHTML=matchScoreHTML(bs);
   const cpEl=document.getElementById("courtPlayers"); if(cpEl) cpEl.innerHTML=courtPlayersHTML(onCourt);
   const actEl=document.getElementById("matchActions"); if(actEl) actEl.innerHTML=matchActionsHTML();
   const vlEl=document.getElementById("voiceLogRow"); if(vlEl) vlEl.innerHTML=voiceLogHTML();
   const tbEl=document.getElementById("boxScoreBody"); if(tbEl) tbEl.innerHTML=boxScoreRowsHTML(onCourt,bs);
+  const bpEl=document.getElementById("benchPlayers"); if(bpEl) bpEl.innerHTML=benchPlayersHTML();
   bindMatchShotButtons();
 }
 function renderMatch(){
   const bs=boxScore();
-  const onCourt = T().players.filter(p=>p.present).slice(0,5);
+  const onCourt = onCourtPlayers();
   main.innerHTML=`
     <h2 class="view-title">Match en direct</h2>
     <div class="scorebar" id="matchScore">${matchScoreHTML(bs)}</div>
@@ -4134,6 +4183,8 @@ function renderMatch(){
       <h3>Sur le terrain <span class="muted" style="font-weight:400;font-size:11px"># choisis un joueur</span></h3>
       <div class="court-players" id="courtPlayers">${courtPlayersHTML(onCourt)}</div>
       <div id="matchActions">${matchActionsHTML()}</div>
+      <h3 style="margin-top:14px">Sur le banc <span class="muted" style="font-weight:400;font-size:11px">touche un joueur pour le faire entrer</span></h3>
+      <div class="court-players" id="benchPlayers">${benchPlayersHTML()}</div>
       <div class="pill-row" style="margin-top:10px">
         <button class="btn sm sec" onclick="oppScore(2)">Adv +2</button>
         <button class="btn sm sec" onclick="oppScore(3)">Adv +3</button>
