@@ -101,6 +101,7 @@
   .abtn{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:12px 4px;
     font-weight:700;font-size:12.5px;cursor:pointer;text-align:center}
   .abtn:active{background:var(--accent);color:#101317}
+  .abtn.tapped{background:var(--accent)!important;color:#101317!important;transform:scale(.94);transition:transform .12s ease}
   .abtn.wide{grid-column:span 3}
   .scorebar{display:flex;align-items:center;justify-content:space-between;background:var(--panel2);border:1px solid var(--line);
     border-radius:12px;padding:10px 14px;margin-bottom:10px}
@@ -109,8 +110,10 @@
   table.box th,table.box td{padding:6px 3px;text-align:center;border-bottom:1px solid var(--line)}
   table.box th{color:var(--muted);font-weight:600;font-size:10px}
   table.box td.name{text-align:left;font-weight:700}
-  .toolbar{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
-  .tool{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 9px;font-size:11px;cursor:pointer;font-weight:600}
+  .toolbar{display:flex;flex-wrap:nowrap;gap:5px;margin-bottom:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .toolbar::-webkit-scrollbar{display:none}
+  .tool{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 9px;font-size:11px;cursor:pointer;font-weight:600;flex:0 0 auto}
+  .tool.icon{padding:8px 11px;font-size:16px;line-height:1;min-width:38px;text-align:center}
   .tool.active{background:var(--accent);color:#101317;border-color:var(--accent)}
   .frames{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px}
   .frame-thumb{flex:0 0 auto;width:52px;height:48px;border-radius:8px;border:2px solid var(--line);background:#0c2b17;
@@ -1139,22 +1142,34 @@ function openTeamSwitcher(){
   openModal(`
     <h3>Mes équipes</h3>
     <div class="sub">Change d'équipe ou ajoute-en une</div>
-    ${DB.teams.map(t=>`<div class="sysrow" onclick="switchTeam('${t.id}')" style="cursor:pointer">
-      <div style="flex:1"><div style="font-weight:700;font-size:14px">${t.name}</div><div class="badgepos">${t.category} · ${t.level}</div></div>
-      ${t.id===DB.activeTeam?'<span class="levelchip pro">Active</span>':'<span class="btn sm sec">Ouvrir</span>'}
+    ${DB.teams.map(t=>`<div class="sysrow" style="cursor:pointer">
+      <div style="flex:1" onclick="switchTeam('${t.id}')"><div style="font-weight:700;font-size:14px">${t.name}</div><div class="badgepos">${t.category} · ${t.level}</div></div>
+      <button class="btn sm sec" style="margin-right:6px" onclick="event.stopPropagation();editTeamModal('${t.id}')">✎</button>
+      ${t.id===DB.activeTeam?`<span class="levelchip pro">Active</span>`:`<span class="btn sm sec" onclick="switchTeam('${t.id}')">Ouvrir</span>`}
     </div>`).join("")}
     <button class="btn block" style="margin-top:8px" onclick="addTeamModal()">＋ Ajouter une équipe</button>
     <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
   `);
 }
-const CATS=["U7","U9","U11","U13","U15","U18","Seniors"];
+const CATS=["U7","U9","U11","U13","U15","U17","U18","U21","Seniors"];
+function handleCustomCat(sel){
+  if(sel.value!=="__custom") return;
+  const v=prompt("Tape ta categorie (ex : U16, U21, Veterans)");
+  if(v && v.trim()){
+    const opt=document.createElement("option");
+    opt.value=v.trim(); opt.textContent=v.trim(); opt.selected=true;
+    sel.insertBefore(opt, sel.lastElementChild);
+  } else {
+    sel.selectedIndex=0;
+  }
+}
 const LEVELS=["École de basket","Départemental","Régional","National","Centre de formation","Professionnel"];
 function addTeamModal(){
   openModal(`
     <h3>Nouvelle équipe</h3>
     <label class="fld">Nom de l'équipe</label><input id="nt_name" placeholder="Ex : U13 Filles">
     <div class="grid2" style="margin-top:8px">
-      <div><label class="fld">Catégorie</label><select id="nt_cat">${CATS.map(c=>`<option>${c}</option>`).join("")}</select></div>
+      <div><label class="fld">Catégorie</label><select id="nt_cat" onchange="handleCustomCat(this)">${CATS.map(c=>`<option>${c}</option>`).join("")}<option value="__custom">Autre (préciser)…</option></select></div>
       <div><label class="fld">Niveau</label><select id="nt_lvl">${LEVELS.map(l=>`<option>${l}</option>`).join("")}</select></div>
     </div>
     <div style="height:14px"></div>
@@ -1166,6 +1181,30 @@ function createTeam(){
   const name=val("nt_name")||("Équipe "+(DB.teams.length+1));
   const t=newTeam(name,val("nt_cat"),val("nt_lvl"),[]);
   DB.teams.push(t); DB.activeTeam=t.id; save(); closeModal(); render(); flash("Équipe créée");
+}
+function editTeamModal(id){
+  const t=DB.teams.find(x=>x.id===id); if(!t) return;
+  const knownCat=CATS.includes(t.category);
+  openModal(`
+    <h3>Modifier l'équipe</h3>
+    <label class="fld">Nom de l'équipe</label><input id="et_name" value="${t.name}">
+    <div class="grid2" style="margin-top:8px">
+      <div><label class="fld">Catégorie</label><select id="et_cat" onchange="handleCustomCat(this)">
+        ${CATS.map(c=>`<option ${t.category===c?'selected':''}>${c}</option>`).join("")}
+        ${knownCat?"":`<option selected>${t.category}</option>`}
+        <option value="__custom">Autre (préciser)…</option>
+      </select></div>
+      <div><label class="fld">Niveau</label><select id="et_lvl">${LEVELS.map(l=>`<option ${t.level===l?'selected':''}>${l}</option>`).join("")}</select></div>
+    </div>
+    <div style="height:14px"></div>
+    <button class="btn block" onclick="saveTeamEdit('${id}')">Enregistrer</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="openTeamSwitcher()">Retour</button>
+  `);
+}
+function saveTeamEdit(id){
+  const t=DB.teams.find(x=>x.id===id); if(!t) return;
+  t.name=val("et_name")||t.name; t.category=val("et_cat"); t.level=val("et_lvl");
+  save(); closeModal(); render(); flash("Équipe mise à jour");
 }
 
 /* ============ MULTILINGUE ============ */
@@ -1721,12 +1760,12 @@ function openModal(html){
   if(!modalOpen){ modalOpen=true; try{ history.pushState({pvModal:true},""); }catch(e){} }
 }
 function closeModal(){
-  if(typeof terrainModalOpen!=="undefined" && terrainModalOpen){ terrainModalOpen=false; try{ stopTimer(); }catch(e){} timerState=null; }
+  if(typeof terrainModalOpen!=="undefined" && terrainModalOpen){ terrainModalOpen=false; try{ stopTimer(); }catch(e){} timerState=null; clearActiveTimer(); }
   modalBg.classList.remove("on");
   if(modalOpen){ modalOpen=false; try{ if(history.state && history.state.pvModal){ history.back(); } }catch(e){} }
 }
 window.addEventListener('popstate', function(){
-  if(typeof terrainModalOpen!=="undefined" && terrainModalOpen){ terrainModalOpen=false; try{ stopTimer(); }catch(e){} timerState=null; }
+  if(typeof terrainModalOpen!=="undefined" && terrainModalOpen){ terrainModalOpen=false; try{ stopTimer(); }catch(e){} timerState=null; clearActiveTimer(); }
   if(modalOpen){ modalOpen=false; modalBg.classList.remove("on"); }
 });
 modalBg.onclick=e=>{if(e.target===modalBg)closeModal();};
@@ -1740,6 +1779,11 @@ function pill(label,selected,onclick){
 }
 function syncOnbInputs(){ const n=document.getElementById("onb_name"), t=document.getElementById("onb_team"), e=document.getElementById("onb_email"), p=document.getElementById("onb_pw"), p2=document.getElementById("onb_pw2"); if(n)ONB.name=n.value; if(t)ONB.teamName=t.value; if(e)ONB.email=e.value; if(p)ONB.pw=p.value; if(p2)ONB.pw2=p2.value; }
 function onbSet(k,v){ syncOnbInputs(); ONB[k]=v; renderOnboarding(); }
+function onbCustomCategory(){
+  syncOnbInputs();
+  const v=prompt("Tape ta categorie (ex : U16, U21, Veterans)", CATS.includes(ONB.category)?"":ONB.category);
+  if(v && v.trim()){ ONB.category=v.trim(); renderOnboarding(); }
+}
 function onbToggleDip(d){ syncOnbInputs(); const i=ONB.diplomas.indexOf(d); if(i>=0)ONB.diplomas.splice(i,1); else ONB.diplomas.push(d); renderOnboarding(); }
 function deriveLevel(){
   const pro = ["7 à 15 ans","Plus de 15 ans"].includes(ONB.years)
@@ -1794,7 +1838,7 @@ function renderOnboarding(){
 
     <div class="card">
       <h3>Catégorie d'âge</h3>
-      <div class="chips">${CATS.map(c=>pill(c, ONB.category===c, `onbSet('category','${c}')`)).join("")}</div>
+      <div class="chips">${CATS.map(c=>pill(c, ONB.category===c, `onbSet('category','${c}')`)).join("")}${pill(CATS.includes(ONB.category)?'Autre…':(ONB.category||'Autre…'), !CATS.includes(ONB.category), `onbCustomCategory()`)}</div>
     </div>
 
     <div class="card">
@@ -3853,8 +3897,8 @@ function drawBlocks(){
       <button class="iconbtn" onclick="delBlock(${i})">🗑</button>
     </div>`).join("");
 }
-function moveBlock(i,d){const n=i+d;if(n<0||n>=T().session.blocks.length)return;const a=T().session.blocks;[a[i],a[n]]=[a[n],a[i]];save();timerState=null;drawBlocks();}
-function delBlock(i){T().session.blocks.splice(i,1);save();timerState=null;renderSession();}
+function moveBlock(i,d){const n=i+d;if(n<0||n>=T().session.blocks.length)return;const a=T().session.blocks;[a[i],a[n]]=[a[n],a[i]];save();timerState=null;clearActiveTimer();drawBlocks();}
+function delBlock(i){T().session.blocks.splice(i,1);save();timerState=null;clearActiveTimer();renderSession();}
 function addBlockModal(){
   openModal(`
     <h3>Ajouter un bloc</h3>
@@ -3953,11 +3997,24 @@ function sessionThemeModal(){
 /* Vue terrain avec minuteur */
 let timerState=null;
 let terrainModalOpen=false;
+// Le decompte vit en memoire (timerState) et ne survit pas seul a un changement de fenetre : sur
+// certains navigateurs mobiles, quitter l'app quelques minutes suspend puis recharge la page a froid,
+// ce qui efface toute variable JS non sauvegardee et donnait l'impression que le chrono "se reinitialise".
+// T().activeTimer est le double persistant, ecrit a chaque demarrage/pause, relu ici au retour.
+function clearActiveTimer(){ if(T().activeTimer){T().activeTimer=null; save();} }
 function terrainView(){
   if(T().session.blocks.length===0){flash("Ajoute d'abord des blocs");return;}
   sfx("whistle");
   if(!timerState||timerState.blocksRef!==T().session.blocks||timerState.idx>=T().session.blocks.length){
-    timerState={idx:0,remaining:T().session.blocks[0].dur*60,running:false,iv:null,blocksRef:T().session.blocks};
+    const saved=T().activeTimer;
+    if(saved && T().session.blocks[saved.idx]){
+      let remaining;
+      if(saved.running && saved.endsAt){ remaining=Math.max(0,Math.round((saved.endsAt-Date.now())/1000)); }
+      else { remaining=(typeof saved.remaining==="number")?saved.remaining:T().session.blocks[saved.idx].dur*60; }
+      timerState={idx:saved.idx,remaining,running:false,iv:null,blocksRef:T().session.blocks};
+    } else {
+      timerState={idx:0,remaining:T().session.blocks[0].dur*60,running:false,iv:null,blocksRef:T().session.blocks};
+    }
   }
   drawTerrain();
 }
@@ -3984,7 +4041,7 @@ function drawTerrain(){
     </div>
     ${detailBtn}
     <div style="height:8px"></div>
-    <button class="btn ghost block" onclick="stopTimer();timerState=null;closeModal()">Fermer</button>
+    <button class="btn ghost block" onclick="stopTimer();timerState=null;clearActiveTimer();closeModal()">Fermer</button>
   `);
   terrainModalOpen=true;
 }
@@ -4007,17 +4064,27 @@ function terrainBlockDetail(idx){
 }
 function toggleTimer(){
   timerState.running=!timerState.running;
-  if(timerState.running){timerState.iv=setInterval(()=>{
-    timerState.remaining--;
-    if(timerState.remaining<=0){clearInterval(timerState.iv);timerState.running=false;flash("Bloc terminé");nextBlock();return;}
-    const el=document.getElementById("tbig");
-    if(el){el.textContent=String(Math.floor(timerState.remaining/60)).padStart(2,"0")+":"+String(timerState.remaining%60).padStart(2,"0");}
-  },1000);}
-  else clearInterval(timerState.iv);
+  if(timerState.running){
+    timerState.endsAt=Date.now()+timerState.remaining*1000;
+    T().activeTimer={idx:timerState.idx,endsAt:timerState.endsAt,running:true}; save();
+    timerState.iv=setInterval(()=>{
+      timerState.remaining=Math.max(0,Math.round((timerState.endsAt-Date.now())/1000));
+      if(timerState.remaining<=0){
+        clearInterval(timerState.iv);timerState.running=false;
+        sfx("whistle"); setTimeout(()=>sfx("whistle"),350); // coup de sifflet double, audible meme sans regarder l'ecran
+        flash("Bloc terminé");nextBlock();return;
+      }
+      const el=document.getElementById("tbig");
+      if(el){el.textContent=String(Math.floor(timerState.remaining/60)).padStart(2,"0")+":"+String(timerState.remaining%60).padStart(2,"0");}
+    },1000);
+  } else {
+    clearInterval(timerState.iv);
+    T().activeTimer={idx:timerState.idx,remaining:timerState.remaining,running:false}; save();
+  }
   const btn=document.getElementById("tbtn");if(btn)btn.textContent=timerState.running?'⏸ Pause':'▶ Démarrer';
 }
 function stopTimer(){if(timerState&&timerState.iv)clearInterval(timerState.iv);}
-function nextBlock(){stopTimer();if(timerState.idx<T().session.blocks.length-1){timerState.idx++;timerState.remaining=T().session.blocks[timerState.idx].dur*60;timerState.running=false;drawTerrain();}else{flash("Séance terminée 💪");timerState=null;closeModal();}}
+function nextBlock(){stopTimer();if(timerState.idx<T().session.blocks.length-1){timerState.idx++;timerState.remaining=T().session.blocks[timerState.idx].dur*60;timerState.running=false;T().activeTimer={idx:timerState.idx,remaining:timerState.remaining,running:false};save();drawTerrain();}else{flash("Séance terminée 💪");timerState=null;clearActiveTimer();closeModal();}}
 
 /* ============ MATCH / STATS EN DIRECT ============ */
 function matchIsPlayed(){return T().match.events.length>0;}
@@ -4135,12 +4202,12 @@ function matchActionsHTML(){
           <button class="abtn" onclick="act('fg2')">Tir 2 pts</button>
           <button class="abtn" onclick="act('fg3')">Tir 3 pts</button>
           <button class="abtn" onclick="act('ft')">Lancer</button>
-          <button class="abtn" onclick="rec('reb')">Rebond</button>
-          <button class="abtn" onclick="rec('ast')">Passe D.</button>
-          <button class="abtn" onclick="rec('stl')">Interception</button>
-          <button class="abtn" onclick="rec('tov')">Perte</button>
-          <button class="abtn" onclick="rec('blk')">Contre</button>
-          <button class="abtn" onclick="rec('foul')">Faute</button>
+          <button class="abtn" onclick="rec('reb',event)">Rebond</button>
+          <button class="abtn" onclick="rec('ast',event)">Passe D.</button>
+          <button class="abtn" onclick="rec('stl',event)">Interception</button>
+          <button class="abtn" onclick="rec('tov',event)">Perte</button>
+          <button class="abtn" onclick="rec('blk',event)">Contre</button>
+          <button class="abtn" onclick="rec('foul',event)">Faute</button>
         </div>`;
 }
 function voiceLogHTML(){
@@ -4160,7 +4227,8 @@ function refreshMatchLive(){
   const onCourt = onCourtPlayers();
   const scoreEl=document.getElementById("matchScore"); if(scoreEl) scoreEl.innerHTML=matchScoreHTML(bs);
   const cpEl=document.getElementById("courtPlayers"); if(cpEl) cpEl.innerHTML=courtPlayersHTML(onCourt);
-  const actEl=document.getElementById("matchActions"); if(actEl) actEl.innerHTML=matchActionsHTML();
+  const actEl=document.getElementById("matchActions");
+  if(actEl){ const mode=pendingShot?"shot":"actions"; if(actEl.dataset.mode!==mode){ actEl.innerHTML=matchActionsHTML(); actEl.dataset.mode=mode; } }
   const vlEl=document.getElementById("voiceLogRow"); if(vlEl) vlEl.innerHTML=voiceLogHTML();
   const tbEl=document.getElementById("boxScoreBody"); if(tbEl) tbEl.innerHTML=boxScoreRowsHTML(onCourt,bs);
   const bpEl=document.getElementById("benchPlayers"); if(bpEl) bpEl.innerHTML=benchPlayersHTML();
@@ -4182,7 +4250,7 @@ function renderMatch(){
     <div class="card">
       <h3>Sur le terrain <span class="muted" style="font-weight:400;font-size:11px"># choisis un joueur</span></h3>
       <div class="court-players" id="courtPlayers">${courtPlayersHTML(onCourt)}</div>
-      <div id="matchActions">${matchActionsHTML()}</div>
+      <div id="matchActions" data-mode="${pendingShot?'shot':'actions'}">${matchActionsHTML()}</div>
       <h3 style="margin-top:14px">Sur le banc <span class="muted" style="font-weight:400;font-size:11px">touche un joueur pour le faire entrer</span></h3>
       <div class="court-players" id="benchPlayers">${benchPlayersHTML()}</div>
       <div class="pill-row" style="margin-top:10px">
@@ -4227,9 +4295,11 @@ function shotResult(made){
   pendingShot=null;save();sfx(made?"net":"bounce");refreshMatchLive();flash(made?"Panier ✓":"Tir manqué");
 }
 function cancelShot(){pendingShot=null;refreshMatchLive();}
-function rec(type){
+function rec(type,ev){
   if(!selPlayer){flash("Choisis d'abord un joueur");return;}
-  T().match.events.push({id:uid(),pid:selPlayer,type,side:"us"});save();sfx("bounce");refreshMatchLive();
+  T().match.events.push({id:uid(),pid:selPlayer,type,side:"us"});save();sfx("bounce");
+  if(ev&&ev.currentTarget){const b=ev.currentTarget;b.classList.remove("tapped");void b.offsetWidth;b.classList.add("tapped");setTimeout(()=>b.classList.remove("tapped"),280);}
+  refreshMatchLive();
 }
 function oppScore(n){T().match.events.push({id:uid(),side:"opp",pts:n,type:"opp"});save();sfx("tap");refreshMatchLive();}
 function undo(){if(T().match.events.length){T().match.events.pop();save();refreshMatchLive();flash("Dernière action annulée");}}
@@ -4275,21 +4345,22 @@ function renderTactics(){
     <div id="tacStage">
     <div class="row" style="margin-bottom:6px"><button id="tacFullBtn" class="btn sm sec" onclick="toggleTacFull()">⛶ Agrandir la plaquette</button></div>
     <div class="toolbar" id="courtmodes">
-      <button class="tool ${tac.court==='half'?'active':''}" data-c="half">Demi-terrain</button>
-      <button class="tool ${tac.court==='full'?'active':''}" data-c="full">Terrain plein</button>
-      <button class="tool ${tac.court==='blank'?'active':''}" data-c="blank">Plaquette vierge</button>
+      <button class="tool icon ${tac.court==='half'?'active':''}" data-c="half" title="Demi-terrain">◐</button>
+      <button class="tool icon ${tac.court==='full'?'active':''}" data-c="full" title="Terrain plein">●</button>
+      <button class="tool icon ${tac.court==='blank'?'active':''}" data-c="blank" title="Plaquette vierge">○</button>
     </div>
     <div class="toolbar" id="toolbar">
-      <button class="tool" data-t="pen">🖊 Stylo</button>
-      <button class="tool" data-t="select">✋ Déplacer</button>
-      <button class="tool" data-t="add-off">🔴 Attaquant</button>
-      <button class="tool" data-t="add-def">🔵 Défenseur</button>
-      <button class="tool" data-t="add-ball">🏀 Ballon</button>
-      <button class="tool" data-t="move">➜ Course</button>
-      <button class="tool" data-t="dribble">〰 Dribble</button>
-      <button class="tool" data-t="pass">┈ Passe</button>
-      <button class="tool" data-t="screen">⊥ Écran</button>
-      <button class="tool" data-t="erase">🧽 Gomme</button>
+      <button class="tool icon" data-t="pen" title="Stylo">🖊</button>
+      <button class="tool icon" data-t="select" title="Déplacer">✋</button>
+      <button class="tool icon" data-t="add-off" title="Attaquant">🔴</button>
+      <button class="tool icon" data-t="add-def" title="Défenseur">🔵</button>
+      <button class="tool icon" data-t="add-ball" title="Ballon">🏀</button>
+      <button class="tool icon" data-t="move" title="Course">➜</button>
+      <button class="tool icon" data-t="dribble" title="Dribble">〰</button>
+      <button class="tool icon" data-t="pass" title="Passe">┈</button>
+      <button class="tool icon" data-t="shot" title="Tir">🎯</button>
+      <button class="tool icon" data-t="screen" title="Écran">⊥</button>
+      <button class="tool icon" data-t="erase" title="Gomme">🧽</button>
     </div>
     <div class="toolbar" id="pencolors" style="align-items:center">
       <span style="font-size:11px;color:var(--muted);margin-right:2px">Couleur</span>
@@ -4445,7 +4516,7 @@ function onDown(e){
     tac.drawing={type:"pen",color:tac.penColor,points:[pt]};
     return;
   }
-  if(["move","dribble","pass","screen"].includes(t)){
+  if(["move","dribble","pass","screen","shot"].includes(t)){
     const tk=tokenAt(pt);
     tac.drawing={type:t,from:tk?tk.id:null,points:[tk?{x:tk.x,y:tk.y}:pt]};
   }
@@ -4518,13 +4589,16 @@ function renderPath(p,temp){
   if(p.type==="pen"){
     return `<path ${rc} d="${pathD(p.points)}" fill="none" stroke="${p.color||'#ffffff'}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity="${temp?.75:1}"/>`;
   }
-  const col = p.type==="pass"?"#ffffff":p.type==="screen"?"#ffd23f":p.type==="dribble"?"#8ef2c0":"#ffffff";
+  const col = p.type==="pass"?"#ffffff":p.type==="screen"?"#ffd23f":p.type==="dribble"?"#8ef2c0":p.type==="shot"?"#ff5b3f":"#ffffff";
   const dash = p.type==="pass"?'stroke-dasharray="2 7"':p.type==="dribble"?'stroke-dasharray="1 5"':"";
   const marker = 'marker-end="url(#arrow)"';
   let extra="";
   if(p.type==="screen"){const a=p.points[p.points.length-1],b=p.points[p.points.length-2]||a;
     const ang=Math.atan2(a.y-b.y,a.x-b.x)+Math.PI/2;const l=11;
     extra=`<line x1="${a.x-Math.cos(ang)*l}" y1="${a.y-Math.sin(ang)*l}" x2="${a.x+Math.cos(ang)*l}" y2="${a.y+Math.sin(ang)*l}" stroke="${col}" stroke-width="3"/>`;
+  }
+  if(p.type==="shot"){const a=p.points[p.points.length-1];
+    extra=`<circle cx="${a.x}" cy="${a.y}" r="8" fill="none" stroke="${col}" stroke-width="2.5"/>`;
   }
   return `<path d="${pathD(p.points)}" fill="none" stroke="${col}" stroke-width="3" ${dash} ${p.type==="screen"?"":marker} opacity="${temp?.6:.95}"/>${extra}`;
 }
@@ -4554,7 +4628,7 @@ function advanceTokens(srcFrame, dstFrame){
     const end=p.points[p.points.length-1];
     if(p.type==="move"||p.type==="screen"){ const t=p.from&&tok(p.from); if(t){t.x=end.x;t.y=end.y;} }
     else if(p.type==="dribble"){ const t=p.from&&tok(p.from); if(t){t.x=end.x;t.y=end.y;} if(ball){ball.x=end.x;ball.y=end.y;} }
-    else if(p.type==="pass"){ if(ball){ball.x=end.x;ball.y=end.y;} }
+    else if(p.type==="pass"||p.type==="shot"){ if(ball){ball.x=end.x;ball.y=end.y;} }
   });
 }
 function addFrame(){
