@@ -6,6 +6,35 @@
 // L'identite de la personne qui redeem le code est verifiee aupres de Supabase a partir de son jeton de
 // connexion, jamais a partir d'un identifiant que le navigateur pourrait fournir lui-meme.
 //
+// Garde-fou ajoute le 2026-09-13 : avant, rien ne limitait le nombre d'essais. Un compte gratuit pouvait
+// tester des milliers de codes par script tant qu'il restait connecte. On reutilise ici le meme compteur
+// persistant que coach.js (table api_rate_limit, fonction pivot_check_rate_limit), avec un espace de noms
+// different ("redeem:") pour ne pas partager le quota avec les questions posees a l'assistant IA.
+// Limite volontairement large : un coach qui se trompe deux ou trois fois en tapant son code ne doit
+// jamais etre bloque, seul un script qui enchaine les essais l'est.
+const RATE_LIMIT_MAX = 8;
+const RATE_LIMIT_WINDOW_SECONDS = 10 * 60;
+
+async function _rateLimited(id) {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE) return false; // pas de Supabase configure, on n'en fait pas dependre l'app
+  try {
+    const r = await fetch(process.env.SUPABASE_URL + '/rest/v1/rpc/pivot_check_rate_limit', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'apikey': process.env.SUPABASE_SERVICE_ROLE,
+        'authorization': 'Bearer ' + process.env.SUPABASE_SERVICE_ROLE
+      },
+      body: JSON.stringify({ p_client_id: id, p_window_seconds: RATE_LIMIT_WINDOW_SECONDS, p_max: RATE_LIMIT_MAX })
+    });
+    if (!r.ok) return false; // en cas de souci Supabase, on laisse passer plutot que de bloquer tout le monde
+    const allowed = await r.json();
+    return allowed === false;
+  } catch (e) {
+    return false;
+  }
+}
+//
 // Variables d'environnement Netlify necessaires :
 //   PIVOT_ACCESS_CODES      JSON, ex: {"PIVOT-OWNER-2026":3650,"PIVOT-TESTEUR-2026":21}
 //   SUPABASE_URL            deja configuree
@@ -43,6 +72,10 @@ if (!who.ok) return { statusCode: 401, headers, body: JSON.stringify({ ok: false
 const user = await who.json();
 const userId = user && user.id;
 if (!userId) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'session invalide, reconnecte-toi' }) };
+
+if (await _rateLimited('redeem:' + userId)) {
+return { statusCode: 429, headers, body: JSON.stringify({ ok: false, error: 'trop de tentatives, reessaie dans quelques minutes' }) };
+}
 
 const days = codes[code];
 if (!days) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'code invalide' }) };

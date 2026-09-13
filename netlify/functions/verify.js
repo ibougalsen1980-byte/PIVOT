@@ -12,6 +12,30 @@
 //   SUPABASE_URL            deja configuree (utilisee par coach.js pour la limite anti-abus)
 //   SUPABASE_SERVICE_ROLE   deja configuree (idem)
 //
+// Garde-fou ajoute le 2026-09-13 : avant, rien n'empechait de rejouer la meme URL de retour Stripe pour
+// obtenir a nouveau des jours d'abonnement. Le seul frein etait cote client (DB.lastSession), une donnee
+// que le navigateur controle librement, donc facilement contournable (autre appareil, stockage local vide,
+// URL resauvegardee avant paiement). Chaque session_id deja traite est maintenant enregistre dans la table
+// Supabase stripe_sessions_used (cle primaire sur session_id, ecrite uniquement par cette fonction avec la
+// cle de service). Un meme session_id ne peut plus jamais crediter des jours une seconde fois.
+async function _alreadyProcessed(sessionId, userId) {
+  const base = process.env.SUPABASE_URL;
+  const svcHeaders = {
+    'apikey': process.env.SUPABASE_SERVICE_ROLE,
+    'authorization': 'Bearer ' + process.env.SUPABASE_SERVICE_ROLE,
+    'content-type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+  const w = await fetch(base + '/rest/v1/stripe_sessions_used', {
+    method: 'POST',
+    headers: svcHeaders,
+    body: JSON.stringify([{ session_id: sessionId, user_id: userId }])
+  });
+  if (w.status === 409) return true; // deja present : ce paiement a deja ete credite
+  if (!w.ok) throw new Error('ecriture stripe_sessions_used impossible');
+  return false;
+}
+
 // Correspondance prix -> duree, a mettre a jour si les prix de STRIPE_LINKS changent dans index.html.
 const PRICE_TO_DAYS = {
 299: { days: 7, plan: 'semaine' },
@@ -56,6 +80,14 @@ return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'com
 const mapping = PRICE_TO_DAYS[session.amount_total];
 if (!mapping) {
 return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'montant non reconnu' }) };
+}
+
+try {
+if (await _alreadyProcessed(sessionId, userId)) {
+return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'ce paiement a deja ete credite' }) };
+}
+} catch (e) {
+return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: 'verification anti-rejeu impossible' }) };
 }
 
 const grant = await grantServerAccess(userId, mapping.days, mapping.plan);
