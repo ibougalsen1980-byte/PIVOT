@@ -4390,7 +4390,7 @@ function renderTactics(){
     <div class="card" style="margin-top:8px;padding:10px 12px">
       <div style="font-weight:700;font-size:12.5px;margin-bottom:6px">Comment lire un système</div>
       <div class="muted" style="font-size:11.5px;line-height:1.7">➜ course du joueur &nbsp;·&nbsp; ┈ passe &nbsp;·&nbsp; 〰 dribble &nbsp;·&nbsp; ⊥ écran</div>
-      <div class="hint" style="margin-top:6px">Trace les courses, passes et dribbles sur l'étape, puis touche ＋ Étape : les joueurs et le ballon se placent automatiquement au bout de tes flèches. Tu n'ajustes que ce qui doit l'être. Le bouton Lire enchaîne toutes les étapes.</div>
+      <div class="hint" style="margin-top:6px">Termine ton trait près d'un joueur ou du ballon, un cercle jaune s'affiche : le trait s'accroche à sa cible. Touche ＋ Étape : tout se place automatiquement au bout des flèches, y compris ce qui a déjà bougé. Tu n'ajustes que ce qui doit l'être. Le bouton Lire enchaîne toutes les étapes.</div>
     </div>
     <div class="row" style="gap:6px;margin-top:8px">
       <button class="btn sm sec" style="flex:1" onclick="exportPDF()">📄 PDF</button>
@@ -4497,15 +4497,26 @@ function tokenAt(pt){
   f.tokens.forEach(t=>{const d=Math.hypot(t.x-pt.x,t.y-pt.y);if(d<24&&d<bd){bd=d;best=t;}});
   return best;
 }
+// Cherche un item (joueur ou ballon) proche d'un point, en excluant celui d'où part le trait :
+// c'est l'accroche magnétique qui permet de lier une passe, une course ou un dribble à sa cible.
+function tokenNear(pt,excludeId,radius){
+  const f=curFrame();let best=null,bd=radius||26;
+  f.tokens.forEach(t=>{ if(t.id===excludeId) return; const d=Math.hypot(t.x-pt.x,t.y-pt.y); if(d<bd){bd=d;best=t;} });
+  return best;
+}
 function onDown(e){
   if(tac.playing)return;
   const pt=svgPt(e);const t=tac.tool;
   if(t==="select"){const tk=tokenAt(pt);if(tk)tac.drag=tk;return;}
   if(t==="add-off"||t==="add-def"||t==="add-ball"){
     const f=curFrame();
-    if(t==="add-ball"){f.tokens=f.tokens.filter(x=>x.kind!=="ball");f.tokens.push({id:"ball",kind:"ball",label:"",x:pt.x,y:pt.y});}
+    if(t==="add-ball") f.tokens=f.tokens.filter(x=>x.kind!=="ball");
+    // évite de poser un nouvel item exactement sur un autre, ce qui le cacherait
+    let px=pt.x, py=pt.y, tries=0;
+    while(f.tokens.some(tk=>Math.hypot(tk.x-px,tk.y-py)<22) && tries<8){ px+=14; py+=10; tries++; }
+    if(t==="add-ball"){f.tokens.push({id:"ball",kind:"ball",label:"",x:px,y:py});}
     else{const kind=t==="add-off"?"off":"def";const n=f.tokens.filter(x=>x.kind===kind).length+1;
-      f.tokens.push({id:kind[0]+uid().slice(0,4),kind,label:String(n),x:pt.x,y:pt.y});}
+      f.tokens.push({id:kind[0]+uid().slice(0,4),kind,label:String(n),x:px,y:py});}
     drawTokens();return;
   }
   if(t==="erase"){const tk=tokenAt(pt);const f=curFrame();
@@ -4547,12 +4558,25 @@ function onMove(e){
     return;}
   if(tac.drawing){const last=tac.drawing.points[tac.drawing.points.length-1];
     const th=tac.drawing.type==="pen"?3:8;
-    if(Math.hypot(pt.x-last.x,pt.y-last.y)>th){tac.drawing.points.push(pt);tacDrawDirty=true;tacScheduleRedraw();}
+    if(Math.hypot(pt.x-last.x,pt.y-last.y)>th){
+      tac.drawing.points.push(pt);
+      if(tac.drawing.type!=="pen"){
+        const tgt=tokenNear(pt,tac.drawing.from);
+        tac.drawing.snapTo=tgt?tgt.id:null;
+        if(tgt){ const p=tac.drawing.points[tac.drawing.points.length-1]; p.x=tgt.x; p.y=tgt.y; }
+      }
+      tacDrawDirty=true;tacScheduleRedraw();
+    }
   }
 }
 function onUp(e){
   if(tac.drag){tac.drag=null;save?save():0;return;}
   if(tac.drawing){
+    if(tac.drawing.type!=="pen" && tac.drawing.snapTo){
+      const tgt=curFrame().tokens.find(t=>t.id===tac.drawing.snapTo);
+      if(tgt){ tac.drawing.to=tgt.id; const last=tac.drawing.points[tac.drawing.points.length-1]; last.x=tgt.x; last.y=tgt.y; }
+    }
+    delete tac.drawing.snapTo;
     if(tac.drawing.points.length>1){curFrame().paths.push(tac.drawing);}
     tac.drawing=null;drawPaths();
   }
@@ -4607,7 +4631,13 @@ function renderPath(p,temp){
 function drawPaths(withTemp){
   const layer=document.getElementById("pathsLayer");if(!layer)return;
   let html=curFrame().paths.map(p=>renderPath(p,false)).join("");
-  if(withTemp&&tac.drawing)html+=renderPath(tac.drawing,true);
+  if(withTemp&&tac.drawing){
+    html+=renderPath(tac.drawing,true);
+    if(tac.drawing.snapTo){
+      const tgt=curFrame().tokens.find(t=>t.id===tac.drawing.snapTo);
+      if(tgt)html+=`<circle cx="${tgt.x}" cy="${tgt.y}" r="16" fill="none" stroke="#ffd23f" stroke-width="2.5" stroke-dasharray="3 3"><animate attributeName="r" values="13;18;13" dur=".9s" repeatCount="indefinite"/></circle>`;
+    }
+  }
   layer.innerHTML=html;
   tacReveal=false;
 }
@@ -4627,7 +4657,10 @@ function advanceTokens(srcFrame, dstFrame){
   const ball=dstFrame.tokens.find(function(t){return t.kind==="ball";});
   (srcFrame.paths||[]).forEach(function(p){
     if(!p||!p.points||p.points.length<2) return;
-    const end=p.points[p.points.length-1];
+    // Un trait accroché à une cible (p.to) suit la position réelle de cette cible dans la nouvelle étape,
+    // même si elle a elle-même déjà bougé : c'est ce qui relie les actions entre elles.
+    const linked=p.to&&tok(p.to);
+    const end=linked?{x:linked.x,y:linked.y}:p.points[p.points.length-1];
     if(p.type==="move"||p.type==="screen"){ const t=p.from&&tok(p.from); if(t){t.x=end.x;t.y=end.y;} }
     else if(p.type==="dribble"){ const t=p.from&&tok(p.from); if(t){t.x=end.x;t.y=end.y;} if(ball){ball.x=end.x;ball.y=end.y;} }
     else if(p.type==="pass"||p.type==="shot"){ if(ball){ball.x=end.x;ball.y=end.y;} }
