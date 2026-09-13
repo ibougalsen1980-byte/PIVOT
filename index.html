@@ -3887,10 +3887,12 @@ function exportSessionOnePDF(){
 }
 function drawBlocks(){
   const c=document.getElementById("blocks");
-  c.innerHTML=T().session.blocks.map((b,i)=>`
+  const hint=T().session.blocks.length?`<div class="hint" style="margin-bottom:8px">Touche un bloc, ou le crayon, pour modifier son titre, sa durée ou ses consignes.</div>`:"";
+  c.innerHTML=hint+T().session.blocks.map((b,i)=>`
     <div class="block-item">
       <div class="num" style="background:var(--panel);border:1px solid var(--line);color:var(--muted)">${i+1}</div>
       <div class="bt" style="cursor:pointer" onclick="editBlock(${i})"><b>${b.title}</b><br><small>${b.cat} · ${b.dur} min · intensité ${b.intensity}${b.points?" · ✎":""}</small></div>
+      <button class="iconbtn" title="Modifier ce bloc" onclick="editBlock(${i})">✎</button>
       ${b.exoId?`<button class="iconbtn" title="Voir la fiche de l'exercice" onclick="exoDetail('${b.exoId}')">📋</button>`:(b.physId!=null?`<button class="iconbtn" title="Voir la fiche" onclick="physDetail(${b.physId})">📋</button>`:"")}
       <button class="iconbtn" onclick="moveBlock(${i},-1)">↑</button>
       <button class="iconbtn" onclick="moveBlock(${i},1)">↓</button>
