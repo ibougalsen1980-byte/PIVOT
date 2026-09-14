@@ -4551,7 +4551,10 @@ function tacScheduleRedraw(){
   tacRafPending=true;
   requestAnimationFrame(()=>{
     tacRafPending=false;
-    if(tacDragDirty){tacDragDirty=false;drawTokens();}
+    // Pendant un glisser, on ne touche plus qu'au jeton déplacé (transform seul, pas de
+    // reconstruction du HTML) : les autres joueurs restent des noeuds DOM intacts et ne
+    // clignotent plus quand on en bouge un seul.
+    if(tacDragDirty){tacDragDirty=false; if(tac.drag) moveTokenDOM(tac.drag); }
     if(tacDrawDirty){tacDrawDirty=false;drawPaths(true);}
   });
 }
@@ -4605,25 +4608,40 @@ function onUp(e){
       if(n===4||n===5) return "center";
       return "forward";
   }
-  function playerFig(x,y,kind,label){
+  // playerFig() dessine désormais la silhouette centrée sur (0,0) : chaque jeton se
+  // positionne ensuite avec un simple transform="translate(x,y)" sur son <g>, ce qui permet
+  // de le déplacer (glisser, animation) en ne touchant qu'un seul attribut, sans reconstruire
+  // ni redécoder l'image à chaque frame. FS règle la taille (88 sur la plaquette principale,
+  // plus petit dans les aperçus d'exercices) ; le badge du numéro est mis à l'échelle avec.
+  function playerFig(kind,label,FS){
+      FS = FS || 88;
       const off=kind==="off";
       const img=PLAYER_IMG[(off?"off_":"def_")+playerPost(label)];
-      const FS=88;
       const w=img.ar>=1?FS:FS*img.ar, h=img.ar>=1?FS/img.ar:FS;
-      const bx=x+w*0.30, by=y+h*0.30;
+      const bx=w*0.30, by=h*0.30;
       const badgeFill=off?"#e8631f":"#1b2735";
-      return `<g>`
-          +`<image href="${img.file}" x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
-        +`<circle cx="${bx}" cy="${by}" r="18" fill="${badgeFill}" stroke="#0b0e12" stroke-width="3"/>`
-        +`<text x="${bx}" y="${by+7}" text-anchor="middle" font-size="22" font-weight="800" fill="#ffffff">${esc(label)}</text>`
-        +`</g>`;
+      const br=FS*0.2045, bsw=FS*0.0341, bfs=FS*0.25, byo=FS*0.0795;
+      return `<image href="${img.file}" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+        +`<circle cx="${bx}" cy="${by}" r="${br}" fill="${badgeFill}" stroke="#0b0e12" stroke-width="${bsw}"/>`
+        +`<text x="${bx}" y="${by+byo}" text-anchor="middle" font-size="${bfs}" font-weight="800" fill="#ffffff">${esc(label)}</text>`;
+  }
+  function tokenTag(t){
+      return t.kind==="ball"
+        ? `<circle cx="0" cy="0" r="9" fill="#e6a700" stroke="#8a5a00" stroke-width="1.5"/><path d="M-9,0 h18 M0,-9 v18" stroke="#8a5a00" stroke-width="1"/>`
+        : playerFig(t.kind,t.label,88);
+  }
+  function tokenMarkupOne(t){
+      return `<g id="tok_${t.id}" transform="translate(${t.x},${t.y})">${tokenTag(t)}</g>`;
+  }
+  // Repositionne un jeton déjà présent dans le DOM sans reconstruire son HTML (donc sans
+  // redécoder son image) : c'est ce qui rend le glisser et la lecture d'animation fluides.
+  function moveTokenDOM(t){
+      const el=document.getElementById("tok_"+t.id);
+      if(el) el.setAttribute("transform",`translate(${t.x},${t.y})`);
+      else drawTokens();
   }
 function tokensMarkup(f){
-  return f.tokens.map(t=>{
-    if(t.kind==="ball") return `<g><circle cx="${t.x}" cy="${t.y}" r="9" fill="#e6a700" stroke="#8a5a00" stroke-width="1.5"/><path d="M${t.x-9},${t.y} h18 M${t.x},${t.y-9} v18" stroke="#8a5a00" stroke-width="1"/></g>`;
-    const col=t.kind==="off"?"#e8631f":"#2f6bd6";
-    return playerFig(t.x,t.y,t.kind,t.label);
-  }).join("");
+  return f.tokens.map(tokenMarkupOne).join("");
 }
 function drawTokens(){
   const layer=document.getElementById("tokensLayer");if(!layer)return;
@@ -4700,20 +4718,22 @@ function playAnim(){
   if(tac.frames.length<2){flash("Ajoute une 2e image pour animer");return;}
   if(tac.playing)return;tac.playing=true;
   const layerP=document.getElementById("pathsLayer");if(layerP)layerP.innerHTML="";
+  const layer=document.getElementById("tokensLayer");
   let seg=0;
   const step=()=>{
     if(seg>=tac.frames.length-1){tac.playing=false;tac.cur=tac.frames.length-1;drawTokens();drawPaths();return;}
     const A=tac.frames[seg],B=tac.frames[seg+1];const dur=900;let t0=null;
+    // Un seul rebuild HTML par étape (pas un par frame d'animation) : ensuite on ne fait
+    // plus que déplacer chaque jeton via son transform, ce qui élimine le clignotement et
+    // les à-coups pendant la lecture.
+    layer.innerHTML=A.tokens.map(tokenMarkupOne).join("");
     const frame=(ts)=>{
       if(!t0)t0=ts;const k=Math.min(1,(ts-t0)/dur);
-      const layer=document.getElementById("tokensLayer");
-      layer.innerHTML=A.tokens.map(a=>{
+      A.tokens.forEach(a=>{
         const b=B.tokens.find(x=>x.id===a.id)||a;
         const x=a.x+(b.x-a.x)*k, y=a.y+(b.y-a.y)*k;
-        if(a.kind==="ball")return `<g><circle cx="${x}" cy="${y}" r="9" fill="var(--ball)" stroke="#b8860b" stroke-width="1.5"/></g>`;
-        const col=a.kind==="off"?"var(--off)":"var(--def)";
-        return playerFig(x,y,a.kind,a.label);
-      }).join("");
+        moveTokenDOM({id:a.id,kind:a.kind,label:a.label,x,y});
+      });
       if(k<1)requestAnimationFrame(frame);else{seg++;setTimeout(step,120);}
     };
     requestAnimationFrame(frame);
@@ -6186,14 +6206,18 @@ function animateSystemFrames(frames,id,capId){
   const tokG=document.getElementById(id+'_tokens'); const cap=capId&&document.getElementById(capId);
   if(!tokG||!frames||!frames.length)return;
   if(sysAnimRaf)cancelAnimationFrame(sysAnimRaf);
-  function drawTok(tokens){ tokG.innerHTML=tokens.map(function(t){
-    if(t.kind==='ball')return '<circle cx="'+t.x+'" cy="'+t.y+'" r="9" fill="#e6a700" stroke="#8a5a00" stroke-width="1.5"/>';
-    const col=t.kind==='off'?'#e8631f':'#2f6bd6';
-    return playerFig(t.x,t.y,t.kind,t.label);
-  }).join(''); }
-  let seg=0,t0=null; const hold=350,move=950;
+  function tokTag(t){
+    return t.kind==='ball'
+      ? '<circle cx="0" cy="0" r="9" fill="#e6a700" stroke="#8a5a00" stroke-width="1.5"/>'
+      : playerFig(t.kind,t.label,88);
+  }
+  // Reconstruit tous les jetons (une fois par étape) puis, pendant l'interpolation, ne fait
+  // plus que déplacer chaque <g> via transform : plus de redécodage d'image à chaque frame.
+  function buildTok(tokens){ tokG.innerHTML=tokens.map(function(t){ return '<g id="'+id+'_tok_'+t.id+'" transform="translate('+t.x+','+t.y+')">'+tokTag(t)+'</g>'; }).join(''); }
+  function moveTok(tokens){ tokens.forEach(function(t){ const el=document.getElementById(id+'_tok_'+t.id); if(el) el.setAttribute('transform','translate('+t.x+','+t.y+')'); else buildTok(tokens); }); }
+  let seg=0,t0=null,curSeg=-1; const hold=350,move=950;
   try{
-    drawTok(frames[0].tokens); if(cap)cap.textContent='Étape 1 sur '+frames.length;
+    buildTok(frames[0].tokens); curSeg=0; if(cap)cap.textContent='Étape 1 sur '+frames.length;
   }catch(err){
     try{ flash("Animation indisponible pour ce système"); }catch(e2){}
     return;
@@ -6202,11 +6226,12 @@ function animateSystemFrames(frames,id,capId){
     try{
       if(!t0)t0=ts; const el=ts-t0;
       const A=frames[seg], B=frames[Math.min(seg+1,frames.length-1)];
-      if(el<hold){ drawTok(A.tokens); }
+      if(seg!==curSeg){ curSeg=seg; buildTok(A.tokens); }
+      if(el<hold){ /* on reste sur la pose A déjà construite */ }
       else{
         const k=Math.min(1,(el-hold)/move);
-        drawTok(A.tokens.map(function(a){ const b=(B.tokens.find(function(x){return x.id===a.id;}))||a; return {kind:a.kind,label:a.label,x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k}; }));
-        if(k>=1){ seg++; if(seg>=frames.length-1){ drawTok(B.tokens); if(cap)cap.textContent='Étape '+frames.length+' sur '+frames.length; sysAnimRaf=null; return; } if(cap)cap.textContent='Étape '+(seg+1)+' sur '+frames.length; t0=ts; }
+        moveTok(A.tokens.map(function(a){ const b=(B.tokens.find(function(x){return x.id===a.id;}))||a; return {id:a.id,kind:a.kind,label:a.label,x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k}; }));
+        if(k>=1){ seg++; if(seg>=frames.length-1){ buildTok(B.tokens); if(cap)cap.textContent='Étape '+frames.length+' sur '+frames.length; sysAnimRaf=null; return; } if(cap)cap.textContent='Étape '+(seg+1)+' sur '+frames.length; t0=ts; }
       }
       sysAnimRaf=requestAnimationFrame(step);
     }catch(err){
@@ -6894,8 +6919,11 @@ function animateExo(e,id){
   const pathsG=document.getElementById(id+'_paths');
   if(!actorsG)return; if(exoAnimRaf)cancelAnimationFrame(exoAnimRaf);
   if(coneG)coneG.innerHTML=(data.cones||[]).map(function(c){return '<polygon points="'+c[0]+','+(c[1]-5)+' '+(c[0]-4)+','+(c[1]+4)+' '+(c[0]+4)+','+(c[1]+4)+'" fill="#ffd23f" opacity=".9"/>';}).join('');
-  function drawActors(pos,flip){ actorsG.innerHTML=data.actors.map(function(a,i){ const p=pos[i]; const x=flip?300-p[0]:p[0]; const col=a.kind==='def'?'#2f6bd6':'#e8631f';
-    return '<g><circle cx="'+x+'" cy="'+p[1]+'" r="13" fill="'+col+'" stroke="#0b0e12" stroke-width="2"/><text x="'+x+'" y="'+(p[1]+4)+'" text-anchor="middle" font-size="11" font-weight="800" fill="'+(a.kind==='def'?'#fff':'#0b0e12')+'">'+a.label+'</text></g>'; }).join(''); }
+  // Mêmes silhouettes 3D que la plaquette tactique (échelle réduite pour ce petit terrain
+  // d'aperçu), construites une fois puis simplement déplacées via transform à chaque frame.
+  function buildActors(pos,flip){ actorsG.innerHTML=data.actors.map(function(a,i){ const p=pos[i]; const x=flip?300-p[0]:p[0];
+    return '<g id="'+id+'_actor_'+i+'" transform="translate('+x+','+p[1]+')">'+playerFig(a.kind,a.label,34)+'</g>'; }).join(''); }
+  function moveActors(pos,flip){ data.actors.forEach(function(a,i){ const p=pos[i]; const x=flip?300-p[0]:p[0]; const el=document.getElementById(id+'_actor_'+i); if(el) el.setAttribute('transform','translate('+x+','+p[1]+')'); else buildActors(pos,flip); }); }
   const phases=data.cap.length; const PH=1100;
   // Les animations de famille et de bibliothèque jouent les deux côtés : passe normale puis passe en miroir.
   const sides=spec?1:2; const totalPhases=phases*sides;
@@ -6912,7 +6940,7 @@ function animateExo(e,id){
   // même façon que la boucle elle-même, plutôt que de laisser passer une exception non gérée.
   try{
     ballEl.setAttribute('opacity',showBall?'1':'0'); swish.setAttribute('opacity','0');
-    drawActors(data.actors.map(function(a){return a.keys[0];}),false);
+    buildActors(data.actors.map(function(a){return a.keys[0];}),false);
     if(showBall){ const b0=data.ball.keys[0]; ballEl.setAttribute('cx',b0[0]); ballEl.setAttribute('cy',b0[1]); }
     if(capEl)capEl.textContent=data.cap[0]; if(stepEl)stepEl.textContent='1';
   }catch(err){
@@ -6927,7 +6955,7 @@ function animateExo(e,id){
     try{
       if(!t0)t0=ts; const el=ts-t0; const gph=Math.floor(el/PH);
       if(gph>=totalPhases){ const lastFlip=(sides>1)&&((Math.floor((totalPhases-1)/phases))%2===1);
-        drawActors(data.actors.map(function(a){return a.keys[Math.min(phases,a.keys.length-1)];}),lastFlip);
+        moveActors(data.actors.map(function(a){return a.keys[Math.min(phases,a.keys.length-1)];}),lastFlip);
         if(pathsG) pathsG.innerHTML='';
         if(data.ballArcLast&&showBall){ ballEl.setAttribute('cx',fx(150,lastFlip)); ballEl.setAttribute('cy',44); swish.setAttribute('opacity','1'); }
         exoAnimRaf=null; return; }
@@ -6935,7 +6963,7 @@ function animateExo(e,id){
       if(gph!==curPh){ curPh=gph; if(capEl)capEl.textContent=data.cap[ph]+(flip?' · autre côté':''); if(stepEl)stepEl.textContent=(ph+1);
         if(pathsG) pathsG.innerHTML=(data.segPaths&&data.segPaths[ph])?data.segPaths[ph].map(function(p){return renderSegPath(p,flip);}).join(''):''; }
       const k=(el-gph*PH)/PH;
-      drawActors(data.actors.map(function(a){ const A=a.keys[Math.min(ph,a.keys.length-1)], B=a.keys[Math.min(ph+1,a.keys.length-1)]; return [A[0]+(B[0]-A[0])*k, A[1]+(B[1]-A[1])*k]; }),flip);
+      moveActors(data.actors.map(function(a){ const A=a.keys[Math.min(ph,a.keys.length-1)], B=a.keys[Math.min(ph+1,a.keys.length-1)]; return [A[0]+(B[0]-A[0])*k, A[1]+(B[1]-A[1])*k]; }),flip);
       if(showBall){ const A=data.ball.keys[Math.min(ph,data.ball.keys.length-1)], B=data.ball.keys[Math.min(ph+1,data.ball.keys.length-1)];
         let bx=A[0]+(B[0]-A[0])*k, by=A[1]+(B[1]-A[1])*k;
         if(data.ballArcLast&&ph===phases-1){ by-=Math.sin(Math.PI*k)*55; if(k>0.9)swish.setAttribute('opacity','1'); }
