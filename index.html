@@ -113,7 +113,8 @@
   .toolbar{display:flex;flex-wrap:nowrap;gap:5px;margin-bottom:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .toolbar::-webkit-scrollbar{display:none}
   .tool{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 9px;font-size:11px;cursor:pointer;font-weight:600;flex:0 0 auto}
-  .tool.icon{padding:8px 11px;font-size:16px;line-height:1;min-width:38px;text-align:center}
+  .tool.icon{padding:6px 8px 5px;font-size:16px;line-height:1;min-width:44px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+  .tool.icon .lbl{font-size:8.5px;font-weight:600;line-height:1;white-space:nowrap}
   .tool.active{background:var(--accent);color:#101317;border-color:var(--accent)}
   .frames{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px}
   .frame-thumb{flex:0 0 auto;width:52px;height:48px;border-radius:8px;border:2px solid var(--line);background:#0c2b17;
@@ -4351,24 +4352,24 @@ function renderTactics(){
     <div class="sub">Dessine à main levée comme sur une plaquette. Choisis ton fond, ta couleur, tes joueurs.</div>
     <div id="tacStage">
     <div class="row" style="margin-bottom:6px"><button id="tacFullBtn" class="btn sm sec" onclick="toggleTacFull()">⛶ Agrandir la plaquette</button></div>
-    <div class="toolbar" id="courtmodes">
-      <button class="tool icon ${tac.court==='half'?'active':''}" data-c="half" title="Demi-terrain">◐</button>
-      <button class="tool icon ${tac.court==='full'?'active':''}" data-c="full" title="Terrain plein">●</button>
-      <button class="tool icon ${tac.court==='blank'?'active':''}" data-c="blank" title="Plaquette vierge">○</button>
-    </div>
-    <div class="toolbar" id="toolbar">
-      <button class="tool icon" data-t="pen" title="Stylo">🖊</button>
-      <button class="tool icon" data-t="select" title="Déplacer">✋</button>
-      <button class="tool icon" data-t="add-off" title="Attaquant">🔴</button>
-      <button class="tool icon" data-t="add-def" title="Défenseur">🔵</button>
-      <button class="tool icon" data-t="add-ball" title="Ballon">🏀</button>
-      <button class="tool icon" data-t="move" title="Course">➜</button>
-      <button class="tool icon" data-t="dribble" title="Dribble">〰</button>
-      <button class="tool icon" data-t="pass" title="Passe">┈</button>
-      <button class="tool icon" data-t="shot" title="Tir">🎯</button>
-      <button class="tool icon" data-t="screen" title="Écran">⊥</button>
-      <button class="tool icon" data-t="erase" title="Gomme">🧽</button>
-    </div>
+        <div class="toolbar" id="courtmodes">
+              <button class="tool icon ${tac.court==='half'?'active':''}" data-c="half" title="Demi-terrain">◐<span class="lbl">Demi</span></button>
+                    <button class="tool icon ${tac.court==='full'?'active':''}" data-c="full" title="Terrain plein">●<span class="lbl">Plein</span></button>
+                          <button class="tool icon ${tac.court==='blank'?'active':''}" data-c="blank" title="Plaquette vierge">○<span class="lbl">Vierge</span></button>
+                              </div>
+                                  <div class="toolbar" id="toolbar">
+                                        <button class="tool icon" data-t="pen" title="Stylo">🖊<span class="lbl">Stylo</span></button>
+                                              <button class="tool icon" data-t="select" title="Déplacer">✋<span class="lbl">Déplacer</span></button>
+                                                    <button class="tool icon" data-t="add-off" title="Attaquant">🔴<span class="lbl">Attaquant</span></button>
+                                                          <button class="tool icon" data-t="add-def" title="Défenseur">🔵<span class="lbl">Défenseur</span></button>
+                                                                <button class="tool icon" data-t="add-ball" title="Ballon">🏀<span class="lbl">Ballon</span></button>
+                                                                      <button class="tool icon" data-t="move" title="Course">➜<span class="lbl">Course</span></button>
+                                                                            <button class="tool icon" data-t="dribble" title="Dribble">〰<span class="lbl">Dribble</span></button>
+                                                                                  <button class="tool icon" data-t="pass" title="Passe">┈<span class="lbl">Passe</span></button>
+                                                                                        <button class="tool icon" data-t="shot" title="Tir">🎯<span class="lbl">Tir</span></button>
+                                                                                              <button class="tool icon" data-t="screen" title="Écran">⊥<span class="lbl">Écran</span></button>
+                                                                                                    <button class="tool icon" data-t="erase" title="Gomme">🧽<span class="lbl">Gomme</span></button>
+                                                                                                        </div>
     <div class="toolbar" id="pencolors" style="align-items:center">
       <span style="font-size:11px;color:var(--muted);margin-right:2px">Couleur</span>
       ${["#ffffff","#e8631f","#ffd23f","#3a86ff","#111111"].map(c=>`<button class="pcolor" data-col="${c}" style="width:26px;height:26px;border-radius:50%;border:2px solid ${tac.penColor===c?'#fff':'rgba(0,0,0,.2)'};background:${c};cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.3)"></button>`).join("")}
