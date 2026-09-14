@@ -4608,14 +4608,14 @@ function onUp(e){
   function playerFig(x,y,kind,label){
       const off=kind==="off";
       const img=PLAYER_IMG[(off?"off_":"def_")+playerPost(label)];
-      const FS=48;
+      const FS=64;
       const w=img.ar>=1?FS:FS*img.ar, h=img.ar>=1?FS/img.ar:FS;
       const bx=x+w*0.30, by=y+h*0.30;
       const badgeFill=off?"#e8631f":"#1b2735";
       return `<g>`
           +`<image href="${img.file}" x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
-        +`<circle cx="${bx}" cy="${by}" r="7.2" fill="${badgeFill}" stroke="#0b0e12" stroke-width="1.2"/>`
-        +`<text x="${bx}" y="${by+3}" text-anchor="middle" font-size="9" font-weight="800" fill="#ffffff">${esc(label)}</text>`
+        +`<circle cx="${bx}" cy="${by}" r="13" fill="${badgeFill}" stroke="#0b0e12" stroke-width="2"/>`
+        +`<text x="${bx}" y="${by+5}" text-anchor="middle" font-size="16" font-weight="800" fill="#ffffff">${esc(label)}</text>`
         +`</g>`;
   }
 function tokensMarkup(f){
