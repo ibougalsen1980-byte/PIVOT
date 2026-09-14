@@ -4608,7 +4608,7 @@ function onUp(e){
   function playerFig(x,y,kind,label){
       const off=kind==="off";
       const img=PLAYER_IMG[(off?"off_":"def_")+playerPost(label)];
-      const FS=36;
+      const FS=48;
       const w=img.ar>=1?FS:FS*img.ar, h=img.ar>=1?FS/img.ar:FS;
       const bx=x+w*0.30, by=y+h*0.30;
       const badgeFill=off?"#e8631f":"#1b2735";
