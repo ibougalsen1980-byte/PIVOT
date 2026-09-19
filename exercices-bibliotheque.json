@@ -4703,18 +4703,18 @@
       "materiel": "1 ballon, deux plots ou deux partenaires",
       "surface": "Demi-terrain",
       "objectif": "Choisir la bonne finition quand deux défenseurs protègent le cercle.",
-      "placement": "Un finisseur, deux obstacles ou aides dans la raquette.",
+      "placement": "Un finisseur, deux partenaires en aide passive dans la raquette au départ.",
       "etapes": [
-        "(4 min) Pénétration, lecture de l'espace entre les deux aides.",
-        "(3 min) Choix, floater par-dessus, contre-pied, ou ressortie.",
-        "(3 min) Alternance des angles d'attaque."
+        "(4 min) Pénétration, lecture de l'espace entre les deux aides passives.",
+        "(3 min) Choix, floater par-dessus, contre-pied, ou ressortie, contact maîtrisé à l'approche du cercle.",
+        "(3 min) Alternance des angles d'attaque, aides actives seulement quand la lecture est sûre."
       ],
-      "consignes": "Lis l'espace tôt, choisis la finition adaptée, protège le ballon.",
+      "consignes": "Lis l'espace tôt, choisis la finition adaptée, protège le ballon. Aides passives par défaut, sans contester le tir à pleine vitesse, contact maîtrisé à l'approche du cercle.",
       "erreurs": "Foncer sans lire, finition forcée.",
       "corrections": "Ralentis à l'entrée de la raquette pour lire les deux aides.",
       "reussite": "La finition choisie correspond à l'espace laissé.",
-      "vEasy": "Aides passives.",
-      "vHard": "Aides actives qui montent au contre.",
+      "vEasy": "Une seule aide, statique.",
+      "vHard": "Aides actives qui montent au contre, seulement une fois le contact maîtrisé en version passive.",
       "postes": "Meneur, Ailier",
       "stats": "Finitions en surnombre défensif",
       "prerequis": [
@@ -6910,7 +6910,7 @@
       "postes": "Tous",
       "stats": "Pénétrations contenues",
       "prerequis": [
-        "e33"
+        "x4"
       ],
       "suivants": [
         "x159"
