@@ -2,11 +2,14 @@
 // Deux rôles : garder l'application consultable sans réseau (exercices, plaquette, effectif déjà chargés),
 // et afficher les notifications poussées (le code d'abonnement existe déjà dans index.html, il ne lui manquait que ce fichier).
 
-const CACHE_NAME = 'pivot-cache-v2';
+const CACHE_NAME = 'pivot-cache-v3';
 // v2 : ajout des deux fichiers de donnees (bibliotheque d'exercices et traductions) a l'app shell,
 // pour qu'un coach qui ouvre l'app hors ligne juste apres l'installation ait quand meme sa bibliotheque,
 // plutot que de dependre d'une premiere visite en ligne reussie.
-const APP_SHELL = ['/', '/index.html', '/manifest.json', '/logo.png', '/exercices-bibliotheque.json', '/exercices-i18n.json'];
+// v3 (20/09/2026) : manifest.json declare deux icones (logo-192.png et logo.png), mais seule logo.png
+// etait mise en cache. Sans reseau, l'icone 192x192 (utilisee par certains systemes pour l'installation
+// et le raccourci) restait indisponible alors que l'app pretendait la fournir.
+const APP_SHELL = ['/', '/index.html', '/manifest.json', '/logo.png', '/logo-192.png', '/exercices-bibliotheque.json', '/exercices-i18n.json'];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

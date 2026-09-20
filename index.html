@@ -825,15 +825,50 @@ function newTeam(name,category,level,players){return {
   };}
 const SEED = {
   profile:{done:false, name:"", years:"", diplomas:[], level:"", category:""},
+  // Champs complets ajoutés le 20/09/2026 : ces 8 exercices "bloc express" du constructeur de séance
+  // avaient un id qui ne correspondait à rien dans allExos(), donc le bouton "voir la fiche complète"
+  // renvoyait silencieusement vers la bibliothèque générale sans jamais montrer la fiche demandée.
   drills:[
-    {id:uid(),title:"Mise en train + appuis",cat:"Échauffement",dur:10,intensity:"Faible"},
-    {id:uid(),title:"Ball handling 2 ballons",cat:"Maniement",dur:12,intensity:"Moyenne"},
-    {id:uid(),title:"Tir en sortie de dribble",cat:"Tir",dur:15,intensity:"Moyenne"},
-    {id:uid(),title:"3 contre 2 transition",cat:"Jeu collectif",dur:15,intensity:"Forte"},
-    {id:uid(),title:"Pick and roll aile",cat:"Jeu collectif",dur:12,intensity:"Moyenne"},
-    {id:uid(),title:"Défense sur homme + aide",cat:"Défense",dur:12,intensity:"Forte"},
-    {id:uid(),title:"Lancers francs sous fatigue",cat:"Tir",dur:8,intensity:"Faible"},
-    {id:uid(),title:"5 contre 5 dirigé",cat:"Situation match",dur:16,intensity:"Forte"},
+    {id:uid(),title:"Mise en train + appuis",cat:"Échauffement",dur:10,intensity:"Faible",age:"Tous",players:"Groupe",
+      objectif:"Élever la température corporelle et réactiver les appuis avant l'entrée dans le vif de la séance.",
+      setup:"Terrain complet, un ballon pour deux.",material:"Ballons, plots pour matérialiser les lignes de course.",
+      steps:["(3 min) Course légère avec changements de direction sur les lignes du terrain.","(4 min) Gammes d'appuis : pas chassés, pas croisés, montées de genoux, talons-fesses.","(3 min) Dribble de contrôle en marchant puis en courant, sans opposition."],
+      keys:"Rester sur l'avant du pied, dos droit, regard relevé.",vEasy:"Rythme réduit, sans ballon sur la première partie.",vHard:"Ajout d'un changement de rythme au signal du coach.",variants:[]},
+    {id:uid(),title:"Ball handling 2 ballons",cat:"Maniement",dur:12,intensity:"Moyenne",age:"Tous",players:"Individuel",
+      objectif:"Développer la dissociation main droite/main gauche et la vision périphérique en conservant le contrôle du ballon.",
+      setup:"Chaque joueur avec deux ballons, en dispersion sur le terrain.",material:"Deux ballons par joueur.",
+      steps:["(4 min) Dribble simultané sur place, hauteur basse.","(4 min) Dribble alterné (un ballon monte quand l'autre descend), sur place puis en déplacement.","(4 min) Mêmes exercices en marchant, regard relevé vers le coach qui montre des doigts à annoncer."],
+      keys:"Ballon sous la main, pas dessus. Ne jamais regarder les ballons.",vEasy:"Un seul ballon, l'autre main derrière le dos.",vHard:"Ajout d'un déplacement latéral pendant le dribble alterné.",variants:[]},
+    {id:uid(),title:"Tir en sortie de dribble",cat:"Tir",dur:15,intensity:"Moyenne",age:"Tous",players:"Binômes",
+      objectif:"Automatiser l'enchaînement dribble d'approche, arrêt et tir en équilibre.",
+      setup:"Un tireur, un passeur/rebondeur par panier, positions variées autour de la raquette.",material:"Ballons, plots pour marquer les postes de départ.",
+      steps:["(5 min) Un dribble puis tir en course, alterner les côtés.","(5 min) Deux à trois dribbles avec changement de main puis tir arrêté.","(5 min) Départ sur passe du coach, prise de dribble et tir, cadence imposée."],
+      keys:"Arrêt équilibré avant le tir, même geste de tir à chaque répétition.",vEasy:"Tir sans opposition, distance réduite.",vHard:"Défenseur passif qui gêne la trajectoire de dribble.",variants:[]},
+    {id:uid(),title:"3 contre 2 transition",cat:"Jeu collectif",dur:15,intensity:"Forte",age:"U13 à Pro",players:"5 minimum",
+      objectif:"Prendre la bonne décision en supériorité numérique lors du repli défensif adverse.",
+      setup:"Demi-terrain, trois attaquants qui partent de la ligne de fond contre deux défenseurs qui replient depuis l'autre panier.",material:"Ballons.",
+      steps:["(5 min) 3 contre 2 sans contrainte, objectif marquer avant que les défenseurs ne soient replacés.","(5 min) Même exercice avec obligation de faire au moins une passe avant le tir.","(5 min) Rotation des rôles, les deux défenseurs deviennent attaquants au tour suivant."],
+      keys:"Écartement large des ailes, ne pas dribbler dans la vitesse de course adverse.",vEasy:"Défenseurs qui démarrent plus loin.",vHard:"Passage à 3 contre 3 avec un défenseur supplémentaire qui rentre en retard.",variants:[]},
+    {id:uid(),title:"Pick and roll aile",cat:"Jeu collectif",dur:12,intensity:"Moyenne",age:"U15 à Pro",players:"Binômes puis 5",
+      objectif:"Maîtriser le timing entre le porteur de balle et le poseur d'écran sur le côté.",
+      setup:"Demi-terrain, un porteur et un intérieur sur l'aile, défenseurs en option.",material:"Ballons, plots pour marquer l'angle de pose.",
+      steps:["(4 min) Répétition du timing sans défense : pose d'écran, appel du porteur, roulade vers le panier.","(4 min) Ajout d'un défenseur passif sur le porteur pour travailler l'utilisation de l'écran.","(4 min) Ajout des deux défenseurs, lecture de la sortie (rouler ou s'écarter)."],
+      keys:"Écran fixe et légal, porteur qui attend le contact avant de partir.",vEasy:"Sans défense, focus sur le timing uniquement.",vHard:"Défense complète avec aide d'un troisième défenseur.",variants:[]},
+    {id:uid(),title:"Défense sur homme + aide",cat:"Défense",dur:12,intensity:"Forte",age:"U13 à Pro",players:"Binômes puis 3",
+      objectif:"Tenir une position défensive individuelle solide puis apporter une aide rapide et lisible.",
+      setup:"Demi-terrain, un attaquant, un défenseur, un troisième joueur en position d'aide.",material:"Ballons.",
+      steps:["(4 min) 1 contre 1 défense fermée, sans aide, l'attaquant cherche à pénétrer.","(4 min) Ajout d'un deuxième défenseur en aide dès que l'attaquant pénètre.","(4 min) Rotation des trois rôles, cadence imposée par le coach."],
+      keys:"Position basse, pas de croisement des appuis, communication vocale avant l'aide.",vEasy:"Attaquant sans dribble, déplacements uniquement.",vHard:"Ajout d'un deuxième attaquant pour forcer un choix de rotation.",variants:[]},
+    {id:uid(),title:"Lancers francs sous fatigue",cat:"Tir",dur:8,intensity:"Faible",age:"Tous",players:"Individuel",
+      objectif:"Reproduire une routine de lancer franc fiable même en état de fatigue, condition proche du match.",
+      setup:"Un tireur par panier disponible.",material:"Ballons, chronomètre.",
+      steps:["(2 min) Sprint court ou gainage pour élever la fréquence cardiaque.","(4 min) Série de lancers francs immédiatement après l'effort, routine identique à chaque tir.","(2 min) Répétition avec enjeu annoncé (nombre à atteindre) pour la charge mentale."],
+      keys:"Garder la même routine gestuelle quel que soit l'état de fatigue.",vEasy:"Effort plus court avant la série.",vHard:"Série chronométrée avec pénalité collective si l'objectif n'est pas atteint.",variants:[]},
+    {id:uid(),title:"5 contre 5 dirigé",cat:"Situation match",dur:16,intensity:"Forte",age:"U15 à Pro",players:"10",
+      objectif:"Transférer en situation de match réelle les principes travaillés plus tôt dans la séance.",
+      setup:"Terrain complet, deux équipes de cinq.",material:"Ballons, chasubles.",
+      steps:["(6 min) Match dirigé avec arrêt du coach pour corriger un point précis travaillé plus tôt.","(6 min) Reprise du jeu en continu, correction limitée aux temps morts.","(4 min) Dernière période à enjeu (score à atteindre) pour la mise sous pression."],
+      keys:"Faire le lien explicite avec le point technique ou tactique travaillé plus tôt dans la séance.",vEasy:"Arrêts de jeu plus fréquents pour corriger.",vHard:"Jeu continu sans interruption, débriefing uniquement à la fin.",variants:[]},
   ],
   plays:[], continuity:{}, consentShare:{},
   teams:[ (function(){const t=newTeam("Mon équipe","","",[]);t.match.opponent="";return t;})() ],
@@ -852,6 +887,18 @@ function migrateDB(){
   if(!DB.continuity) DB.continuity={};
   if(!DB.consentShare) DB.consentShare={};
   if(!DB.drills) DB.drills=JSON.parse(JSON.stringify(SEED.drills));
+  // Complément du 20/09/2026 : les comptes créés avant cette date ont un DB.drills sauvegardé avec
+  // l'ancienne version minimale (sans steps/setup/objectif...). Comme le bloc ci-dessus ne réhydrate
+  // que si DB.drills est totalement absent, on complète ici, id par id, les entrées qui n'ont pas
+  // encore de "steps" avec la version enrichie de SEED.drills, sans toucher aux entrées déjà complètes.
+  else{
+    const seedById={};
+    (SEED.drills||[]).forEach(function(s){ seedById[s.id]=s; });
+    DB.drills=DB.drills.map(function(d){
+      if(d && !d.steps && seedById[d.id]) return JSON.parse(JSON.stringify(seedById[d.id]));
+      return d;
+    });
+  }
   if(!DB.plays) DB.plays=[];
   if(!DB.customDrills) DB.customDrills=[];
   if(!DB.activeTeam) DB.activeTeam=DB.teams[0].id;
@@ -1304,7 +1351,7 @@ const I18N={
     "Abonnement":"Subscription","FAQ":"FAQ","Mentions légales":"Legal notice","Mon profil":"My profile","Verrouiller":"Lock","Se déconnecter":"Sign out","Sauvegarder":"Back up","Restaurer":"Restore","Réinitialiser":"Reset",
     "Présents prévus":"Expected present","Blocs de séance":"Practice blocks","Systèmes créés":"Plays created","Pts dernier match":"Pts last game","Prochaine séance":"Next practice",
     "Effectif":"Roster","Ta licence de coach":"Your coach licence","Ajouter un joueur":"Add a player","Nouveau joueur":"New player","Prénom":"First name","Nom":"Last name","Numéro":"Number","Poste":"Position","Numéro de licence":"Licence number","Ajouter à l'effectif":"Add to roster","Retirer de l'effectif":"Remove from roster","Modifier la fiche":"Edit the card","Enregistrer les modifications":"Save changes",
-    "Constructeur de séance":"Practice builder","Ajouter un bloc":"Add a block","Piocher dans la bibliothèque d'exercices":"Pick from the drill library","Générer par IA":"Generate with AI","Générer une séance":"Generate a practice","Séance équilibrée complète":"Full balanced practice","Vue terrain":"Court view","Démarrer":"Start","Bloc suivant →":"Next block →","Fermer":"Close",
+    "Constructeur de séance":"Practice builder","Ajouter un bloc":"Add a block","Piocher dans la bibliothèque d'exercices":"Pick from the drill library","Générer une séance":"Generate a practice","Séance équilibrée complète":"Full balanced practice","Vue terrain":"Court view","Démarrer":"Start","Bloc suivant →":"Next block →","Fermer":"Close",
     "Match en direct":"Live game","Sur le terrain":"On court","Tir 2 pts":"2pt shot","Tir 3 pts":"3pt shot","Lancer":"Free throw","Rebond":"Rebound","Passe D.":"Assist","Interception":"Steal","Perte":"Turnover","Contre":"Block","Faute":"Foul","Annuler dernière":"Undo last","Saisie éclair":"Quick entry","Valider":"Enter","Box score en direct":"Live box score","Générer le rapport de match":"Generate game report","Télécharger la box score complète (CSV)":"Download full box score (CSV)","Rapport de match":"Game report","OK":"OK",
     "Plaquette tactique":"Play board","Plaquette vierge":"Blank board","Terrain plein":"Full court","Demi-terrain":"Half court","Enregistrer le système":"Save the play","Vider":"Clear",
     "Bibliothèque d'exercices":"Drill library","Créer mon exercice":"Create my drill","Niveau":"Level","Joueurs présents":"Players present","Durée maximale":"Maximum duration","Toutes":"All","Objectif":"Goal","Mise en place":"Setup","Déroulé":"Steps","Points clés":"Key points","Ce que tu dis":"What you say","Erreur à corriger":"Error to fix","Plus facile":"Easier","Plus dur":"Harder","Variantes":"Variations","Ajouter à ma séance":"Add to my practice","Retour à la liste":"Back to the list","Critères de réussite":"Success criteria","Repères":"Markers","Organisation":"Organisation","Enregistrer dans ma bibliothèque":"Save to my library","Supprimer cet exercice":"Delete this drill","Titre":"Title","Catégorie":"Category","Durée (min)":"Duration (min)","Tranche d'âge":"Age range",
@@ -1316,7 +1363,8 @@ const I18N={
     "Ton avis sur PIVOT":"Your feedback on PIVOT","Envoyer mon avis":"Send my feedback",
     "Préparation physique":"Physical preparation","Ajouter à la séance":"Add to practice","Santé et prévention":"Health and prevention",
     "Séance solo du joueur":"Player solo session","Thème travaillé":"Topic worked","Détail de la séance":"Session detail","Nouvelle série de tir":"New shooting set","Tirs réussis":"Made shots","Tirs tentés":"Attempted shots","Enregistrer la série":"Save the set","Enregistrer la série de tir":"Save the shooting set",
-    "Charger":"Load","Contact":"Contact","Éditeur":"Publisher"
+    "Charger":"Load","Contact":"Contact","Éditeur":"Publisher",
+    "Deux minutes pour nous aider à progresser":"Two minutes to help us improve","Ta note":"Your rating","(obligatoire)":"(required)","Touche une étoile pour noter":"Tap a star to rate","Choisis d'abord une note.":"Pick a rating first.","Ton commentaire ou ta critique":"Your comment or feedback","Ce qui te plaît, ce qui manque, ce qu'on peut améliorer...":"What you like, what's missing, what we can improve...","Ton nom ou ton équipe":"Your name or your team","(facultatif)":"(optional)","Ex : Coach Ibou, U15 Filles":"E.g. Coach Ibou, U15 Girls","Merci pour ton retour":"Thanks for your feedback","Ton avis a bien été envoyé. Chaque remarque aide à rendre PIVOT plus utile sur le terrain.":"Your feedback has been sent. Every comment helps make PIVOT more useful on court.","Tes réponses restent confidentielles.":"Your answers stay confidential."
   },
   es:{
     "Accueil":"Inicio","Effectif":"Plantel","Séance":"Sesión","Match":"Partido","Tactique":"Jugadas","Posture":"Actitud","Physique":"Físico","Santé":"Salud","Références":"Biblioteca",
@@ -1328,7 +1376,7 @@ const I18N={
     "Abonnement":"Suscripción","FAQ":"Preguntas","Mentions légales":"Aviso legal","Mon profil":"Mi perfil","Verrouiller":"Bloquear","Se déconnecter":"Cerrar sesión","Sauvegarder":"Guardar copia","Restaurer":"Restaurar","Réinitialiser":"Restablecer",
     "Présents prévus":"Presentes previstos","Blocs de séance":"Bloques de sesión","Systèmes créés":"Jugadas creadas","Pts dernier match":"Pts último partido","Prochaine séance":"Próxima sesión",
     "Ta licence de coach":"Tu licencia de entrenador","Ajouter un joueur":"Añadir jugador","Nouveau joueur":"Nuevo jugador","Prénom":"Nombre","Nom":"Apellido","Numéro":"Número","Poste":"Posición","Numéro de licence":"Número de licencia","Ajouter à l'effectif":"Añadir al plantel","Retirer de l'effectif":"Quitar del plantel","Modifier la fiche":"Editar la ficha","Enregistrer les modifications":"Guardar cambios",
-    "Constructeur de séance":"Constructor de sesión","Ajouter un bloc":"Añadir un bloque","Piocher dans la bibliothèque d'exercices":"Elegir de la biblioteca","Générer par IA":"Generar con IA","Générer une séance":"Generar una sesión","Séance équilibrée complète":"Sesión equilibrada completa","Vue terrain":"Vista de cancha","Démarrer":"Empezar","Bloc suivant →":"Bloque siguiente →","Fermer":"Cerrar",
+    "Constructeur de séance":"Constructor de sesión","Ajouter un bloc":"Añadir un bloque","Piocher dans la bibliothèque d'exercices":"Elegir de la biblioteca","Générer une séance":"Generar una sesión","Séance équilibrée complète":"Sesión equilibrada completa","Vue terrain":"Vista de cancha","Démarrer":"Empezar","Bloc suivant →":"Bloque siguiente →","Fermer":"Cerrar",
     "Match en direct":"Partido en vivo","Sur le terrain":"En cancha","Tir 2 pts":"Tiro 2 pts","Tir 3 pts":"Tiro 3 pts","Lancer":"Tiro libre","Rebond":"Rebote","Passe D.":"Asistencia","Interception":"Robo","Perte":"Pérdida","Contre":"Tapón","Faute":"Falta","Annuler dernière":"Deshacer última","Saisie éclair":"Registro rápido","Valider":"Aceptar","Box score en direct":"Estadísticas en vivo","Générer le rapport de match":"Generar informe del partido","Télécharger la box score complète (CSV)":"Descargar estadísticas completas (CSV)","Rapport de match":"Informe del partido","OK":"OK",
     "Plaquette tactique":"Pizarra táctica","Plaquette vierge":"Pizarra en blanco","Terrain plein":"Cancha completa","Demi-terrain":"Media cancha","Enregistrer le système":"Guardar la jugada","Vider":"Vaciar",
     "Bibliothèque d'exercices":"Biblioteca de ejercicios","Créer mon exercice":"Crear mi ejercicio","Niveau":"Nivel","Joueurs présents":"Jugadores presentes","Durée maximale":"Duración máxima","Toutes":"Todas","Objectif":"Objetivo","Mise en place":"Disposición","Déroulé":"Desarrollo","Points clés":"Puntos clave","Ce que tu dis":"Lo que dices","Erreur à corriger":"Error a corregir","Plus facile":"Más fácil","Plus dur":"Más difícil","Variantes":"Variantes","Ajouter à ma séance":"Añadir a mi sesión","Retour à la liste":"Volver a la lista","Critères de réussite":"Criterios de éxito","Repères":"Referencias","Organisation":"Organización","Enregistrer dans ma bibliothèque":"Guardar en mi biblioteca","Supprimer cet exercice":"Eliminar este ejercicio","Titre":"Título","Catégorie":"Categoría","Durée (min)":"Duración (min)","Tranche d'âge":"Franja de edad",
@@ -1340,7 +1388,8 @@ const I18N={
     "Ton avis sur PIVOT":"Tu opinión sobre PIVOT","Envoyer mon avis":"Enviar mi opinión",
     "Préparation physique":"Preparación física","Ajouter à la séance":"Añadir a la sesión","Santé et prévention":"Salud y prevención",
     "Séance solo du joueur":"Sesión individual del jugador","Thème travaillé":"Tema trabajado","Détail de la séance":"Detalle de la sesión","Nouvelle série de tir":"Nueva serie de tiro","Tirs réussis":"Tiros anotados","Tirs tentés":"Tiros intentados","Enregistrer la série":"Guardar la serie",
-    "Charger":"Cargar","Contact":"Contacto","Éditeur":"Editor"
+    "Charger":"Cargar","Contact":"Contacto","Éditeur":"Editor",
+    "Deux minutes pour nous aider à progresser":"Dos minutos para ayudarnos a mejorar","Ta note":"Tu nota","(obligatoire)":"(obligatorio)","Touche une étoile pour noter":"Toca una estrella para puntuar","Choisis d'abord une note.":"Elige primero una nota.","Ton commentaire ou ta critique":"Tu comentario o crítica","Ce qui te plaît, ce qui manque, ce qu'on peut améliorer...":"Lo que te gusta, lo que falta, lo que podemos mejorar...","Ton nom ou ton équipe":"Tu nombre o tu equipo","(facultatif)":"(opcional)","Ex : Coach Ibou, U15 Filles":"Ej: Coach Ibou, U15 Femenino","Merci pour ton retour":"Gracias por tu opinión","Ton avis a bien été envoyé. Chaque remarque aide à rendre PIVOT plus utile sur le terrain.":"Tu opinión se ha enviado. Cada comentario ayuda a que PIVOT sea más útil en la cancha.","Tes réponses restent confidentielles.":"Tus respuestas siguen siendo confidenciales."
   },
   pt:{
     "Accueil":"Início","Effectif":"Elenco","Séance":"Treino","Match":"Jogo","Tactique":"Jogadas","Posture":"Postura","Physique":"Físico","Santé":"Saúde","Références":"Biblioteca",
@@ -1352,7 +1401,7 @@ const I18N={
     "Abonnement":"Assinatura","FAQ":"Perguntas","Mentions légales":"Aviso legal","Mon profil":"Meu perfil","Verrouiller":"Bloquear","Se déconnecter":"Sair","Sauvegarder":"Fazer backup","Restaurer":"Restaurar","Réinitialiser":"Redefinir",
     "Présents prévus":"Presentes previstos","Blocs de séance":"Blocos de treino","Systèmes créés":"Jogadas criadas","Pts dernier match":"Pts último jogo","Prochaine séance":"Próximo treino",
     "Ta licence de coach":"A tua licença de treinador","Ajouter un joueur":"Adicionar jogador","Nouveau joueur":"Novo jogador","Prénom":"Nome","Nom":"Apelido","Numéro":"Número","Poste":"Posição","Numéro de licence":"Número de licença","Ajouter à l'effectif":"Adicionar ao elenco","Retirer de l'effectif":"Remover do elenco","Modifier la fiche":"Editar a ficha","Enregistrer les modifications":"Guardar alterações",
-    "Constructeur de séance":"Construtor de treino","Ajouter un bloc":"Adicionar um bloco","Piocher dans la bibliothèque d'exercices":"Escolher da biblioteca","Générer par IA":"Gerar com IA","Générer une séance":"Gerar um treino","Séance équilibrée complète":"Treino equilibrado completo","Vue terrain":"Vista da quadra","Démarrer":"Começar","Bloc suivant →":"Bloco seguinte →","Fermer":"Fechar",
+    "Constructeur de séance":"Construtor de treino","Ajouter un bloc":"Adicionar um bloco","Piocher dans la bibliothèque d'exercices":"Escolher da biblioteca","Générer une séance":"Gerar um treino","Séance équilibrée complète":"Treino equilibrado completo","Vue terrain":"Vista da quadra","Démarrer":"Começar","Bloc suivant →":"Bloco seguinte →","Fermer":"Fechar",
     "Match en direct":"Jogo ao vivo","Sur le terrain":"Em quadra","Tir 2 pts":"Arremesso 2 pts","Tir 3 pts":"Arremesso 3 pts","Lancer":"Lance livre","Rebond":"Ressalto","Passe D.":"Assistência","Interception":"Roubo","Perte":"Perda","Contre":"Toco","Faute":"Falta","Annuler dernière":"Desfazer última","Saisie éclair":"Registo rápido","Valider":"Confirmar","Box score en direct":"Estatísticas ao vivo","Générer le rapport de match":"Gerar relatório do jogo","Télécharger la box score complète (CSV)":"Baixar estatísticas completas (CSV)","Rapport de match":"Relatório do jogo","OK":"OK",
     "Plaquette tactique":"Quadro tático","Plaquette vierge":"Quadro em branco","Terrain plein":"Quadra inteira","Demi-terrain":"Meia quadra","Enregistrer le système":"Guardar a jogada","Vider":"Limpar",
     "Bibliothèque d'exercices":"Biblioteca de exercícios","Créer mon exercice":"Criar o meu exercício","Niveau":"Nível","Joueurs présents":"Jogadores presentes","Durée maximale":"Duração máxima","Toutes":"Todas","Objectif":"Objetivo","Mise en place":"Disposição","Déroulé":"Desenvolvimento","Points clés":"Pontos-chave","Ce que tu dis":"O que dizes","Erreur à corriger":"Erro a corrigir","Plus facile":"Mais fácil","Plus dur":"Mais difícil","Variantes":"Variantes","Ajouter à ma séance":"Adicionar ao meu treino","Retour à la liste":"Voltar à lista","Critères de réussite":"Critérios de êxito","Repères":"Referências","Organisation":"Organização","Enregistrer dans ma bibliothèque":"Guardar na minha biblioteca","Supprimer cet exercice":"Eliminar este exercício","Titre":"Título","Catégorie":"Categoria","Durée (min)":"Duração (min)","Tranche d'âge":"Faixa etária",
@@ -1364,7 +1413,8 @@ const I18N={
     "Ton avis sur PIVOT":"A tua opinião sobre o PIVOT","Envoyer mon avis":"Enviar a minha opinião",
     "Préparation physique":"Preparação física","Ajouter à la séance":"Adicionar ao treino","Santé et prévention":"Saúde e prevenção",
     "Séance solo du joueur":"Treino individual do jogador","Thème travaillé":"Tema trabalhado","Détail de la séance":"Detalhe do treino","Nouvelle série de tir":"Nova série de arremessos","Tirs réussis":"Arremessos convertidos","Tirs tentés":"Arremessos tentados","Enregistrer la série":"Guardar a série",
-    "Charger":"Carregar","Contact":"Contacto","Éditeur":"Editor"
+    "Charger":"Carregar","Contact":"Contacto","Éditeur":"Editor",
+    "Deux minutes pour nous aider à progresser":"Dois minutos para nos ajudar a melhorar","Ta note":"A tua nota","(obligatoire)":"(obrigatório)","Touche une étoile pour noter":"Toca numa estrela para avaliar","Choisis d'abord une note.":"Escolhe primeiro uma nota.","Ton commentaire ou ta critique":"O teu comentário ou crítica","Ce qui te plaît, ce qui manque, ce qu'on peut améliorer...":"O que gostas, o que falta, o que podemos melhorar...","Ton nom ou ton équipe":"O teu nome ou a tua equipa","(facultatif)":"(opcional)","Ex : Coach Ibou, U15 Filles":"Ex: Coach Ibou, U15 Feminino","Merci pour ton retour":"Obrigado pelo teu feedback","Ton avis a bien été envoyé. Chaque remarque aide à rendre PIVOT plus utile sur le terrain.":"A tua opinião foi enviada. Cada comentário ajuda a tornar o PIVOT mais útil em quadra.","Tes réponses restent confidentielles.":"As tuas respostas continuam confidenciais."
   }
 };
 function i18nPhrase(t,d){
@@ -1377,7 +1427,9 @@ function i18nPhrase(t,d){
 function applyI18n(root){
   const l=getLang(); if(!root) return;
   const d=I18N[l]||null;
-  const sel="button, h2, h3, .sub, .fld, .lbl, .lbl2, .lbl3, .tag, .badge, .chip, .hint, .eyebrow, .big, .small, a.reset, a, option, th, label, .view-title, .pname, .price, .offer";
+  // p, h4, .pv-rtxt, .pv-err ajoutés le 20/09/2026 : nécessaires pour traduire le widget "Ton avis
+  // sur PIVOT" (#pvAvisOver), qui restait toujours en français quelle que soit la langue choisie.
+  const sel="button, h2, h3, h4, p, .sub, .fld, .lbl, .lbl2, .lbl3, .tag, .badge, .chip, .hint, .eyebrow, .big, .small, a.reset, a, option, th, label, .view-title, .pname, .price, .offer, .pv-rtxt, .pv-err";
   root.querySelectorAll(sel).forEach(function(el){
     if(el.classList && el.classList.contains('mi')) return;      // icône Material, ne pas traduire
     if(el.children.length!==0) return;
@@ -2859,7 +2911,9 @@ function openPosture(){
 /* ============ ASSISTANT IA (conversation) ============ */
 let aiLevel=(DB.profile && DB.profile.aiLevel) ? DB.profile.aiLevel : 'pro';
 let chatLog=[{who:"ai",txt:"Salut Coach. Je connais ton effectif, tes séances et tes matchs, et je m'adapte à ton niveau. Dis-moi ce dont tu as besoin, tactique, séance, préparation mentale d'un joueur."}];
-function setLevel(l){aiLevel=l;var b=document.getElementById('lvlBeg'),p=document.getElementById('lvlPro');if(b)b.classList.toggle('active',l==='beg');if(p)p.classList.toggle('active',l==='pro');flash(l==='beg'?'Réponses niveau débutant':'Réponses niveau pro');}
+// Sauvegarde ajoutée le 20/09/2026 : le choix débutant/pro ne vivait qu'en mémoire (variable aiLevel),
+// donc il revenait sur "pro" par défaut à chaque rechargement de l'app, même juste après l'avoir changé.
+function setLevel(l){aiLevel=l;if(DB.profile){DB.profile.aiLevel=l;save();}var b=document.getElementById('lvlBeg'),p=document.getElementById('lvlPro');if(b)b.classList.toggle('active',l==='beg');if(p)p.classList.toggle('active',l==='pro');flash(l==='beg'?'Réponses niveau débutant':'Réponses niveau pro');}
 function aiChat(){
   openModal(`
     <h3>✨ Assistant IA basket</h3>
@@ -2899,7 +2953,7 @@ function rosterInfo(){
   return {total:ps.length, present:present, postes:postes};
 }
 /* Contexte PIVOT pour l'IA : ses vrais exercices et la mémoire des séances. */
-function _exoByTitle(t){ t=(t||"").toLowerCase(); return allExos().find(function(e){ return (e.titre||"").toLowerCase()===t; }); }
+function _exoByTitle(t){ t=(t||"").toLowerCase(); return allExos().find(function(e){ return (e.title||"").toLowerCase()===t; }); }
 function aiHistoryContext(){
   const parts=[]; const cur=T().session;
   if(cur&&cur.blocks&&cur.blocks.length) parts.push("en cours « "+(cur.title||"")+" » : "+cur.blocks.map(b=>b.title).join(", "));
@@ -2912,9 +2966,9 @@ function aiHistoryContext(){
 function aiCandidates(query,max){
   const cat=teamAgeCat(); const th=detectTheme((query||"").toLowerCase());
   const pool=allExos().filter(function(e){ return exoFitsAge(e,cat); });
-  const match=function(e){ if(!th) return false; return e.cat===th.cat || (e.theme&&th.re.test(String(e.theme).toLowerCase())) || th.re.test((e.titre||"").toLowerCase()); };
+  const match=function(e){ if(!th) return false; return e.cat===th.cat || (e.theme&&th.re.test(String(e.theme).toLowerCase())) || th.re.test((e.title||"").toLowerCase()); };
   const list=pool.filter(match).concat(pool.filter(function(e){ return !match(e); })).slice(0,max||12);
-  return list.map(function(e){ return "- "+e.titre+" ("+e.cat+(e.theme?(", "+e.theme):"")+", "+(e.age||"")+", "+(e.dur||"?")+" min, intensité "+(e.intensite||"")+") : "+String(e.objectif||"").slice(0,90); }).join("\n");
+  return list.map(function(e){ return "- "+e.title+" ("+e.cat+(e.theme?(", "+e.theme):"")+", "+(e.age||"")+", "+(e.dur||"?")+" min, intensité "+(e.intensity||"")+") : "+String(e.objectif||"").slice(0,90); }).join("\n");
 }
 async function realAI(q){
   const ri=rosterInfo(), p=DB.profile||{};
@@ -2925,6 +2979,10 @@ async function realAI(q){
       team:{name:T().name, category:T().category, level:T().level, opponent:T().match.opponent,
         players:ri.total, present:ri.present, postes:ri.postes},
       coach:{nom:p.name||'', experience:p.years||'', diplomes:(p.diplomas||[]).join(', '), niveau:p.level||''}})});
+  // Distinction ajoutée le 20/09/2026 : avant, un quota dépassé (429) déclenchait exactement la même
+  // erreur générique qu'une vraie panne, et le coach recevait une réponse locale de secours sans
+  // jamais savoir que ce n'était pas l'IA qui avait répondu.
+  if(r.status===429) throw new Error('rate_limit');
   if(!r.ok) throw new Error('api');
   const d=await r.json();
   if(!d||!d.reply) throw new Error('reply');
@@ -3137,7 +3195,14 @@ async function askAI(q){
     }
   }catch(e){
     await new Promise(r=>setTimeout(r,300));
-    chatLog[i].txt=aiReply(q);
+    // Transparence ajoutée le 20/09/2026 : la bascule vers la réponse locale (mots-clés, sans IA)
+    // était invisible pour le coach, qui pouvait croire que Claude avait répondu alors que non.
+    // Un quota dépassé (429) est désormais annoncé clairement plutôt que masqué par ce repli silencieux.
+    if(e && e.message==='rate_limit'){
+      chatLog[i].txt="<span style='color:#c0392b'>Trop de questions envoyées à l'IA en peu de temps, réessaie dans quelques minutes.</span> En attendant, voici une réponse à partir des repères de l'app :<br><br>"+aiReply(q);
+    } else {
+      chatLog[i].txt="<span class='muted' style='font-size:11px'>Réponse locale, l'IA n'a pas pu être jointe.</span><br><br>"+aiReply(q);
+    }
     drawChat();
   }
 }
@@ -3732,7 +3797,10 @@ function renderSession(){
     <button class="btn sec block" style="margin-bottom:8px" onclick="openResources()">📚 Piocher dans la bibliothèque d'exercices</button>
     <div class="row between" style="margin-bottom:10px">
       <button class="btn sm sec" onclick="addBlockModal()">⚡ Bloc express</button>
-      <button class="btn sm sec" onclick="sessionThemeModal()">✨ Générer par IA</button>
+      <!-- Libellé corrigé le 20/09/2026 : ce bouton lance un algorithme de règles (thème -> progression
+           geste simple vers match), aucun appel à une IA n'a lieu ici. L'ancien texte "Générer par IA"
+           annonçait une fonction qui n'existe pas dans ce parcours. -->
+      <button class="btn sm sec" onclick="sessionThemeModal()">✨ Générer une séance</button>
       <button class="btn sm ghost" onclick="terrainView()">▶ Vue terrain</button>
     </div>
     <div id="blocks"></div>
@@ -5476,7 +5544,10 @@ function exoLevel(e){
   return "Intermédiaire";
 }
 function levelColor(l){ return l==="Avancé"?"#d64545":l==="Intermédiaire"?"#c98a12":l==="Débutant"?"#1a9e6a":l==="Perso"?"#e8631f":"#6a7178"; }
-function allExos(){ return EXO.concat(LIB_EXOS).concat(DB.customDrills||[]); }
+// DB.drills ajouté le 20/09/2026 : ce sont les exercices "bloc express" du constructeur de séance
+// (addBlock). Leurs id n'étaient reliés à rien ici, donc "voir la fiche complète" redirigeait
+// silencieusement vers la bibliothèque générale au lieu d'afficher la fiche demandée.
+function allExos(){ return EXO.concat(LIB_EXOS).concat(DB.drills||[]).concat(DB.customDrills||[]); }
 function themesForCat(cat){
   if(cat==="Tous") return [];
   const seen={};
@@ -5556,6 +5627,13 @@ function createExoModal(){
       <div><label class="fld">Tranche d'âge</label><input id="cx_age" placeholder="Ex : U13 à Senior"></div>
       <div><label class="fld">Niveau</label><select id="cx_niveau">${EXO_LEVELS.filter(l=>l!=="Tous").map(l=>`<option ${l==="Intermédiaire"?"selected":""}>${l}</option>`).join("")}</select></div>
     </div>
+    <!-- Champ ajouté le 20/09/2026 : sans nombre de joueurs, le filtre "joueurs présents" de la
+         recherche d'exercices ne pouvait jamais s'appliquer à un exercice perso. Laissé vide, il
+         reste ignoré par ce filtre exactement comme avant, aucun exercice existant n'est modifié. -->
+    <div class="grid2" style="margin-top:8px">
+      <div><label class="fld">Joueurs min</label><input id="cx_jmin" type="number" placeholder="Ex : 4"></div>
+      <div><label class="fld">Joueurs max</label><input id="cx_jmax" type="number" placeholder="Ex : 10"></div>
+    </div>
     <label class="fld" style="margin-top:8px">Objectif</label><input id="cx_obj" placeholder="Ce que l'exercice développe">
     <label class="fld" style="margin-top:8px">Mise en place</label><textarea id="cx_setup" placeholder="Disposition, matériel, nombre de joueurs"></textarea>
     <label class="fld" style="margin-top:8px">🔄 Organisation du groupe</label><input id="cx_orga" placeholder="Comment répartir les joueurs, éviter les temps d'attente">
@@ -5573,8 +5651,12 @@ function saveCustomExo(){
   const title=val("cx_title"); if(!title){ flash("Donne un titre à l'exercice"); return; }
   const stepsRaw=document.getElementById("cx_steps"); const setupRaw=document.getElementById("cx_setup");
   const steps=((stepsRaw&&stepsRaw.value)||"").split("\n").map(s=>s.trim()).filter(Boolean);
+  // joueursMin/joueursMax ajoutés le 20/09/2026 : seuls des champs remplis par le coach lui-même,
+  // jamais une valeur inventée, sinon on ne les fixe pas et l'exercice reste "Groupe" comme avant.
+  const jmin=parseInt(val("cx_jmin"))||0, jmax=parseInt(val("cx_jmax"))||0;
+  const playersLabel = (!jmin && !jmax) ? "Groupe" : (jmin===jmax ? (jmin+" joueur"+(jmin>1?"s":"")) : (jmin+" à "+jmax+" joueurs"));
   const e={ id:"cx"+uid(), custom:true, title, cat:val("cx_cat")||"Situation", niveau:val("cx_niveau")||"Intermédiaire",
-    age:val("cx_age")||"Tous", players:"Groupe", dur:parseInt(val("cx_dur"))||10, intensity:"Moyenne",
+    age:val("cx_age")||"Tous", players:playersLabel, joueursMin:jmin, joueursMax:jmax, dur:parseInt(val("cx_dur"))||10, intensity:"Moyenne",
     material:"Au choix", objectif:val("cx_obj")||"", setup:(setupRaw&&setupRaw.value.trim())||"", orga:val("cx_orga")||"", steps:steps.length?steps:["À préciser"],
     say:val("cx_say")||"", error:val("cx_error")||"", keys:val("cx_keys")||"", vEasy:"", vHard:"" };
   DB.customDrills.push(e); save(); if(typeof sfx==="function")sfx("ok"); openResources(); flash("Exercice enregistré dans ta bibliothèque");
@@ -7283,7 +7365,9 @@ if(_recoveryError){ try{ history.replaceState(null,"",location.pathname+location
     s.addEventListener('click',function(){ setR(v); }); });
   document.getElementById('pvStars').addEventListener('mouseleave',function(){ paint(rating); });
 
-  function open(){ over.classList.add('on'); }
+  // applyI18n ajouté le 20/09/2026 : ce widget vit hors de #app, donc le passage de langue (setLang)
+  // ne le traduisait jamais. On le traduit à l'ouverture, avec la langue choisie à cet instant.
+  function open(){ try{ if(typeof applyI18n==="function") applyI18n(over); }catch(e){} over.classList.add('on'); }
   function close(){ over.classList.remove('on'); }
   btn.addEventListener('click',open);
   document.getElementById('pvClose').addEventListener('click',close);
