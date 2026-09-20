@@ -1018,7 +1018,13 @@ if(supa){
   });
 }
 /* ===== Notifications poussées (Web Push) ===== */
-const VAPID_PUBLIC="BKOopq1V8QXCcWoUFrb7Nux186JZq0V12J9xDQW9Pn8NY2m6kBzWJpTDHD0K_n72O_-791y3n--vyQMDMFSknzM";
+// Clé remplacée le 2026-09-20 : la fonction serveur qui envoie réellement les notifications
+// (/api/notify) n'a jamais existé jusqu'ici, donc la clé privée correspondant à l'ancienne clé
+// publique ci-dessous n'a jamais été configurée nulle part et est irrécupérable. Nouvelle paire
+// VAPID générée pour aller avec la fonction netlify/functions/notify.js. Conséquence concrète :
+// un coach qui avait déjà activé les notifications avant cette date doit les désactiver puis les
+// réactiver une fois pour resouscrire avec la nouvelle clé, sinon ses envois resteront muets.
+const VAPID_PUBLIC="BPGjk_8HIDY8XTo_0W-Q8XFfOc-Ka4WqSwdas1_BrcsA5-DpaAlo9hRyYeU4z_ezZUZEhHl3DmMWe1nukYrFIZ8";
 const ADMIN_EMAIL="ibougalsen1980@gmail.com";
 function notifSupported(){ return ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window); }
 function _urlB64ToU8(b64){

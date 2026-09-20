@@ -27,6 +27,15 @@
   status = 200
   force = true
 
+# Diffusion des notifications push (index.html appelle fetch('/api/notify') depuis "Diffuser une
+# notification" dans les réglages admin), ajoutée le 2026-09-20 : cette adresse n'avait jamais eu de
+# redirection ni de fonction serveur, d'où l'erreur 404 au moment de l'envoi.
+[[redirects]]
+  from = "/api/notify"
+  to = "/.netlify/functions/notify"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/sw.js"
   [headers.values]

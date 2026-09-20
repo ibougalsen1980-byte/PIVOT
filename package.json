@@ -5,5 +5,8 @@
   "description": "PIVOT, application coach de basket avec assistant IA Claude",
   "engines": {
     "node": "18"
+  },
+  "dependencies": {
+    "web-push": "^3.6.7"
   }
 }
