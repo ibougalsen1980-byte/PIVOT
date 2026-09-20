@@ -61,6 +61,7 @@ exports.handler = async (event) => {
     const message = (body.message || '').toString().slice(0, 4000);
     const level = body.level === 'beg' ? 'debutant' : 'professionnel';
     const team = body.team || {};
+    const coach = body.coach || {};
 
     if (!message) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'message vide' }) };
@@ -83,7 +84,19 @@ exports.handler = async (event) => {
       "Sujet sensible : si un mal-être dépasse la performance, surtout chez un mineur, oriente vers un adulte de confiance et un professionnel, et rappelle qu'en cas de danger on protège et on alerte.",
       "N'utilise pas de tirets cadratins. Reste direct et humain.",
       "Contexte de l'équipe : nom " + (team.name || 'inconnu') + ", catégorie " + (team.category || 'inconnue') + ", niveau " + (team.level || 'inconnu') + ", effectif " + (team.players || 0) + " joueurs, prochain adversaire " + (team.opponent || 'inconnu') + "."
-    ].join('\n');
+    ];
+    // Profil du coach ajouté le 20/09/2026 : le navigateur envoyait déjà ce profil (body.coach) à
+    // chaque question, mais cette fonction ne le lisait jamais, donc l'IA ne savait rien de
+    // l'expérience ou des diplômes du coach qui pose la question, alors que l'app le lui promettait.
+    if (coach.nom || coach.experience || coach.diplomes || coach.niveau) {
+      const parts = [];
+      if (coach.nom) parts.push("nom " + coach.nom);
+      if (coach.experience) parts.push("expérience " + coach.experience + " ans");
+      if (coach.diplomes) parts.push("diplômes " + coach.diplomes);
+      if (coach.niveau) parts.push("niveau déclaré dans l'app " + coach.niveau);
+      system.push("Profil du coach qui pose la question : " + parts.join(', ') + ".");
+    }
+    const systemPrompt = system.join('\n');
 
     const model = process.env.PIVOT_MODEL || 'claude-haiku-4-5-20251001';
 
@@ -97,7 +110,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         model: model,
         max_tokens: 700,
-        system: system,
+        system: systemPrompt,
         messages: [{ role: 'user', content: message }]
       })
     });
