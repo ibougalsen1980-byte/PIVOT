@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" id="pvViewport" content="width=device-width, initial-scale=1.0">
 <title>PIVOT, l'assistant du coach de basket</title>
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="logo.png">
@@ -1469,6 +1469,15 @@ let view = "home";
 const main = document.getElementById("main");
 // Bascule vers un onglet principal en poussant un état d'historique, pour que le bouton
 // retour (Android/TWA compris) revienne à l'onglet précédent au lieu de fermer l'application.
+// Bloque le pincement uniquement sur Match et Tactique (dessin/déplacement à deux doigts sur le terrain) ;
+// le zoom tactile reste disponible partout ailleurs pour la lisibilité des consignes.
+function pvApplyZoomLock(){
+  const vp=document.getElementById("pvViewport"); if(!vp) return;
+  const lock = (view==="match" || view==="tactics");
+  vp.setAttribute("content", lock
+    ? "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    : "width=device-width, initial-scale=1.0");
+}
 function pvGoTab(tab, opts){
   opts = opts || {};
   const prev = view;
@@ -1687,6 +1696,7 @@ function render(){
   if(!_welcomed){ _welcomed=true; setTimeout(function(){ flash("Bienvenue "+coachName()+", prêt pour l'entraînement ?"); },350); }
   main.scrollTop=0;
   main.classList.remove("enter"); void main.offsetWidth; main.classList.add("enter");
+  pvApplyZoomLock();
   if(view==="home") renderHome();
   else if(view==="roster") renderRoster();
   else if(view==="session") renderSession();
