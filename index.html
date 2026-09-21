@@ -508,15 +508,13 @@
   <button id="aiFab" onclick="aiChat()" title="Assistant IA"><span class="mi">auto_awesome</span></button>
   </div>
   <nav class="tabs" id="tabs">
-    <button data-v="home" class="active"><span class="ic mi">home</span><span class="lbl">Accueil</span></button>
-    <button data-v="roster"><span class="ic mi">groups</span><span class="lbl">Effectif</span></button>
-    <button data-v="session"><span class="ic mi">assignment</span><span class="lbl">Séance</span></button>
-    <button data-v="match"><span class="ic mi">sports_basketball</span><span class="lbl">Match</span></button>
-    <button data-v="tactics"><span class="ic mi">draw</span><span class="lbl">Tactique</span></button>
-    <button data-v="posture"><span class="ic mi">shield</span><span class="lbl">Posture</span></button>
-    <button data-modal="openPhysique"><span class="ic mi">fitness_center</span><span class="lbl">Physique</span></button>
-    <button data-modal="openSante"><span class="ic mi">health_and_safety</span><span class="lbl">Santé</span></button>
-    <button data-modal="openSystems"><span class="ic mi">menu_book</span><span class="lbl">Références</span></button>
+    <button data-v="home" class="active" aria-label="Accueil"><span class="ic mi">home</span><span class="lbl">Accueil</span></button>
+    <button data-v="roster" aria-label="Effectif"><span class="ic mi">groups</span><span class="lbl">Effectif</span></button>
+    <button data-v="session" aria-label="Séance"><span class="ic mi">assignment</span><span class="lbl">Séance</span></button>
+    <button data-v="match" aria-label="Match"><span class="ic mi">sports_basketball</span><span class="lbl">Match</span></button>
+    <button data-v="tactics" aria-label="Tactique"><span class="ic mi">draw</span><span class="lbl">Tactique</span></button>
+    <button data-v="posture" aria-label="Posture"><span class="ic mi">shield</span><span class="lbl">Posture</span></button>
+    <button data-modal="openResources" aria-label="Ressources : physique, santé, références"><span class="ic mi">apps</span><span class="lbl">Ressources</span></button>
   </nav>
 </div>
 
@@ -1268,12 +1266,12 @@ function saveTeamEdit(id){
 
 /* ============ MULTILINGUE ============ */
 const LANG={
-  fr:{home:"Accueil",roster:"Effectif",session:"Séance",match:"Match",tactics:"Tactique",posture:"Posture",physique:"Physique",sante:"Santé",references:"Références",hello:"Bonjour"},
-  en:{home:"Home",roster:"Roster",session:"Practice",match:"Game",tactics:"Plays",posture:"Mindset",physique:"Fitness",sante:"Health",references:"Library",hello:"Hello"},
-  es:{home:"Inicio",roster:"Plantel",session:"Sesión",match:"Partido",tactics:"Jugadas",posture:"Actitud",physique:"Físico",sante:"Salud",references:"Biblioteca",hello:"Hola"},
-  pt:{home:"Início",roster:"Elenco",session:"Treino",match:"Jogo",tactics:"Jogadas",posture:"Postura",physique:"Físico",sante:"Saúde",references:"Biblioteca",hello:"Olá"},
+  fr:{home:"Accueil",roster:"Effectif",session:"Séance",match:"Match",tactics:"Tactique",posture:"Posture",physique:"Physique",sante:"Santé",references:"Références",ressources:"Ressources",hello:"Bonjour"},
+  en:{home:"Home",roster:"Roster",session:"Practice",match:"Game",tactics:"Plays",posture:"Mindset",physique:"Fitness",sante:"Health",references:"Library",ressources:"Resources",hello:"Hello"},
+  es:{home:"Inicio",roster:"Plantel",session:"Sesión",match:"Partido",tactics:"Jugadas",posture:"Actitud",physique:"Físico",sante:"Salud",references:"Biblioteca",ressources:"Recursos",hello:"Hola"},
+  pt:{home:"Início",roster:"Elenco",session:"Treino",match:"Jogo",tactics:"Jogadas",posture:"Postura",physique:"Físico",sante:"Saúde",references:"Biblioteca",ressources:"Recursos",hello:"Olá"},
 };
-const NAV_MODAL_KEY={openPhysique:"physique",openSante:"sante",openSystems:"references"};
+const NAV_MODAL_KEY={openPhysique:"physique",openSante:"sante",openSystems:"references",openResources:"ressources"};
 const ALL_LANGS=[
   {code:"fr",name:"Français",ready:true},{code:"en",name:"English",ready:true},
   {code:"es",name:"Español",ready:true},{code:"pt",name:"Português",ready:true},
@@ -1469,10 +1467,22 @@ function openLangPicker(){
 /* ============ NAVIGATION ============ */
 let view = "home";
 const main = document.getElementById("main");
+// Bascule vers un onglet principal en poussant un état d'historique, pour que le bouton
+// retour (Android/TWA compris) revienne à l'onglet précédent au lieu de fermer l'application.
+function pvGoTab(tab, opts){
+  opts = opts || {};
+  const prev = view;
+  view = tab;
+  document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("active", x.dataset.v===tab));
+  if(opts.render!==false) render();
+  if(!opts.noHistory && prev!==tab){
+    try{ history.pushState({pvView:tab}, ""); }catch(e){}
+  }
+}
 document.querySelectorAll("#tabs button").forEach(b=>{
   b.onclick=()=>{
     if(b.dataset.modal){ sfx("tap"); if(typeof window[b.dataset.modal]==="function") window[b.dataset.modal](); return; }
-    view=b.dataset.v; sfx("net"); document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("active",x===b)); render();
+    sfx("net"); pvGoTab(b.dataset.v);
   };
 });
 // Accès et abonnement.
@@ -1669,7 +1679,7 @@ function render(){
       db.style.cssText="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#101317;font-size:12px;font-weight:700;padding:7px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px";
       db.innerHTML='<span>🔎 Mode découverte, ton travail n\'est pas enregistré</span><button onclick="demoSignup()" style="background:#101317;color:#fff;border:0;border-radius:9px;padding:6px 11px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">Créer mon compte</button>';
     } else if(db){ db.remove(); } }
-  document.querySelectorAll('#tabs button').forEach(b=>{const lb=b.querySelector('.lbl'); if(!lb)return; if(b.dataset.v) lb.textContent=tr(b.dataset.v); else if(b.dataset.modal && NAV_MODAL_KEY[b.dataset.modal]) lb.textContent=tr(NAV_MODAL_KEY[b.dataset.modal]);});
+  document.querySelectorAll('#tabs button').forEach(b=>{const lb=b.querySelector('.lbl'); if(!lb)return; const k=b.dataset.v || (b.dataset.modal && NAV_MODAL_KEY[b.dataset.modal]); if(!k)return; lb.textContent=tr(k); b.setAttribute('aria-label', tr(k));});
   { const mb=document.getElementById('muteBtn'); if(mb) mb.textContent=(DB.profile&&DB.profile.muted)?'volume_off':'volume_up'; }
   updateBell();
   document.getElementById("teamName").textContent = coachName();
@@ -1828,9 +1838,17 @@ function closeModal(){
   modalBg.classList.remove("on");
   if(modalOpen){ modalOpen=false; try{ if(history.state && history.state.pvModal){ history.back(); } }catch(e){} }
 }
-window.addEventListener('popstate', function(){
+window.addEventListener('popstate', function(e){
   if(typeof terrainModalOpen!=="undefined" && terrainModalOpen){ terrainModalOpen=false; try{ stopTimer(); }catch(e){} timerState=null; clearActiveTimer(); }
   if(modalOpen){ modalOpen=false; modalBg.classList.remove("on"); }
+  const st=e && e.state;
+  if(st && st.pvView){
+    pvGoTab(st.pvView, {noHistory:true});
+  } else if(view!=="home"){
+    // Plus d'état d'onglet dans l'historique de l'app : on ramène à Accueil au lieu de laisser
+    // l'écran figé sur un onglet que le bouton retour vient de quitter.
+    pvGoTab("home", {noHistory:true});
+  }
 });
 modalBg.onclick=e=>{if(e.target===modalBg)closeModal();};
 
@@ -1941,9 +1959,7 @@ async function finishOnboarding(){
   t.name=ONB.teamName || (ONB.category+" ");
   t.category=ONB.category; t.level=ONB.level;
   save();
-  view="home";
-  document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("active",x.dataset.v==="home"));
-  render();
+  pvGoTab("home");
   flash(lvl==="pro"?"Profil pro, réponses expertes activées":"Profil enregistré, réponses pédagogiques activées");
 }
 function editProfile(){
@@ -2000,8 +2016,7 @@ function loadDailySession(){
   const th=dailyTheme();
   if((T().session.blocks||[]).length && !confirm("Remplacer la séance en cours par la séance du jour ("+th.label+") ?")) return;
   generateSession(th.cat);
-  view="session"; document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x.dataset.v==='session'));
-  render();
+  pvGoTab("session");
 }
 /* ===== Plan annuel par catégorie, inspiré des repères de formation FFBB ===== */
 const YEAR_PLAN_MONTHS=["Septembre","Octobre","Novembre","Décembre","Janvier","Février","Mars","Avril","Mai","Juin"];
@@ -2141,8 +2156,7 @@ function loadPlanSession(cat,label){
   if((T().session.blocks||[]).length && !confirm("Remplacer la séance en cours par une séance "+String(cat).toLowerCase()+" ?")) return;
   generateSession(cat, _planCat);
   closeModal();
-  view="session"; document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x.dataset.v==='session'));
-  render();
+  pvGoTab("session");
   flash(label+" : séance "+String(cat).toLowerCase()+" chargée");
 }
 function generateSeason(){
@@ -2158,8 +2172,7 @@ function loadSeasonWeek(i){
   if((T().session.blocks||[]).length && !confirm("Remplacer la séance en cours par "+w.mois+" S"+w.sem+" ("+String(w.cat).toLowerCase()+") ?")) return;
   T().session={title:w.mois+" S"+w.sem+" · "+w.titre, blocks:JSON.parse(JSON.stringify(w.blocks))};
   save(); closeModal();
-  view="session"; document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x.dataset.v==='session'));
-  render();
+  pvGoTab("session");
   flash(w.mois+" S"+w.sem+" chargé dans l'onglet Séance");
 }
 function exportYearPlanPDF(){
@@ -2375,7 +2388,7 @@ function updateClock(){
 }
 function startClock(){ if(_clockIv) return; _clockIv=setInterval(updateClock,1000); }
 /* ---- Premiers pas (rendre l'app indispensable au débutant) ---- */
-function goStep(tab){ if(!tab)return; view=tab; document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x.dataset.v===tab)); render(); }
+function goStep(tab){ if(!tab)return; pvGoTab(tab); }
 function coachSteps(){
   const t=T();
   return [
@@ -2668,6 +2681,15 @@ function physDetail(i){
     ${cameFromTerrain?'':'<button class="btn block" style="margin-top:10px" onclick="addPhysToSession('+i+')">＋ Ajouter à la séance</button>'}
     ${cameFromTerrain?`<button class="btn block" style="margin-top:8px" onclick="drawTerrain()">▶ Reprendre le chrono</button>`:""}
     <button class="btn sec block" style="margin-top:8px" onclick="openPhysique()">← Retour à la préparation physique</button>
+  `);
+}
+function openResources(){
+  openModal(`
+    <h3 style="margin:0 0 6px">${tr('ressources')}</h3>
+    <div class="sub" style="margin-bottom:10px">Préparation physique, santé et références techniques</div>
+    <div class="sysrow" style="cursor:pointer" onclick="openPhysique()"><span class="ic mi" style="margin-right:10px">fitness_center</span><div style="flex:1;font-weight:700;font-size:14px">${tr('physique')}</div><span class="ic mi muted">chevron_right</span></div>
+    <div class="sysrow" style="cursor:pointer" onclick="openSante()"><span class="ic mi" style="margin-right:10px">health_and_safety</span><div style="flex:1;font-weight:700;font-size:14px">${tr('sante')}</div><span class="ic mi muted">chevron_right</span></div>
+    <div class="sysrow" style="cursor:pointer" onclick="openSystems()"><span class="ic mi" style="margin-right:10px">menu_book</span><div style="flex:1;font-weight:700;font-size:14px">${tr('references')}</div><span class="ic mi muted">chevron_right</span></div>
   `);
 }
 function openPhysique(){
@@ -6239,9 +6261,7 @@ function loadSystem(i){
   const sy=SYSTEMS[i];
   tac.frames=JSON.parse(JSON.stringify(sy.frames));tac.cur=0;tac.playing=false;tac.playTitle=sy.title||"";
   closeModal();
-  view='tactics';
-  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x.dataset.v==='tactics'));
-  render();
+  pvGoTab("tactics");
   flash('Système chargé, appuie sur Lire');
 }
 /* ====== Aperçu animé des systèmes (mini-lecteur) ====== */
