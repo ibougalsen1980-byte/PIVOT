@@ -1002,7 +1002,7 @@ function renderCloudAuth(recovery){
     ${login?`<a class="reset" onclick="cloudForgot()">Mot de passe oublié</a>`:``}
     <div style="text-align:center;margin-top:16px">
       <div style="height:1px;background:var(--line);margin:0 0 14px"></div>
-      <button class="btn sec block" onclick="startDemo()">🔎 Découvrir sans compte</button>
+      <button class="btn sec block" onclick="startDemo()">Découvrir sans compte</button>
       <div class="hint" style="margin-top:6px">Explore l'application librement. Crée un compte quand tu veux enregistrer ton travail.</div>
     </div>`}
   `;
@@ -1110,29 +1110,29 @@ function openSettings(){
   const daysLeft = (typeof subDaysLeft==='function')?subDaysLeft():0;
   const isAdmin = logged && supaUser.email && String(supaUser.email).toLowerCase()===ADMIN_EMAIL;
   openModal(`
-    <h3>⚙️ Réglages</h3>
+    <h3>Réglages</h3>
     <div class="card">
-      <h3>🌐 Langue</h3>
+      <h3>Langue</h3>
       <button class="btn sec block" onclick="openLangPicker()">Choisir la langue</button>
     </div>
     <div class="card">
-      <h3>🔊 Son de l'app</h3>
+      <h3>Son de l'app</h3>
       <div class="muted" style="font-size:12px;margin-bottom:8px">Ambiance de gymnase, rebonds et signaux.</div>
       <div class="row" style="align-items:center;gap:10px">
         <span class="mi" style="font-size:20px">volume_down</span>
         <input type="range" min="0" max="100" step="5" value="${Math.round(sndVol()*100)}" oninput="setSoundVol(this.value)" style="flex:1" ${(DB.profile&&DB.profile.muted)?'disabled':''}>
         <span class="mi" style="font-size:20px">volume_up</span>
       </div>
-      <button class="btn ${(DB.profile&&DB.profile.muted)?'':'sec'} block" style="margin-top:8px" onclick="toggleMute();openSettings()">${(DB.profile&&DB.profile.muted)?'🔔 Réactiver le son':'🔕 Couper le son'}</button>
+      <button class="btn ${(DB.profile&&DB.profile.muted)?'':'sec'} block" style="margin-top:8px" onclick="toggleMute();openSettings()">${(DB.profile&&DB.profile.muted)?'Réactiver le son':'Couper le son'}</button>
     </div>
     ${logged?`
     <div class="card">
-      <h3>🔔 Notifications</h3>
-      <button class="btn ${(DB.profile&&DB.profile.notifOn)?'sec':''} block" onclick="toggleNotifs()">${(DB.profile&&DB.profile.notifOn)?'🔕 Désactiver les notifications':'🔔 Activer les notifications'}</button>
-      ${isAdmin?`<button class="btn block" style="margin-top:8px" onclick="adminBroadcast()">📣 Diffuser une notification</button>`:''}
+      <h3>Notifications</h3>
+      <button class="btn ${(DB.profile&&DB.profile.notifOn)?'sec':''} block" onclick="toggleNotifs()">${(DB.profile&&DB.profile.notifOn)?'Désactiver les notifications':'Activer les notifications'}</button>
+      ${isAdmin?`<button class="btn block" style="margin-top:8px" onclick="adminBroadcast()">Diffuser une notification</button>`:''}
     </div>`:''}
     <div class="card">
-      <h3>👤 Compte</h3>
+      <h3>Compte</h3>
       <div class="muted" style="font-size:12.5px;margin-bottom:6px">${logged?('Connecté'+(supaUser.email?(' : '+supaUser.email):'')):'Mode local, aucun compte connecté sur cet appareil.'}</div>
       <div class="muted" style="font-size:12.5px;margin-bottom:8px">${acc?('Accès actif'+(daysLeft?(', '+daysLeft+' jour'+(daysLeft>1?'s':'')+' restants'):'')):'Aucun accès actif.'}</div>
       ${IS_TWA?'':`<button class="btn sec block" onclick="openPricing()">${acc?'Gérer mon abonnement':"S'abonner"}</button>`}
@@ -1140,7 +1140,7 @@ function openSettings(){
       ${logged?`<button class="btn ghost block" style="margin-top:8px" onclick="lockApp()">Se déconnecter</button>`:''}
     </div>
     <div class="card">
-      <h3>💾 Données</h3>
+      <h3>Données</h3>
       <div class="grid2">
         <button class="btn sec" onclick="exportData()">Sauvegarder</button>
         <button class="btn sec" onclick="importData()">Restaurer</button>
@@ -1417,7 +1417,7 @@ const I18N={
 };
 function i18nPhrase(t,d){
   if(d[t]!==undefined) return d[t];
-  // gère un préfixe d'emoji ou de symbole : "🎯 Objectif" -> traduit "Objectif"
+  // gère un préfixe d'emoji ou de symbole : "Objectif" -> traduit "Objectif"
   const m=t.match(/^([^\p{L}\p{N}]+)(.+)$/u);
   if(m && d[m[2].trim()]!==undefined) return m[1]+d[m[2].trim()];
   return null;
@@ -1454,7 +1454,7 @@ function setLang(code){
 function openLangPicker(){
   const ready=ALL_LANGS.filter(function(l){return l.ready;});
   openModal(`
-    <h3>🌐 Langue</h3>
+    <h3>Langue</h3>
     <div class="sub">Interface traduite. Le contenu des exercices se traduit progressivement, l'anglais est disponible pour les titres et objectifs, l'espagnol et le portugais arrivent.</div>
     ${ready.map(l=>`<div class="sysrow" onclick="setLang('${l.code}')" style="cursor:pointer">
       <div style="flex:1;font-weight:700;font-size:14px">${l.name}</div>
@@ -1588,7 +1588,7 @@ function renderPaywall(){
     </div>
     <div class="card"><div style="font-size:13px;line-height:1.55">PIVOT met un adjoint expert dans ta poche, du Baby Basket au niveau professionnel : assistant IA, séances, plaquette tactique, match et suivi des joueurs.</div></div>
     ${!DB.trialUsed?`<div class="card" style="border:2px solid var(--accent)">
-      <div class="offer">🎁 Première semaine offerte</div>
+      <div class="offer">Première semaine offerte</div>
       <div class="hint" style="margin:6px 2px 10px">Teste tout PIVOT gratuitement pendant 7 jours, sans carte bancaire. Une fois par personne.</div>
       <button class="btn block" onclick="startFreeTrial()">Commencer gratuitement</button>
     </div>`:``}
@@ -1686,7 +1686,7 @@ function render(){
   { const cont=document.getElementById("content"); let db=document.getElementById("demoBar");
     if(isDemo()&&cont){ if(!db){ db=document.createElement("div"); db.id="demoBar"; cont.insertBefore(db,cont.firstChild); }
       db.style.cssText="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#101317;font-size:12px;font-weight:700;padding:7px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px";
-      db.innerHTML='<span>🔎 Mode découverte, ton travail n\'est pas enregistré</span><button onclick="demoSignup()" style="background:#101317;color:#fff;border:0;border-radius:9px;padding:6px 11px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">Créer mon compte</button>';
+      db.innerHTML='<span>Mode découverte, ton travail n\'est pas enregistré</span><button onclick="demoSignup()" style="background:#101317;color:#fff;border:0;border-radius:9px;padding:6px 11px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">Créer mon compte</button>';
     } else if(db){ db.remove(); } }
   document.querySelectorAll('#tabs button').forEach(b=>{const lb=b.querySelector('.lbl'); if(!lb)return; const k=b.dataset.v || (b.dataset.modal && NAV_MODAL_KEY[b.dataset.modal]); if(!k)return; lb.textContent=tr(k); b.setAttribute('aria-label', tr(k));});
   { const mb=document.getElementById('muteBtn'); if(mb) mb.textContent=(DB.profile&&DB.profile.muted)?'volume_off':'volume_up'; }
@@ -1890,7 +1890,7 @@ function renderOnboarding(){
       <div style="width:56px;height:56px;border-radius:15px;margin:0 auto 10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-family:'Oswald',sans-serif;font-size:30px;color:#fff;box-shadow:0 8px 20px rgba(239,108,47,.4)">P</div>
       <h2 class="view-title" style="margin:0">Bienvenue sur PIVOT</h2>
       <div class="sub" style="margin-top:4px">Réponds en 30 secondes, l'app s'adapte à ton profil et à ton niveau.</div>
-      <button class="btn sm sec" style="margin-top:8px" onclick="openLangPicker()">🌐 Langue de l'application</button>
+      <button class="btn sm sec" style="margin-top:8px" onclick="openLangPicker()">Langue de l'application</button>
     </div>
 
     <div class="card">
@@ -2147,14 +2147,14 @@ function renderYearPlanModal(){
     return `<div style="margin:10px 0 2px;font-weight:800;font-size:12px;letter-spacing:.03em;color:var(--accent,#e86b1f);text-transform:uppercase">${YEAR_PLAN_MONTHS[mi]}</div>${rows}`;
   }).join("");
   openModal(`
-    <h3>📅 Plan de saison par catégorie</h3>
+    <h3>Plan de saison par catégorie</h3>
     <div class="sub">Progression semaine par semaine, de septembre à juin, alignée sur le référentiel de formation FFBB. Chaque semaine génère une séance d'exercices triés par thème et par âge de la catégorie.</div>
     <div class="row" style="flex-wrap:wrap;gap:6px;margin:12px 0 8px">
       ${keys.map(k=>`<button class="btn sm ${k===_planCat?'':'sec'}" onclick="_planCat='${k}';renderYearPlanModal()">${k}</button>`).join("")}
     </div>
     <div class="row" style="gap:6px;margin-bottom:8px">
-      <button class="btn sm" style="flex:1" onclick="generateSeason()">${se?'↻ Régénérer la saison':'⚡ Générer toute la saison'}</button>
-      <button class="btn sm sec" style="flex:1" onclick="exportYearPlanPDF()">📄 PDF du plan</button>
+      <button class="btn sm" style="flex:1" onclick="generateSeason()">${se?'↻ Régénérer la saison':'Générer toute la saison'}</button>
+      <button class="btn sm sec" style="flex:1" onclick="exportYearPlanPDF()">PDF du plan</button>
     </div>
     ${se?`<div class="hint" style="margin-bottom:6px">Saison générée, ${se.weeks.length} séances enregistrées. Touche une semaine pour la charger dans l'onglet Séance.</div>`:``}
     ${body}
@@ -2225,12 +2225,12 @@ function renderHome(){
     <div class="card">
       <div class="row between" style="align-items:center">
         <div>
-          <h3 style="margin:0">🔥 Ta régularité</h3>
+          <h3 style="margin:0">Ta régularité</h3>
           <div class="muted" style="font-size:12.5px;margin-top:2px">${(function(){const s=streakWeeks();return s>0?(s+" semaine"+(s>1?"s":"")+" d'affilée, garde le rythme"):"Prépare une séance cette semaine pour lancer ta série";})()}</div>
         </div>
         <div class="kpi" style="min-width:64px"><div class="n">${streakWeeks()}</div><div class="l">sem.</div></div>
       </div>
-      <button class="btn block" style="margin-top:10px" onclick="loadDailySession()">⚡ Séance du jour, dominante ${dailyTheme().label}</button>
+      <button class="btn block" style="margin-top:10px" onclick="loadDailySession()">Séance du jour, dominante ${dailyTheme().label}</button>
       <div class="hint" style="margin-top:6px">Une base équilibrée construite depuis la bibliothèque, à ajuster ensuite dans l'onglet Séance.</div>
     </div>
 
@@ -2238,7 +2238,7 @@ function renderHome(){
     ${pricingBannerHTML()}
 
     <div class="card">
-      <h3>🔔 Alertes</h3>
+      <h3>Alertes</h3>
       ${upcomingEvents().map(u=>`<div class="alert"><span class="badge ${u.e.kind==='Match'?'bad':'ok'}">${u.when.toUpperCase()}</span> ${u.e.time} · ${u.e.title}${u.e.place?(' · '+u.e.place):''}</div>`).join("")}
       ${absent.length? absent.map(p=>`<div class="alert"><span class="badge warn">ABSENT</span> ${p.first} ${p.last} n'est pas dispo pour la prochaine séance</div>`).join(""):""}
       ${!absent.length && !upcomingEvents().length ? `<div class="muted" style="font-size:12.5px">Aucune alerte. Effectif au complet, rien d'imminent au calendrier.</div>`:""}
@@ -2252,49 +2252,49 @@ function renderHome(){
     </div>
 
     <div class="card">
-      <h3>📅 À venir</h3>
+      <h3>À venir</h3>
       <div class="listitem"><div class="num" style="background:var(--blue)">📋</div><div style="flex:1"><b>${T().session.title||"Prochaine séance"}</b><br><small class="muted">${T().session.blocks&&T().session.blocks.length?T().session.blocks.length+" blocs · "+T().session.blocks.reduce((a,b)=>a+(b.dur||0),0)+" min prévues":"À construire dans l'onglet Séance"}</small></div><span class="tag">Séance</span></div>
       ${T().match.opponent?`<div class="listitem"><div class="num">🏀</div><div style="flex:1"><b>Match vs ${T().match.opponent}</b><br><small class="muted">Saisie en direct dans l'onglet Match</small></div><span class="tag">Match</span></div>`:``}
-      <button class="btn sec block" style="margin-top:10px" onclick="openTimeline()">🗓 Voir le calendrier</button>
+      <button class="btn sec block" style="margin-top:10px" onclick="openTimeline()">Voir le calendrier</button>
     </div>
 
     <div class="card">
-      <h3>✨ Recommandations de l'assistant IA</h3>
+      <h3>Recommandations de l'assistant IA</h3>
       ${homeRecosHTML()}
       <div class="hint">Chaque suggestion est refusable. L'IA propose, tu décides.</div>
     </div>
 
     <div class="card">
-      <h3>📚 Références de haut niveau</h3>
+      <h3>Références de haut niveau</h3>
       <div class="grid2">
-        <button class="btn sec" onclick="openSystems()">🏀 Systèmes de jeu</button>
-        <button class="btn sec" onclick="openDrillsRef()">🎯 Exercices experts</button>
+        <button class="btn sec" onclick="openSystems()">Systèmes de jeu</button>
+        <button class="btn sec" onclick="openDrillsRef()">Exercices experts</button>
       </div>
       <div class="hint">Systèmes animés prêts à charger dans le tableau tactique, du centre de formation au niveau pro.</div>
     </div>
 
     <div class="card">
-      <h3>📅 Plan de saison par catégorie</h3>
+      <h3>Plan de saison par catégorie</h3>
       <div class="muted" style="font-size:12.5px;margin-bottom:10px">Une progression mois par mois, du U7 aux seniors, inspirée des repères de formation FFBB. Charge la séance du mois en un clic.</div>
       <button class="btn block" onclick="openYearPlan()">Ouvrir le plan annuel</button>
     </div>
 
     <div class="card" style="border:1px solid var(--accent)">
-      <h3>🛡 Posture & protection de l'enfance</h3>
+      <h3>Posture & protection de l'enfance</h3>
       <div class="muted" style="font-size:12.5px;margin-bottom:10px">Des repères pour accompagner les jeunes en difficulté, tenir un cadre, et savoir quand alerter.</div>
       <button class="btn block" onclick="openPosture()">Ouvrir les repères</button>
     </div>
 
     <div class="card">
-      <h3>🧩 Autres modules</h3>
+      <h3>Autres modules</h3>
       <div class="grid2">
-        <button class="btn sec" onclick="openPhysique()">💪 Préparation physique</button>
-        <button class="btn sec" onclick="openSante()">🩺 Santé & prévention</button>
+        <button class="btn sec" onclick="openPhysique()">Préparation physique</button>
+        <button class="btn sec" onclick="openSante()">Santé & prévention</button>
       </div>
     </div>
 
     <div class="card">
-      <h3>⚙️ Réglages</h3>
+      <h3>Réglages</h3>
       <div class="muted" style="font-size:12.5px;margin-bottom:10px">Langue, son, notifications, compte et données, tout au même endroit.</div>
       <button class="btn sec block" onclick="openSettings()">Ouvrir les réglages</button>
     </div>
@@ -2413,7 +2413,7 @@ function stepsCardHTML(){
   const s=coachSteps(), done=s.filter(x=>x.done).length, total=s.length;
   if(done>=total) return "";
   return `<div class="card">
-    <h3>🚀 Tes premiers pas <span class="muted" style="font-weight:400;font-size:11px">${done}/${total}</span></h3>
+    <h3>Tes premiers pas <span class="muted" style="font-weight:400;font-size:11px">${done}/${total}</span></h3>
     <div class="prog" style="margin:2px 0 10px"><i style="width:${Math.round(done/total*100)}%"></i></div>
     <div class="steps">
       ${s.map(x=>`<div class="st ${x.done?'done':''}" onclick="goStep(${x.tab?`'${x.tab}'`:'null'})">
@@ -2525,7 +2525,7 @@ function evLineHTML(e,dateObj){
 function calHeaderHTML(title){
   const modes=[["day","Jour"],["week","Semaine"],["month","Mois"],["year","Année"]];
   return `
-    <h3>🗓 Calendrier</h3>
+    <h3>Calendrier</h3>
     <div class="row" style="gap:6px;margin:6px 0 10px;flex-wrap:wrap">
       ${modes.map(m=>`<button class="btn sm ${calState.mode===m[0]?'':'sec'}" onclick="calMode('${m[0]}')">${m[1]}</button>`).join("")}
       <button class="btn sm ghost" onclick="calToday()">Aujourd'hui</button>
@@ -2598,7 +2598,7 @@ function drawCal(){
     ${recurring?`<div class="hint" style="margin-top:8px">${recurring} créneau${recurring>1?"x":""} récurrent${recurring>1?"s":""} chaque semaine, en plus des évènements datés.</div>`:""}`;
   }
   const notifBtn=(typeof Notification!=="undefined" && Notification.permission==="default")
-    ? `<button class="btn sm sec block" style="margin-top:8px" onclick="askCalNotif()">🔔 Activer les rappels d'échéances</button>` : "";
+    ? `<button class="btn sm sec block" style="margin-top:8px" onclick="askCalNotif()">Activer les rappels d'échéances</button>` : "";
   openModal(`
     ${calHeaderHTML(title)}
     ${body}
@@ -2668,7 +2668,7 @@ function checkTodayNotif(){
   const up=upcomingEvents().filter(u=>u.when==="Aujourd'hui");
   if(!up.length) return;
   const txt=up.map(u=>u.e.time+" "+u.e.title).join(", ");
-  flash("📅 Aujourd'hui : "+txt);
+  flash("Aujourd'hui : "+txt);
   try{ if(typeof Notification!=="undefined" && Notification.permission==="granted"){ new Notification("PIVOT, aujourd'hui", {body:txt, icon:"logo.png"}); } }catch(e){}
 }
 function addPhysToSession(i){
@@ -2684,10 +2684,10 @@ function physDetail(i){
   openModal(`
     <h3>${p.t}</h3>
     <div class="sub">${p.g} · ${p.d} min · intensité ${p.intensity||'Moyenne'} · ${p.per}</div>
-    <div class="card"><h3>🎯 Objectif</h3><div style="font-size:13px">${p.objectif||''}</div></div>
-    ${p.setup?`<div class="card"><h3>📍 Mise en place</h3><div style="font-size:13px">${p.setup}</div></div>`:''}
+    <div class="card"><h3>Objectif</h3><div style="font-size:13px">${p.objectif||''}</div></div>
+    ${p.setup?`<div class="card"><h3>Mise en place</h3><div style="font-size:13px">${p.setup}</div></div>`:''}
     <div class="card"><h3>▶ Déroulé</h3><ol style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${(p.steps||[]).map(s=>`<li>${s}</li>`).join("")}</ol></div>
-    ${p.consignes?`<div class="card"><h3>🔑 Points clés</h3><div style="font-size:13px">${p.consignes}</div></div>`:''}
+    ${p.consignes?`<div class="card"><h3>Points clés</h3><div style="font-size:13px">${p.consignes}</div></div>`:''}
     ${cameFromTerrain?'':'<button class="btn block" style="margin-top:10px" onclick="addPhysToSession('+i+')">＋ Ajouter à la séance</button>'}
     ${cameFromTerrain?`<button class="btn block" style="margin-top:8px" onclick="drawTerrain()">▶ Reprendre le chrono</button>`:""}
     <button class="btn sec block" style="margin-top:8px" onclick="openPhysique()">← Retour à la préparation physique</button>
@@ -2707,7 +2707,7 @@ function openPhysique(){
     <h3>Préparation physique</h3>
     <div class="sub">Programmes adaptés à l'âge, au poste et à la période de saison</div>
     <div class="card" style="border:1px solid var(--accent)">
-      <h3 style="margin:0 0 4px">🔄 Préparation physique de reprise</h3>
+      <h3 style="margin:0 0 4px">Préparation physique de reprise</h3>
       <div class="muted" style="font-size:12px;margin-bottom:8px">Revenir à l'effort par paliers, après la coupure ou une blessure, sans se blesser. Plan sur 4 semaines relié à tes exercices.</div>
       <button class="btn block" onclick="openReprise()">Ouvrir la reprise</button>
     </div>
@@ -2761,11 +2761,11 @@ function openReprise(){
       <button class="btn sm sec block" onclick="loadRepriseWeek(${i})">＋ Charger cette séance de reprise</button></div>`;
   }).join("");
   openModal(`
-    <h3>🔄 Préparation physique de reprise</h3>
+    <h3>Préparation physique de reprise</h3>
     <div class="sub">Revenir à l'effort par paliers, après une coupure ou une blessure, sans se blesser.</div>
     <div class="card"><h3>Les principes</h3><div class="muted" style="font-size:12.5px;line-height:1.6">Reprends progressivement, la charge d'une semaine ne bondit pas de plus d'environ dix pour cent. Beaucoup de mobilité et de proprioception au début, les sprints et les sauts maximaux arrivent en dernier. L'hydratation, le sommeil et l'alimentation soutiennent la reprise. Une douleur qui persiste arrête la progression, on ne force pas. Le premier entraînement ne finit jamais sur un épuisement total.</div></div>
     <div class="card" style="border:1px solid var(--accent)">
-      <h3 style="margin:0 0 4px">⚡ Séance de reprise complète</h3>
+      <h3 style="margin:0 0 4px">Séance de reprise complète</h3>
       <div class="muted" style="font-size:12px;margin-bottom:8px">Une séance prête qui mélange foncier, prévention, technique et un peu de collectif à intensité modérée, adaptée à ta catégorie. Chaque bloc a sa fiche.</div>
       <button class="btn block" onclick="loadRepriseSession()">Charger la séance de reprise dans le constructeur</button>
     </div>
@@ -2778,30 +2778,30 @@ function openReprise(){
 }
 /* ============ SANTÉ ============ */
 const HEALTH_TOPICS=[
-  {t:"🧊 Blessure aiguë, le réflexe GREC", d:"Devant une entorse, un coup ou un claquage, applique GREC dès les premières minutes. Glace vingt minutes enveloppée dans un linge, jamais à même la peau. Repos, on arrête le joueur, pas de reprise le jour même. Élévation du membre au-dessus du cœur. Compression légère avec une bande si tu sais la poser. La chaleur, les massages et les étirements sont à éviter les premières quarante-huit heures. Un doute sur une fracture, une déformation, une douleur qui ne cède pas : avis médical."},
-  {t:"🧠 Commotion cérébrale, sortir du jeu", d:"Après un choc à la tête ou une chute, méfie-toi même sans perte de connaissance. Signes à repérer : maux de tête, confusion, nausées, troubles de l'équilibre, vision floue, lenteur, propos qui déraillent. En cas de doute, on sort le joueur et on ne le fait pas rejouer le jour même, même s'il dit aller bien. Surveillance par un adulte, avis médical avant tout retour. Une seconde commotion sur un cerveau non remis est dangereuse. Dans le sport, la règle tient en trois mots : en cas de doute, on sort."},
-  {t:"💧 Hydratation", d:"Un joueur déshydraté perd en lucidité, en vitesse et en sécurité d'appui avant même d'avoir soif. Bois avant, pendant et après l'effort. Repère : gourde à portée, pauses d'eau toutes les quinze à vingt minutes à l'entraînement, davantage par forte chaleur. Signes d'alerte : bouche sèche, urines foncées, crampes, fatigue soudaine, vertiges. L'eau suffit pour une séance ordinaire. Au-delà d'une heure d'effort intense ou par forte chaleur, une boisson légèrement sucrée et salée aide."},
-  {t:"🌡️ Chaleur et coup de chaud", d:"Par forte chaleur, raccourcis les séances, multiplie les pauses à l'ombre, allège les tenues, hydrate plus souvent. Signes d'un coup de chaleur : peau très chaude, maux de tête, nausées, confusion, arrêt de la transpiration. C'est une urgence : mettre au frais, rafraîchir, faire boire par petites gorgées si la personne est consciente, et appeler les secours sans attendre. Ne jamais forcer un enfant qui montre ces signes à continuer."},
-  {t:"🔥 Échauffement et retour au calme", d:"Un échauffement progressif de dix à quinze minutes prépare le cœur, les muscles et les articulations et coupe une grande part des blessures. Ordre utile : mobilité articulaire, montée cardio douce, gammes d'appuis et de course, puis gestes techniques à intensité croissante. En fin de séance, cinq minutes de retour au calme, footing léger et respiration, aident la récupération. Les étirements longs se font à distance de l'effort, pas juste avant une séance explosive."},
-  {t:"😴 Sommeil et récupération", d:"Le sommeil est le premier outil de récupération et de progression, surtout chez l'adolescent en pleine croissance. Un jeune a besoin de huit à dix heures. Le manque de sommeil dégrade la vigilance, l'humeur, la coordination et augmente le risque de blessure. Encourage des horaires réguliers, un écran coupé avant le coucher, une vraie coupure après les matchs du soir. La fatigue accumulée se voit sur le terrain avant de se dire avec des mots."},
-  {t:"🍽️ Nutrition autour du match", d:"Le dernier vrai repas se prend trois à quatre heures avant le match, à base de féculents, un peu de protéines, peu de gras. Une collation légère une heure avant, fruit ou barre de céréales, complète si besoin. On évite le gras et le sucre rapide juste avant l'effort. Après le match, on recharge dans l'heure qui suit avec des glucides et un peu de protéines. Rien d'extrême, de la régularité : un joueur mal nourri s'épuise et récupère mal."},
-  {t:"🔁 Retour au jeu après blessure", d:"On ne revient pas d'une blessure d'un coup. La progression se fait par étapes : plus de douleur au repos, puis reprise de la course en ligne, puis changements de direction, puis contact et opposition, puis match. On ne passe une étape que si la précédente est indolore. Après une blessure sérieuse, l'avis du médecin ou du kiné prime sur l'envie de rejouer. Un retour précipité est la première cause de rechute."},
-  {t:"🦶 Entorse de cheville, conduite à tenir", d:"C'est la blessure la plus fréquente au basket. Sur le moment : GREC, on arrête le joueur. Une cheville qui gonfle vite, qui ne supporte pas l'appui, ou très douloureuse à un endroit précis de l'os, demande un avis médical pour écarter la fracture. Au retour, le travail de proprioception, équilibre sur un pied et réception stable, est indispensable pour éviter la récidive. Une cheville qui a déjà lâché doit être renforcée, pas seulement soignée."},
-  {t:"🧰 Trousse de premiers soins", d:"Garde une trousse au bord du terrain et en déplacement : poche de froid instantané, bandes de contention, sparadrap, pansements, compresses, antiseptique, ciseaux, gants jetables, couverture de survie, et la liste des personnes à prévenir avec les numéros. Vérifie les dates et le stock avant chaque saison. Connais l'accès des secours au gymnase et l'emplacement du défibrillateur. Être prêt fait gagner les minutes qui comptent."}
+  {t:"Blessure aiguë, le réflexe GREC", d:"Devant une entorse, un coup ou un claquage, applique GREC dès les premières minutes. Glace vingt minutes enveloppée dans un linge, jamais à même la peau. Repos, on arrête le joueur, pas de reprise le jour même. Élévation du membre au-dessus du cœur. Compression légère avec une bande si tu sais la poser. La chaleur, les massages et les étirements sont à éviter les premières quarante-huit heures. Un doute sur une fracture, une déformation, une douleur qui ne cède pas : avis médical."},
+  {t:"Commotion cérébrale, sortir du jeu", d:"Après un choc à la tête ou une chute, méfie-toi même sans perte de connaissance. Signes à repérer : maux de tête, confusion, nausées, troubles de l'équilibre, vision floue, lenteur, propos qui déraillent. En cas de doute, on sort le joueur et on ne le fait pas rejouer le jour même, même s'il dit aller bien. Surveillance par un adulte, avis médical avant tout retour. Une seconde commotion sur un cerveau non remis est dangereuse. Dans le sport, la règle tient en trois mots : en cas de doute, on sort."},
+  {t:"Hydratation", d:"Un joueur déshydraté perd en lucidité, en vitesse et en sécurité d'appui avant même d'avoir soif. Bois avant, pendant et après l'effort. Repère : gourde à portée, pauses d'eau toutes les quinze à vingt minutes à l'entraînement, davantage par forte chaleur. Signes d'alerte : bouche sèche, urines foncées, crampes, fatigue soudaine, vertiges. L'eau suffit pour une séance ordinaire. Au-delà d'une heure d'effort intense ou par forte chaleur, une boisson légèrement sucrée et salée aide."},
+  {t:"Chaleur et coup de chaud", d:"Par forte chaleur, raccourcis les séances, multiplie les pauses à l'ombre, allège les tenues, hydrate plus souvent. Signes d'un coup de chaleur : peau très chaude, maux de tête, nausées, confusion, arrêt de la transpiration. C'est une urgence : mettre au frais, rafraîchir, faire boire par petites gorgées si la personne est consciente, et appeler les secours sans attendre. Ne jamais forcer un enfant qui montre ces signes à continuer."},
+  {t:"Échauffement et retour au calme", d:"Un échauffement progressif de dix à quinze minutes prépare le cœur, les muscles et les articulations et coupe une grande part des blessures. Ordre utile : mobilité articulaire, montée cardio douce, gammes d'appuis et de course, puis gestes techniques à intensité croissante. En fin de séance, cinq minutes de retour au calme, footing léger et respiration, aident la récupération. Les étirements longs se font à distance de l'effort, pas juste avant une séance explosive."},
+  {t:"Sommeil et récupération", d:"Le sommeil est le premier outil de récupération et de progression, surtout chez l'adolescent en pleine croissance. Un jeune a besoin de huit à dix heures. Le manque de sommeil dégrade la vigilance, l'humeur, la coordination et augmente le risque de blessure. Encourage des horaires réguliers, un écran coupé avant le coucher, une vraie coupure après les matchs du soir. La fatigue accumulée se voit sur le terrain avant de se dire avec des mots."},
+  {t:"Nutrition autour du match", d:"Le dernier vrai repas se prend trois à quatre heures avant le match, à base de féculents, un peu de protéines, peu de gras. Une collation légère une heure avant, fruit ou barre de céréales, complète si besoin. On évite le gras et le sucre rapide juste avant l'effort. Après le match, on recharge dans l'heure qui suit avec des glucides et un peu de protéines. Rien d'extrême, de la régularité : un joueur mal nourri s'épuise et récupère mal."},
+  {t:"Retour au jeu après blessure", d:"On ne revient pas d'une blessure d'un coup. La progression se fait par étapes : plus de douleur au repos, puis reprise de la course en ligne, puis changements de direction, puis contact et opposition, puis match. On ne passe une étape que si la précédente est indolore. Après une blessure sérieuse, l'avis du médecin ou du kiné prime sur l'envie de rejouer. Un retour précipité est la première cause de rechute."},
+  {t:"Entorse de cheville, conduite à tenir", d:"C'est la blessure la plus fréquente au basket. Sur le moment : GREC, on arrête le joueur. Une cheville qui gonfle vite, qui ne supporte pas l'appui, ou très douloureuse à un endroit précis de l'os, demande un avis médical pour écarter la fracture. Au retour, le travail de proprioception, équilibre sur un pied et réception stable, est indispensable pour éviter la récidive. Une cheville qui a déjà lâché doit être renforcée, pas seulement soignée."},
+  {t:"Trousse de premiers soins", d:"Garde une trousse au bord du terrain et en déplacement : poche de froid instantané, bandes de contention, sparadrap, pansements, compresses, antiseptique, ciseaux, gants jetables, couverture de survie, et la liste des personnes à prévenir avec les numéros. Vérifie les dates et le stock avant chaque saison. Connais l'accès des secours au gymnase et l'emplacement du défibrillateur. Être prêt fait gagner les minutes qui comptent."}
 ];
 function openSante(){
   const fiches=HEALTH_TOPICS.map(function(o,i){
     return `<details class="card" style="padding:12px 14px"><summary style="font-weight:700;font-size:13.5px;cursor:pointer;list-style:none">${o.t}</summary><div class="muted" style="font-size:12.5px;line-height:1.5;margin-top:8px">${o.d}</div></details>`;
   }).join("");
   openModal(`
-    <h3>🩺 Santé et prévention</h3>
+    <h3>Santé et prévention</h3>
     <div class="sub">Repères de terrain pour prévenir et réagir. L'app aide au suivi, elle ne pose jamais de diagnostic.</div>
     <div class="card" style="border-left:3px solid var(--bad)">
-      <h3 style="margin:0 0 6px">📞 Urgences</h3>
+      <h3 style="margin:0 0 6px">Urgences</h3>
       <div class="muted" style="font-size:12.5px;line-height:1.5">En France : 15 SAMU, 18 pompiers, 112 numéro d'urgence européen, 114 par SMS pour les personnes sourdes. Ailleurs, garde le numéro local affiché dans le gymnase. En cas de doute vital, on appelle d'abord, on agit ensuite.</div>
     </div>
     <div class="card">
-      <h3>🚑 À surveiller</h3>
+      <h3>À surveiller</h3>
       <div class="hint">Les blessures que tu signales sur les fiches joueur apparaissent dans l'Infirmerie, avec la durée estimée et la date de reprise. Ouvre une fiche joueur pour déclarer ou lever une blessure.</div>
     </div>
     <div style="font-weight:700;font-size:13px;margin:14px 2px 8px">Fiches pratiques</div>
@@ -2871,12 +2871,12 @@ function postureSectionsHTML(){
     <div class="hint" style="margin:0 2px 6px">Repères à transmettre aux présidents de club.</div>
     ${cards(HONORABILITE)}
     ${head("Violences sexuelles dans le sport")}
-    <div class="card" style="border:1px solid var(--accent)"><h3>⚠️ En parler, c'est protéger</h3><div style="font-size:13px;line-height:1.55">${VSS_INTRO}</div></div>
+    <div class="card" style="border:1px solid var(--accent)"><h3>En parler, c'est protéger</h3><div style="font-size:13px;line-height:1.55">${VSS_INTRO}</div></div>
     <div class="card"><h3>Préconisations concrètes</h3><ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${VSS_PRECOS.map(function(v){return `<li style="margin-bottom:4px">${v}</li>`;}).join("")}</ul></div>
-    <div class="card"><h3>👁 Grille de vigilance</h3>
+    <div class="card"><h3>Grille de vigilance</h3>
       <div class="hint" style="margin-bottom:6px">Un signal isolé n'est pas une preuve. Plusieurs signaux appellent l'attention.</div>
       <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${VIGILANCE.map(function(v){return `<li>${v}</li>`;}).join("")}</ul></div>
-    <div class="card" style="border:1px solid var(--accent)"><h3>🚸 Protocole d'alerte</h3>
+    <div class="card" style="border:1px solid var(--accent)"><h3>Protocole d'alerte</h3>
       <ol style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${PROTOCOLE.map(function(s){return `<li>${s}</li>`;}).join("")}</ol></div>
     <div class="card" style="border:1px solid var(--bad)">
       <h3 style="color:var(--bad)">En cas de danger immédiat</h3>
@@ -2925,17 +2925,17 @@ function renderPosture(){
     <div class="sub">Une méthode de terrain pour tenir un cadre, accompagner les jeunes en difficulté, et savoir agir.</div>
     <div class="card"><h3>L'approche</h3><div style="font-size:13px;line-height:1.55">Elle ne remplace ni un professionnel, ni une procédure officielle. Elle donne des repères de posture et un protocole clair, pour agir juste et protéger.</div></div>
     ${postureSectionsHTML()}
-    <button class="btn block" style="margin-top:12px" onclick="exportPosturePDF()">📄 Exporter la méthode pour mon staff</button>
+    <button class="btn block" style="margin-top:12px" onclick="exportPosturePDF()">Exporter la méthode pour mon staff</button>
     <div style="height:14px"></div>
   `;
 }
 function openPosture(){
   openModal(`
-    <h3>🛡 Méthode posture & protection de l'enfance</h3>
+    <h3>Méthode posture & protection de l'enfance</h3>
     <div class="sub">Une méthode de terrain, ancrée dans l'expérience éducative, pas dans un discours d'IA. Pour tenir un cadre, accompagner les jeunes en difficulté, et savoir agir.</div>
     <div class="card"><h3>L'approche</h3><div style="font-size:13px;line-height:1.55">Elle ne remplace ni un professionnel, ni une procédure officielle. Elle donne des repères de posture et un protocole clair, pour agir juste et protéger.</div></div>
     ${postureSectionsHTML()}
-    <button class="btn block" style="margin-top:12px" onclick="exportPosturePDF()">📄 Exporter la méthode pour mon staff</button>
+    <button class="btn block" style="margin-top:12px" onclick="exportPosturePDF()">Exporter la méthode pour mon staff</button>
     <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
   `);
 }
@@ -2948,7 +2948,7 @@ let chatLog=[{who:"ai",txt:"Salut Coach. Je connais ton effectif, tes séances e
 function setLevel(l){aiLevel=l;if(DB.profile){DB.profile.aiLevel=l;save();}var b=document.getElementById('lvlBeg'),p=document.getElementById('lvlPro');if(b)b.classList.toggle('active',l==='beg');if(p)p.classList.toggle('active',l==='pro');flash(l==='beg'?'Réponses niveau débutant':'Réponses niveau pro');}
 function aiChat(){
   openModal(`
-    <h3>✨ Assistant IA basket</h3>
+    <h3>Assistant IA basket</h3>
     <div class="seg" style="margin-bottom:10px">
       <button id="lvlBeg" class="${aiLevel==='beg'?'active':''}" onclick="setLevel('beg')">Coach débutant</button>
       <button id="lvlPro" class="${aiLevel==='pro'?'active':''}" onclick="setLevel('pro')">Coach pro</button>
@@ -2959,7 +2959,7 @@ function aiChat(){
       <span class="chip" onclick="askReprise()">Séance de reprise</span>
       <span class="chip" onclick="askCycle()">Construire un cycle</span>
       <span class="chip" onclick="askAI('Prépare notre prochain adversaire')">Préparer l'adversaire</span>
-      <span class="chip" onclick="askAI('Mon meneur perd confiance après 3 matchs ratés')">🧠 Coach mental</span>
+      <span class="chip" onclick="askAI('Mon meneur perd confiance après 3 matchs ratés')">Coach mental</span>
       <span class="chip" onclick="askAI('Mon équipe se décourage quand on est menés')">Gérer le découragement</span>
     </div>
     <div class="row" style="gap:8px">
@@ -3208,7 +3208,7 @@ async function askAI(q){
       await typeText(i, shown);
       chatLog[i].txt=linkifyExos(chatLog[i].txt);
       if(weeks.length){ _pendingCycle=weeks;
-        weeks.forEach(function(w,idx){ chatLog.push({who:"ai",txt:'🗓️ '+w.label+' — '+w.session.blocks.length+' blocs.<br><button class="btn sm block" style="margin-top:6px" onclick="loadCycleWeek('+idx+')">＋ Charger la séance de cette semaine</button>'}); });
+        weeks.forEach(function(w,idx){ chatLog.push({who:"ai",txt:''+w.label+' — '+w.session.blocks.length+' blocs.<br><button class="btn sm block" style="margin-top:6px" onclick="loadCycleWeek('+idx+')">＋ Charger la séance de cette semaine</button>'}); });
       }
       drawChat();
     } else {
@@ -3219,10 +3219,10 @@ async function askAI(q){
       chatLog[i].txt=linkifyExos(chatLog[i].txt);
       if(sess){ _pendingAiSession=sess;
         const _qa=qaCheckSession(sess.blocks, parseDureeDemandee(q));
-        const _qaAlert=_qa.problems.length ? ('<div style="color:#c0392b;font-size:12px;margin:4px 0 2px">⚠️ '+_qa.problems.join(", ")+', vérifie avant de charger.</div>') : '';
-        chatLog.push({who:"ai",txt:'🗒️ Séance prête, '+sess.blocks.length+' blocs, '+_qa.total+' min au total.'+_qaAlert+'<br><button class="btn sm block" style="margin-top:6px" onclick="loadPendingAiSession()">＋ Charger dans le constructeur</button><button class="btn sm sec block" style="margin-top:6px" onclick="saveAiSession()">💾 Enregistrer dans Mes séances</button>'});
+        const _qaAlert=_qa.problems.length ? ('<div style="color:#c0392b;font-size:12px;margin:4px 0 2px">'+_qa.problems.join(", ")+', vérifie avant de charger.</div>') : '';
+        chatLog.push({who:"ai",txt:'Séance prête, '+sess.blocks.length+' blocs, '+_qa.total+' min au total.'+_qaAlert+'<br><button class="btn sm block" style="margin-top:6px" onclick="loadPendingAiSession()">＋ Charger dans le constructeur</button><button class="btn sm sec block" style="margin-top:6px" onclick="saveAiSession()">Enregistrer dans Mes séances</button>'});
       }
-      if(isSession&&isReprise){ chatLog.push({who:"ai",txt:'⚡ Séance de reprise chargée, foncier, prévention, technique et collectif léger.<br><button class="btn sm block" style="margin-top:6px" onclick="closeModal();view=\'session\';render()">Ouvrir la séance de reprise</button>'}); }
+      if(isSession&&isReprise){ chatLog.push({who:"ai",txt:'Séance de reprise chargée, foncier, prévention, technique et collectif léger.<br><button class="btn sm block" style="margin-top:6px" onclick="closeModal();view=\'session\';render()">Ouvrir la séance de reprise</button>'}); }
       drawChat();
     }
   }catch(e){
@@ -3403,7 +3403,7 @@ function renderRoster(){
       <div class="hint">Enregistrée automatiquement.</div>
     </div>
     <div class="card" id="rosterList"></div>
-    <button class="btn sec block" style="margin-bottom:8px" onclick="openAssiduite()">📊 Suivi d'assiduité</button>
+    <button class="btn sec block" style="margin-bottom:8px" onclick="openAssiduite()">Suivi d'assiduité</button>
     <button class="btn block" onclick="addPlayerModal()">＋ Ajouter un joueur</button>
   `;
   const list=document.getElementById("rosterList");
@@ -3434,7 +3434,7 @@ function injuryModal(id){
   const p=T().players.find(x=>x.id===id); if(!p)return;
   const j=p.injury||{};
   openModal(`
-    <h3>🩹 Blessure · ${p.first} ${p.last}</h3>
+    <h3>Blessure · ${p.first} ${p.last}</h3>
     <div class="sub">Renseigne la nature, la durée estimée et la date de reprise possible. Le joueur reste dans l'effectif mais est marqué indisponible, et ses séances manquées ne pèsent pas sur son taux d'assiduité.</div>
     <label class="fld" style="margin-top:10px">Nature ou zone touchée</label><input id="inj_zone" placeholder="Ex : entorse cheville droite" value="${(j.zone||'').replace(/"/g,'&quot;')}">
     <div class="grid2" style="margin-top:8px">
@@ -3486,7 +3486,7 @@ function openAppel(){
       <div id="apb_${p.id}" class="row" style="gap:6px">${appelBtns(p.id)}</div>
     </div>`; }).join("");
   openModal(`
-    <h3>🧮 Faire l'appel</h3>
+    <h3>Faire l'appel</h3>
     <div class="sub">Note qui est là aujourd'hui. C'est daté et conservé pour suivre l'assiduité.</div>
     <div class="row" style="gap:8px;align-items:center;margin:10px 0 4px">
       <label class="fld" style="margin:0">Date</label>
@@ -3495,7 +3495,7 @@ function openAppel(){
     </div>
     <div class="card" style="padding:6px 12px">${rows}</div>
     <button class="btn block" style="margin-top:10px" onclick="saveAppel()">Enregistrer l'appel</button>
-    <button class="btn sec block" style="margin-top:8px" onclick="openAssiduite()">📊 Voir le suivi d'assiduité</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="openAssiduite()">Voir le suivi d'assiduité</button>
   `);
 }
 function saveAppel(){
@@ -3533,7 +3533,7 @@ function openAssiduite(){
   const recs=attLog();
   const injured=T().players.filter(function(p){ return p.injury && p.injury.active; }).sort(function(a,b){return a.num-b.num;});
   const infHtml = injured.length
-    ? `<div class="card" style="margin-top:12px"><h3 style="margin:0 0 6px">🩹 Infirmerie <span class="muted" style="font-size:12px;font-weight:400">(${injured.length})</span></h3>`+
+    ? `<div class="card" style="margin-top:12px"><h3 style="margin:0 0 6px">Infirmerie <span class="muted" style="font-size:12px;font-weight:400">(${injured.length})</span></h3>`+
       injured.map(function(p){ return `<div class="sysrow"><div style="flex:1"><div style="font-weight:700;font-size:13px">${p.num}. ${p.first} ${p.last}</div><div class="muted" style="font-size:11.5px;margin-top:2px">${injuryLine(p)||"Blessé"}</div></div>${p.injury.ret?`<span class="badgepos">${frDate(p.injury.ret)}</span>`:`<span class="badgepos" style="background:#7a52d1;color:#fff">Blessé</span>`}</div>`; }).join("")+
       `</div>`
     : "";
@@ -3550,11 +3550,11 @@ function openAssiduite(){
           <div class="kpi" style="min-width:58px"><div class="n" style="color:${col}">${a.rate==null?"–":a.rate+"%"}</div><div class="l">assidu</div></div>
         </div>`; }).join("");
   openModal(`
-    <h3>📊 Suivi d'assiduité</h3>
+    <h3>Suivi d'assiduité</h3>
     <div class="sub">${recs.length} appel${recs.length>1?"s":""} enregistré${recs.length>1?"s":""}. Taux de présence par joueur, du plus au moins assidu. Les séances manquées pour blessure ne pénalisent pas le taux.</div>
     ${infHtml}
     <div style="margin-top:10px">${body}</div>
-    <button class="btn block" style="margin-top:10px" onclick="openAppel()">🧮 Faire un appel</button>
+    <button class="btn block" style="margin-top:10px" onclick="openAppel()">Faire un appel</button>
     <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
   `);
 }
@@ -3565,7 +3565,7 @@ function addPlayerModal(){
     <div class="row" style="align-items:center;gap:12px;margin-bottom:12px">
       <div id="npPhotoWrap" class="avatar" style="width:60px;height:60px;font-size:20px;flex:0 0 60px;cursor:pointer" onclick="document.getElementById('np_photo').click()">＋</div>
       <div style="flex:1">
-        <button type="button" class="btn sm sec" onclick="document.getElementById('np_photo').click()">📷 Ajouter une photo</button>
+        <button type="button" class="btn sm sec" onclick="document.getElementById('np_photo').click()">Ajouter une photo</button>
         <div class="hint" style="margin-top:4px">Optionnel. La photo est recadrée automatiquement.</div>
       </div>
     </div>
@@ -3599,7 +3599,7 @@ function editPlayerModal(id){
     <div class="row" style="align-items:center;gap:12px;margin-bottom:12px">
       <div id="epPhotoWrap" class="avatar" style="width:60px;height:60px;font-size:20px;flex:0 0 60px;cursor:pointer;${avatarBgCss(p.photo)}" onclick="document.getElementById('ep_photo').click()">${p.photo?'':initials(p)}</div>
       <div style="flex:1">
-        <button type="button" class="btn sm sec" onclick="document.getElementById('ep_photo').click()">📷 ${p.photo?'Changer la photo':'Ajouter une photo'}</button>
+        <button type="button" class="btn sm sec" onclick="document.getElementById('ep_photo').click()">${p.photo?'Changer la photo':'Ajouter une photo'}</button>
         ${p.photo?`<button type="button" class="btn sm ghost" style="color:var(--bad);margin-top:6px" onclick="clearPhotoBuf('epPhotoWrap','${(initials(p)||'?').replace(/'/g,'')}')">Retirer la photo</button>`:''}
       </div>
     </div>
@@ -3643,7 +3643,7 @@ function playerDetail(id){
     ? (solos.length
         ? solos.map(s=>`<div class="sysrow"><div style="flex:1"><div style="font-weight:700;font-size:13px">${s.focus}</div><div class="muted" style="font-size:11.5px">${s.note}</div></div><span class="badgepos">${s.date}</span></div>`).join("")
         : `<div class="hint">Aucune séance solo pour l'instant.</div>`)
-    : `<div class="hint">🔒 Le joueur n'a pas autorisé le partage. Les séances solo et leurs mesures restent masquées pour le coach.</div>`;
+    : `<div class="hint">Le joueur n'a pas autorisé le partage. Les séances solo et leurs mesures restent masquées pour le coach.</div>`;
   openModal(`
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
       <div class="avatar" style="width:56px;height:56px;font-size:20px;flex:0 0 56px;${avatarBgCss(p.photo)}">${p.photo?'':initials(p)}</div>
@@ -3659,25 +3659,25 @@ function playerDetail(id){
     </div>
     ${(function(){ const a=playerAttendance(id); const col=a.rate==null?"var(--muted)":a.rate>=80?"var(--ok)":a.rate>=50?"#c98a12":"var(--bad)";
       return `<div class="card" style="margin-top:12px"><div class="row between" style="align-items:center">
-        <div><h3 style="margin:0">📊 Assiduité</h3><div class="muted" style="font-size:12px;margin-top:2px">${a.total? attBreakdown(a) : "Aucun appel enregistré pour ce joueur"}</div></div>
+        <div><h3 style="margin:0">Assiduité</h3><div class="muted" style="font-size:12px;margin-top:2px">${a.total? attBreakdown(a) : "Aucun appel enregistré pour ce joueur"}</div></div>
         <div class="kpi" style="min-width:62px"><div class="n" style="color:${col}">${a.rate==null?"–":a.rate+"%"}</div><div class="l">présence</div></div>
       </div></div>`; })()}
     ${(function(){ const j=p.injury;
       if(j&&j.active){ return `<div class="card" style="margin-top:12px;border-left:3px solid #7a52d1">
-        <div class="row between" style="align-items:center"><h3 style="margin:0">🩹 Blessure en cours</h3><span class="badgepos" style="background:#7a52d1;color:#fff">Indisponible</span></div>
+        <div class="row between" style="align-items:center"><h3 style="margin:0">Blessure en cours</h3><span class="badgepos" style="background:#7a52d1;color:#fff">Indisponible</span></div>
         <div class="muted" style="font-size:12px;margin-top:6px">${[j.zone?('Nature : '+j.zone):'', j.since?('depuis le '+frDate(j.since)):'', j.dur?('durée estimée '+j.dur):'', j.ret?('reprise possible le '+frDate(j.ret)):''].filter(Boolean).join('<br>')||'Aucun détail renseigné'}</div>
         ${j.note?`<div class="reco" style="margin-top:8px">${j.note}</div>`:''}
         <button class="btn sm sec block" style="margin-top:8px" onclick="injuryModal('${id}')">Modifier la blessure</button>
         <button class="btn sm block" style="margin-top:6px;background:var(--ok);border-color:var(--ok)" onclick="clearInjury('${id}')">✓ Déclarer le retour</button>
       </div>`; }
-      return `<div class="card" style="margin-top:12px"><div class="row between" style="align-items:center"><div><h3 style="margin:0">🩹 Infirmerie</h3><div class="muted" style="font-size:12px;margin-top:2px">Joueur disponible</div></div><button class="btn sm sec" onclick="injuryModal('${id}')">Déclarer une blessure</button></div></div>`; })()}
+      return `<div class="card" style="margin-top:12px"><div class="row between" style="align-items:center"><div><h3 style="margin:0">Infirmerie</h3><div class="muted" style="font-size:12px;margin-top:2px">Joueur disponible</div></div><button class="btn sm sec" onclick="injuryModal('${id}')">Déclarer une blessure</button></div></div>`; })()}
     <div class="card" style="margin-top:12px">
-      <h3>🎯 Objectif en cours</h3>
+      <h3>Objectif en cours</h3>
       ${p.goal?`<div class="reco">${p.goal}</div>`:`<div class="hint">Aucun objectif défini pour ce joueur.</div>`}
       <button class="btn sm sec block" style="margin-top:8px" onclick="setGoal('${id}')">${p.goal?'Modifier l\'objectif':'Définir un objectif'}</button>
     </div>
     <div class="card">
-      <h3>🔗 Continuité joueur <span class="levelchip pro" style="margin-left:4px">Nouveau</span></h3>
+      <h3>Continuité joueur <span class="levelchip pro" style="margin-left:4px">Nouveau</span></h3>
       <div class="row between" style="margin-bottom:10px">
         <span class="muted" style="font-size:12px">Partage des séances solo au coach</span>
         <button class="btn sm ${shared?'':'sec'}" onclick="toggleShare('${id}')">${shared?'Autorisé ✓':'Non autorisé'}</button>
@@ -3686,8 +3686,8 @@ function playerDetail(id){
       <button class="btn sm sec block" style="margin-top:10px" onclick="addSolo('${id}')">＋ Simuler une séance solo du joueur</button>
       <div class="hint">Ce que le joueur travaille seul remonte au coach, avec son accord. Personne d'autre ne relie ça.</div>
     </div>
-    <button class="btn block" onclick="openPassport('${id}')">🪪 Ouvrir le passeport joueur</button>
-    <button class="btn sec block" style="margin-top:8px" onclick="editPlayerModal('${id}')">✏️ Modifier la fiche</button>
+    <button class="btn block" onclick="openPassport('${id}')">Ouvrir le passeport joueur</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="editPlayerModal('${id}')">Modifier la fiche</button>
     <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
   `);
 }
@@ -3730,7 +3730,7 @@ function openPassport(id){
       <div class="row between" style="font-size:13px;margin-top:4px"><span class="muted">Saison</span><span>${T().season}</span></div>
     </div>
 
-    <div class="card"><h3>🧭 Compétences</h3>
+    <div class="card"><h3>Compétences</h3>
       <div class="hint" style="margin-bottom:8px">Évaluation du coach, ajuste avec + et −.</div>
       ${bars}
     </div>
@@ -3741,15 +3741,15 @@ function openPassport(id){
       <div class="kpi"><div class="n">${bs.ast||0}</div><div class="l">Passes</div></div>
     </div>
 
-    <div class="card"><h3>🎯 Objectif</h3>
+    <div class="card"><h3>Objectif</h3>
       ${p.goal?`<div class="reco">${p.goal}</div>`:`<div class="hint">Aucun objectif défini. Fixe-le depuis la fiche du joueur.</div>`}
     </div>
 
-    <div class="card"><h3>📈 Travail personnel</h3>
-      ${shared ? (solos.length? solos.map(s=>`<div class="row between" style="font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--line)"><span>${s.focus}<br><span class="muted" style="font-size:11px">${s.note}</span></span><span class="badgepos">${s.date}</span></div>`).join("") : `<div class="hint">Aucune séance solo enregistrée.</div>`) : `<div class="hint">🔒 Partage non autorisé par le joueur.</div>`}
+    <div class="card"><h3>Travail personnel</h3>
+      ${shared ? (solos.length? solos.map(s=>`<div class="row between" style="font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--line)"><span>${s.focus}<br><span class="muted" style="font-size:11px">${s.note}</span></span><span class="badgepos">${s.date}</span></div>`).join("") : `<div class="hint">Aucune séance solo enregistrée.</div>`) : `<div class="hint">Partage non autorisé par le joueur.</div>`}
     </div>
 
-    <div class="card"><h3>🎯 Grille de tir</h3>
+    <div class="card"><h3>Grille de tir</h3>
       <div class="hint" style="margin-bottom:8px">Note une série de tir chaque mois pour suivre l'évolution du joueur.</div>
       ${(p.shooting&&p.shooting.length)? p.shooting.map((s,idx)=>({s,idx})).reverse().map(o=>{
           const s=o.s, pct=s.att?Math.round(s.made/s.att*100):0;
@@ -3760,7 +3760,7 @@ function openPassport(id){
       <button class="btn sm sec block" style="margin-top:10px" onclick="addShootModal('${id}')">＋ Ajouter une série de tir</button>
     </div>
 
-    <button class="btn block" onclick="exportPassportPDF('${id}')">📄 Exporter le passeport en PDF</button>
+    <button class="btn block" onclick="exportPassportPDF('${id}')">Exporter le passeport en PDF</button>
     <button class="btn sec block" style="margin-top:8px" onclick="playerDetail('${id}')">← Retour à la fiche</button>
   `);
 }
@@ -3821,18 +3821,18 @@ function renderSession(){
     <h2 class="view-title">Constructeur de séance</h2>
     <div class="sub">${T().session.title||"Nouvelle séance"} · ${sessionDuration()} min · ${T().session.blocks.length} bloc${T().session.blocks.length>1?"s":""}</div>
     <div class="row" style="gap:6px;margin-bottom:8px">
-      <button class="btn sm sec" style="flex:1" onclick="renameSession()">✏️ Titre</button>
-      <button class="btn sm sec" style="flex:1" onclick="newSession()">🆕 Nouvelle</button>
-      <button class="btn sm sec" style="flex:1" onclick="openMySessions()">📁 Mes séances${sv?` (${sv})`:""}</button>
+      <button class="btn sm sec" style="flex:1" onclick="renameSession()">Titre</button>
+      <button class="btn sm sec" style="flex:1" onclick="newSession()">Nouvelle</button>
+      <button class="btn sm sec" style="flex:1" onclick="openMySessions()">Mes séances${sv?` (${sv})`:""}</button>
     </div>
     <button class="btn block" style="margin-bottom:8px" onclick="customBlockModal()">＋ Ajouter un bloc, saisie rapide</button>
-    <button class="btn sec block" style="margin-bottom:8px" onclick="openResources()">📚 Piocher dans la bibliothèque d'exercices</button>
+    <button class="btn sec block" style="margin-bottom:8px" onclick="openResources()">Piocher dans la bibliothèque d'exercices</button>
     <div class="row between" style="margin-bottom:10px">
-      <button class="btn sm sec" onclick="addBlockModal()">⚡ Bloc express</button>
+      <button class="btn sm sec" onclick="addBlockModal()">Bloc express</button>
       <!-- Libellé corrigé le 20/09/2026 : ce bouton lance un algorithme de règles (thème -> progression
            geste simple vers match), aucun appel à une IA n'a lieu ici. L'ancien texte "Générer par IA"
            annonçait une fonction qui n'existe pas dans ce parcours. -->
-      <button class="btn sm sec" onclick="sessionThemeModal()">✨ Générer une séance</button>
+      <button class="btn sm sec" onclick="sessionThemeModal()">Générer une séance</button>
       <button class="btn sm ghost" onclick="terrainView()">▶ Vue terrain</button>
     </div>
     <div id="blocks"></div>
@@ -3840,13 +3840,13 @@ function renderSession(){
       <div style="font-size:34px">📋</div>
       <div style="font-weight:700;margin-top:6px">Aucun bloc pour l'instant</div>
       <div class="muted" style="font-size:12.5px;margin:4px 0 12px">Ajoute tes blocs en saisie rapide, pioche dans la bibliothèque, ou pars d'une base prête. Touche un bloc pour l'ajuster.</div>
-      <button class="btn block" onclick="loadDailySession()">⚡ Charger la séance du jour</button>
+      <button class="btn block" onclick="loadDailySession()">Charger la séance du jour</button>
       <button class="btn sec block" style="margin-top:8px" onclick="customBlockModal()">＋ Créer mon premier bloc</button>
     </div>`:`
-      <button class="btn block" style="margin-top:10px" onclick="saveCurrentSession()">💾 Enregistrer cette séance dans Mes séances</button>
-      <button class="btn sec block" style="margin-top:8px" onclick="openAppel()">🧮 Faire l'appel de la séance</button>
-      <button class="btn sec block" style="margin-top:8px" onclick="addObservation()">📝 Noter une observation après la séance</button>
-      <button class="btn sec block" style="margin-top:8px" onclick="exportSessionOnePDF()">📄 Fiche de séance, 1 page pour le banc</button>`}
+      <button class="btn block" style="margin-top:10px" onclick="saveCurrentSession()">Enregistrer cette séance dans Mes séances</button>
+      <button class="btn sec block" style="margin-top:8px" onclick="openAppel()">Faire l'appel de la séance</button>
+      <button class="btn sec block" style="margin-top:8px" onclick="addObservation()">Noter une observation après la séance</button>
+      <button class="btn sec block" style="margin-top:8px" onclick="exportSessionOnePDF()">Fiche de séance, 1 page pour le banc</button>`}
   `;
   drawBlocks();
 }
@@ -3903,9 +3903,9 @@ function editBlock(i){
     <label class="fld">Points clés</label><textarea id="eb_pts" rows="2">${b.points||""}</textarea>
     <div style="height:12px"></div>
     <button class="btn block" onclick="applyEditBlock(${i})">Enregistrer</button>
-    ${b.exoId?`<button class="btn sec block" style="margin-top:8px" onclick="exoDetail('${b.exoId}')">📋 Voir la fiche complète de l'exercice</button>`:(b.physId!=null?`<button class="btn sec block" style="margin-top:8px" onclick="physDetail(${b.physId})">📋 Voir la fiche complète</button>`:"")}
+    ${b.exoId?`<button class="btn sec block" style="margin-top:8px" onclick="exoDetail('${b.exoId}')">Voir la fiche complète de l'exercice</button>`:(b.physId!=null?`<button class="btn sec block" style="margin-top:8px" onclick="physDetail(${b.physId})">Voir la fiche complète</button>`:"")}
     <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Annuler</button>
-    <button class="btn ghost block" style="margin-top:8px;color:var(--bad)" onclick="delBlock(${i});closeModal()">🗑 Retirer ce bloc</button>
+    <button class="btn ghost block" style="margin-top:8px;color:var(--bad)" onclick="delBlock(${i});closeModal()">Retirer ce bloc</button>
   `);
 }
 function applyEditBlock(i){
@@ -3938,7 +3938,7 @@ function openMySessions(){
           <button class="iconbtn" title="Supprimer" onclick="delSavedSession('${o.id}')">🗑</button>
         </div>`; }).join("");
   openModal(`
-    <h3>📁 Mes séances</h3>
+    <h3>Mes séances</h3>
     <div class="sub">Tes séances enregistrées, à recharger en un geste.</div>
     <div style="margin-top:10px">${body}</div>
     <button class="btn sec block" style="margin-top:10px" onclick="closeModal()">Fermer</button>
@@ -4101,7 +4101,7 @@ function generateSession(themeCat, ageCat){
 }
 function sessionThemeModal(){
   const themes=["Défense","Tir","Maniement","Passe","Jeu collectif","Physique"];
-  openModal(`<h3>✨ Générer une séance</h3>
+  openModal(`<h3>Générer une séance</h3>
     <div class="sub">Choisis la dominante. La séance se construit du geste simple vers la situation de match.</div>
     <div class="grid2">${themes.map(t=>`<button class="btn sec" onclick="closeModal();generateSession('${t}')">${t}</button>`).join("")}</div>
     <div style="height:8px"></div>
@@ -4136,9 +4136,9 @@ function drawTerrain(){
   const b=T().session.blocks[timerState.idx];
   const mm=String(Math.floor(timerState.remaining/60)).padStart(2,"0");
   const ss=String(timerState.remaining%60).padStart(2,"0");
-  const detailBtn=b.exoId?`<button class="btn ghost block" style="margin-top:8px" onclick="terrainShowDetail(${timerState.idx})">📋 Voir la fiche de l'exercice</button>`
-    :(b.physId!=null?`<button class="btn ghost block" style="margin-top:8px" onclick="terrainShowDetail(${timerState.idx})">📋 Voir la fiche</button>`
-    :`<button class="btn ghost block" style="margin-top:8px" onclick="terrainShowDetail(${timerState.idx})">📋 Voir les détails du bloc</button>`);
+  const detailBtn=b.exoId?`<button class="btn ghost block" style="margin-top:8px" onclick="terrainShowDetail(${timerState.idx})">Voir la fiche de l'exercice</button>`
+    :(b.physId!=null?`<button class="btn ghost block" style="margin-top:8px" onclick="terrainShowDetail(${timerState.idx})">Voir la fiche</button>`
+    :`<button class="btn ghost block" style="margin-top:8px" onclick="terrainShowDetail(${timerState.idx})">Voir les détails du bloc</button>`);
   openModal(`
     <h3>Vue terrain</h3>
     <div class="sub">Bloc ${timerState.idx+1}/${T().session.blocks.length}</div>
@@ -4147,7 +4147,7 @@ function drawTerrain(){
       <div style="font-size:19px;font-weight:800;margin-bottom:4px">${b.title}</div>
       <div class="muted" style="font-size:12px;margin-bottom:10px">Intensité ${b.intensity} · ${b.dur} min prévues</div>
       <div class="timerbig" id="tbig">${mm}:${ss}</div>
-      <div class="hint">💬 Temps de parole conseillé : 2 min max avant de lancer</div>
+      <div class="hint">Temps de parole conseillé : 2 min max avant de lancer</div>
     </div>
     <div class="grid2">
       <button class="btn" id="tbtn" onclick="toggleTimer()">${timerState.running?'⏸ Pause':'▶ Démarrer'}</button>
@@ -4172,7 +4172,7 @@ function terrainBlockDetail(idx){
   openModal(`
     <h3>${b.title}</h3>
     <div class="sub">${b.cat} · ${b.dur} min · intensité ${b.intensity}</div>
-    ${b.points?`<div class="card"><h3>🔑 Points clés</h3><div style="font-size:13px">${b.points}</div></div>`:'<div class="hint">Aucun détail supplémentaire enregistré pour ce bloc.</div>'}
+    ${b.points?`<div class="card"><h3>Points clés</h3><div style="font-size:13px">${b.points}</div></div>`:'<div class="hint">Aucun détail supplémentaire enregistré pour ce bloc.</div>'}
     <button class="btn block" style="margin-top:10px" onclick="drawTerrain()">▶ Reprendre le chrono</button>
   `);
 }
@@ -4198,7 +4198,7 @@ function toggleTimer(){
   const btn=document.getElementById("tbtn");if(btn)btn.textContent=timerState.running?'⏸ Pause':'▶ Démarrer';
 }
 function stopTimer(){if(timerState&&timerState.iv)clearInterval(timerState.iv);}
-function nextBlock(){stopTimer();if(timerState.idx<T().session.blocks.length-1){timerState.idx++;timerState.remaining=T().session.blocks[timerState.idx].dur*60;timerState.running=false;T().activeTimer={idx:timerState.idx,remaining:timerState.remaining,running:false};save();drawTerrain();}else{flash("Séance terminée 💪");timerState=null;clearActiveTimer();closeModal();}}
+function nextBlock(){stopTimer();if(timerState.idx<T().session.blocks.length-1){timerState.idx++;timerState.remaining=T().session.blocks[timerState.idx].dur*60;timerState.running=false;T().activeTimer={idx:timerState.idx,remaining:timerState.remaining,running:false};save();drawTerrain();}else{flash("Séance terminée");timerState=null;clearActiveTimer();closeModal();}}
 
 /* ============ MATCH / STATS EN DIRECT ============ */
 function matchIsPlayed(){return T().match.events.length>0;}
@@ -4376,7 +4376,7 @@ function renderMatch(){
     </div>
 
     <div class="card">
-      <h3>⚡ Saisie éclair</h3>
+      <h3>Saisie éclair</h3>
       <div class="row" style="gap:8px;margin-bottom:8px">
         <input id="voiceText" placeholder='Ex : "7 trois points réussi" puis Entrée' onkeydown="if(event.key==='Enter'){applyVoicePhrase(this.value);this.value='';}">
         <button class="btn" onclick="const i=document.getElementById('voiceText');applyVoicePhrase(i.value);i.value='';" style="white-space:nowrap">Valider</button>
@@ -4386,14 +4386,14 @@ function renderMatch(){
     </div>
 
     <div class="card">
-      <h3>📊 Box score en direct</h3>
+      <h3>Box score en direct</h3>
       <table class="box">
         <thead><tr><th class="name" style="text-align:left">Joueur</th><th>PTS</th><th>2pts</th><th>3pts</th><th>LF</th><th>REB</th><th>PD</th><th>INT</th><th>BP</th><th>F</th></tr></thead>
         <tbody id="boxScoreBody">${boxScoreRowsHTML(onCourt,bs)}</tbody>
       </table>
       <div class="hint">Sélection joueur puis action = 2 gestes. Fonctionne aussi sans connexion.</div>
     </div>
-    <button class="btn sec block" onclick="reportModal()">📄 Générer le rapport de match</button>
+    <button class="btn sec block" onclick="reportModal()">Générer le rapport de match</button>
     <button class="btn sec block" style="margin-top:8px" onclick="exportBoxCSV()">⬇️ Télécharger la box score complète (CSV)</button>
   `;
   bindMatchShotButtons();
@@ -4489,7 +4489,7 @@ function renderTactics(){
       <div class="row" style="gap:6px">
         <button class="btn sm ghost" onclick="undoDraw()">↩ Annuler</button>
         <button class="btn sm ghost" onclick="clearFrame()">Vider</button>
-        <button class="btn sm" onclick="savePlay()">💾 Enregistrer</button>
+        <button class="btn sm" onclick="savePlay()">Enregistrer</button>
       </div>
     </div>
     <div class="row between" style="margin-top:8px;align-items:center;gap:8px">
@@ -4505,12 +4505,12 @@ function renderTactics(){
       <div class="hint" style="margin-top:6px">Termine ton trait près d'un joueur ou du ballon, un cercle jaune s'affiche : le trait s'accroche à sa cible. Touche ＋ Étape : tout se place automatiquement au bout des flèches, y compris ce qui a déjà bougé. Tu n'ajustes que ce qui doit l'être. Le bouton Lire enchaîne toutes les étapes.</div>
     </div>
     <div class="row" style="gap:6px;margin-top:8px">
-      <button class="btn sm sec" style="flex:1" onclick="exportPDF()">📄 PDF</button>
-      <button class="btn sm sec" style="flex:1" onclick="exportVideo()">🎞 Vidéo</button>
-      <button class="btn sm" style="flex:1" onclick="shareMyPlay()">📤 Partager</button>
+      <button class="btn sm sec" style="flex:1" onclick="exportPDF()">PDF</button>
+      <button class="btn sm sec" style="flex:1" onclick="exportVideo()">Vidéo</button>
+      <button class="btn sm" style="flex:1" onclick="shareMyPlay()">Partager</button>
     </div>
     <div class="hint">Stylo pour dessiner librement. Ajoute des joueurs et le ballon, puis relie-les avec course, passe ou écran. Ajoute une étape pour animer le mouvement.</div>
-    ${DB.plays.length?`<div class="card" style="margin-top:12px"><h3>📁 Mes systèmes (${DB.plays.length})</h3>${DB.plays.map((pl,i)=>`<div class="listitem"><div class="num" style="background:var(--panel2);border:1px solid var(--line);color:var(--muted)">▶</div><div style="flex:1" onclick="loadPlay(${i})"><b>${pl.title}</b><br><small class="muted">${pl.frames.length} image(s)</small></div><button class="iconbtn" onclick="delPlay(${i})">🗑</button></div>`).join("")}</div>`:""}
+    ${DB.plays.length?`<div class="card" style="margin-top:12px"><h3>Mes systèmes (${DB.plays.length})</h3>${DB.plays.map((pl,i)=>`<div class="listitem"><div class="num" style="background:var(--panel2);border:1px solid var(--line);color:var(--muted)">▶</div><div style="flex:1" onclick="loadPlay(${i})"><b>${pl.title}</b><br><small class="muted">${pl.frames.length} image(s)</small></div><button class="iconbtn" onclick="delPlay(${i})">🗑</button></div>`).join("")}</div>`:""}
   `;
   document.querySelectorAll("#toolbar .tool").forEach(b=>{
     b.classList.toggle("active",b.dataset.t===tac.tool);
@@ -5078,8 +5078,8 @@ function parseVoice(raw){
 function applyVoicePhrase(text){
   text=(text||"").trim(); if(!text) return;
   const r=parseVoice(text);
-  if(!r){ voiceLog.unshift('❓ "'+text+'" · non compris'); refreshMatchLive(); flash("Non compris, réessaie"); return; }
-  if(r.error){ voiceLog.unshift('⚠️ "'+text+'" · '+r.error); refreshMatchLive(); flash(r.error); return; }
+  if(!r){ voiceLog.unshift('"'+text+'" · non compris'); refreshMatchLive(); flash("Non compris, réessaie"); return; }
+  if(r.error){ voiceLog.unshift('"'+text+'" · '+r.error); refreshMatchLive(); flash(r.error); return; }
   T().match.events.push({id:uid(),pid:r.pid,type:r.type,made:r.made,side:"us"});
   const res = (["fg2","fg3","ft"].includes(r.type)) ? (r.made?" réussi":" manqué") : "";
   voiceLog.unshift('✅ #'+r.num+' '+plName(r.pid)+' · '+VLABEL[r.type]+res);
@@ -5614,9 +5614,9 @@ function resListHTML(){
 function openResources(){
   const total=allExos().length;
   openModal(`
-    <h3>📚 Bibliothèque d'exercices</h3>
+    <h3>Bibliothèque d'exercices</h3>
     <div class="sub">${total} exercices. Cherche, filtre, ajoute à ta séance, ou crée le tien.</div>
-    <input id="resSearch" placeholder="🔍 Rechercher un exercice, un thème, un âge, un mot-clé" value="${resQuery}" oninput="resQueryInput(this.value)" style="margin-bottom:8px">
+    <input id="resSearch" placeholder="Rechercher un exercice, un thème, un âge, un mot-clé" value="${resQuery}" oninput="resQueryInput(this.value)" style="margin-bottom:8px">
     <div class="chips" style="margin-bottom:8px">
       ${EXO_CATS.map(c=>`<span class="chip" style="${resCat===c?'background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600':''}" onclick="resSet('${c}')">${c==='Tous'?tr('Toutes'):dCat(c)}</span>`).join("")}
     </div>
@@ -5673,10 +5673,10 @@ function createExoModal(){
     </div>
     <label class="fld" style="margin-top:8px">Objectif</label><input id="cx_obj" placeholder="Ce que l'exercice développe">
     <label class="fld" style="margin-top:8px">Mise en place</label><textarea id="cx_setup" placeholder="Disposition, matériel, nombre de joueurs"></textarea>
-    <label class="fld" style="margin-top:8px">🔄 Organisation du groupe</label><input id="cx_orga" placeholder="Comment répartir les joueurs, éviter les temps d'attente">
+    <label class="fld" style="margin-top:8px">Organisation du groupe</label><input id="cx_orga" placeholder="Comment répartir les joueurs, éviter les temps d'attente">
     <label class="fld" style="margin-top:8px">Déroulé, une étape par ligne. Ajoute le temps entre parenthèses</label><textarea id="cx_steps" placeholder="(3 min) Étape 1&#10;(4 min) Étape 2&#10;(3 min) Étape 3"></textarea>
-    <label class="fld" style="margin-top:8px">🗣 Ce que tu dis aux joueurs</label><input id="cx_say" placeholder="La consigne à lancer, en une phrase">
-    <label class="fld" style="margin-top:8px">⚠️ Erreur à corriger</label><input id="cx_error" placeholder="Le défaut fréquent et comment le reprendre">
+    <label class="fld" style="margin-top:8px">Ce que tu dis aux joueurs</label><input id="cx_say" placeholder="La consigne à lancer, en une phrase">
+    <label class="fld" style="margin-top:8px">Erreur à corriger</label><input id="cx_error" placeholder="Le défaut fréquent et comment le reprendre">
     <label class="fld" style="margin-top:8px">Points clés</label><input id="cx_keys" placeholder="Ce sur quoi insister">
     <div style="height:12px"></div>
     <button class="btn block" onclick="saveCustomExo()">Enregistrer dans ma bibliothèque</button>
@@ -5716,25 +5716,25 @@ function exoDetail(id){
       <span id="exoCourt_cap"></span>
     </div>
     <button class="btn sm sec block" style="margin-bottom:10px" onclick="if(window.EXO_CURRENT)animateExo(window.EXO_CURRENT,'exoCourt')">▶ Revoir l'animation</button>
-    <div class="card"><h3>🎯 Objectif</h3><div style="font-size:13px">${dObj(e)}</div></div>
-    <div class="card"><h3>📍 Mise en place</h3><div style="font-size:13px">${e.setup}</div>
+    <div class="card"><h3>Objectif</h3><div style="font-size:13px">${dObj(e)}</div></div>
+    <div class="card"><h3>Mise en place</h3><div style="font-size:13px">${e.setup}</div>
       <div class="hint" style="margin-top:6px">Matériel : ${e.material}</div>
-      ${e.orga?`<div style="font-size:13px;margin-top:8px"><b>🔄 Organisation</b><br>${e.orga}</div>`:""}</div>
+      ${e.orga?`<div style="font-size:13px;margin-top:8px"><b>Organisation</b><br>${e.orga}</div>`:""}</div>
     <div class="card"><h3>▶ Déroulé</h3>
       <ol style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${e.steps.map(s=>`<li>${s}</li>`).join("")}</ol></div>
-    ${e.say?`<div class="card" style="border-left:4px solid var(--accent)"><h3>🗣 Ce que tu dis</h3><div style="font-size:13px;font-style:italic">« ${e.say} »</div></div>`:""}
-    ${e.error?`<div class="card" style="border-left:4px solid #e0a800"><h3>⚠️ Erreur à corriger</h3><div style="font-size:13px">${e.error}</div></div>`:""}
-    <div class="card"><h3>🔑 Points clés</h3><div style="font-size:13px">${e.keys}</div></div>
+    ${e.say?`<div class="card" style="border-left:4px solid var(--accent)"><h3>Ce que tu dis</h3><div style="font-size:13px;font-style:italic">« ${e.say} »</div></div>`:""}
+    ${e.error?`<div class="card" style="border-left:4px solid #e0a800"><h3>Erreur à corriger</h3><div style="font-size:13px">${e.error}</div></div>`:""}
+    <div class="card"><h3>Points clés</h3><div style="font-size:13px">${e.keys}</div></div>
     <div class="grid2">
       <div class="kpi" style="text-align:left"><div class="l">Plus facile</div><div style="font-size:12px;margin-top:3px">${e.vEasy}</div></div>
       <div class="kpi" style="text-align:left"><div class="l">Plus dur</div><div style="font-size:12px;margin-top:3px">${e.vHard}</div></div>
     </div>
-    <div class="card"><h3>🔀 Variantes ${e.cat}</h3>
+    <div class="card"><h3>Variantes ${e.cat}</h3>
       <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${(VARIANTS_BY_CAT[e.cat]||[]).map(v=>`<li>${v}</li>`).join("")}${(e.variants||[]).map(v=>`<li>${v}</li>`).join("")}</ul>
     </div>
     ${e.lib?libExtraHTML(e):""}
     ${cameFromTerrain?'':`<button class="btn block" style="margin-top:10px" onclick="addExoToSession('${e.id}')">＋ Ajouter à ma séance</button>`}
-    ${(e.custom&&!cameFromTerrain)?`<button class="btn ghost block" style="margin-top:8px;color:var(--bad)" onclick="delCustomExo('${e.id}')">🗑 Supprimer cet exercice</button>`:''}
+    ${(e.custom&&!cameFromTerrain)?`<button class="btn ghost block" style="margin-top:8px;color:var(--bad)" onclick="delCustomExo('${e.id}')">Supprimer cet exercice</button>`:''}
     ${cameFromTerrain?`<button class="btn block" style="margin-top:8px" onclick="drawTerrain()">▶ Reprendre le chrono</button>`:""}
     <button class="btn sec block" style="margin-top:8px" onclick="openResources()">← Retour à la liste</button>
   `);
@@ -5748,8 +5748,8 @@ function libExtraHTML(e){
   };
   const prog=links(e.prerequis,"À travailler avant")+links(e.suivants,"Suite logique")+links(e.similaires,"Exercices proches");
   return `
-    ${e.reussite?`<div class="card"><h3>✅ Critères de réussite</h3><div style="font-size:13px">${e.reussite}</div></div>`:""}
-    <div class="card"><h3>🧩 Repères</h3>
+    ${e.reussite?`<div class="card"><h3>Critères de réussite</h3><div style="font-size:13px">${e.reussite}</div></div>`:""}
+    <div class="card"><h3>Repères</h3>
       <div style="font-size:12.5px;line-height:1.7">
         ${e.theme?`<div><b>${tr('Thème')||'Thème'}</b> · ${dTheme(e.theme)}</div>`:""}
         ${e.postes?`<div><b>${tr('Postes')||'Postes'}</b> · ${e.postes}</div>`:""}
@@ -6246,7 +6246,7 @@ const SYSTEMS=[
 ];
 function openSystems(){
   openModal(`
-    <h3>🏀 Systèmes de jeu de référence</h3>
+    <h3>Systèmes de jeu de référence</h3>
     <div class="sub">Aperçu animé, puis charge le système dans ta plaquette</div>
     <div id="sysPrev"></div>
     ${SYSTEMS.map((sy,i)=>`
@@ -6261,7 +6261,7 @@ function openSystems(){
           <span class="levelchip ${sy.level==='pro'?'pro':'form'}">${sy.level==='pro'?'Pro':'Formation'}</span>
           <button class="btn sm sec" onclick="previewSystem(${i})">▶ Aperçu</button>
           <button class="btn sm" onclick="loadSystem(${i})">Charger</button>
-          <button class="btn sm ghost" onclick="shareSystem(${i})">🔗 Partager</button>
+          <button class="btn sm ghost" onclick="shareSystem(${i})">Partager</button>
         </div>
       </div>`).join("")}
     <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
@@ -6409,7 +6409,7 @@ function openShareModal(title){
       <label class="fld">Mot de passe (optionnel)</label>
       <input id="share_setpw" type="text" placeholder="Laisse vide pour un lien libre" autocomplete="off">
       <div class="hint" style="margin-top:4px">Avec un mot de passe, seuls ceux qui le connaissent voient le système.</div>
-      <button class="btn block" style="margin-top:10px" onclick="genShareLink()">🔗 Générer le lien</button>
+      <button class="btn block" style="margin-top:10px" onclick="genShareLink()">Générer le lien</button>
     </div>
     <div id="shareLinkBox"></div>
     <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
@@ -7161,7 +7161,7 @@ const DRILL_REF=[
 ];
 function openDrillsRef(){
   openModal(`
-    <h3>🎯 Exercices experts</h3>
+    <h3>Exercices experts</h3>
     <div class="sub">Touche un exercice pour voir son animation complète</div>
     <div id="drillPrev"></div>
     ${DRILL_REF.map((dr,i)=>`
