@@ -36,7 +36,7 @@ async function _rateLimited(id) {
 }
 //
 // Variables d'environnement Netlify necessaires :
-//   PIVOT_ACCESS_CODES      JSON, ex: {"PIVOT-OWNER-2026":3650,"PIVOT-TESTEUR-2026":21}
+//   PIVOT_ACCESS_CODES      JSON {"CODE":jours,...}, valeurs reelles uniquement dans Netlify, jamais dans le depot
 //   SUPABASE_URL            deja configuree
 //   SUPABASE_SERVICE_ROLE   deja configuree
 
