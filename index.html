@@ -1004,6 +1004,7 @@ function renderCloudAuth(recovery){
       <div style="height:1px;background:var(--line);margin:0 0 14px"></div>
       <button class="btn sec block" onclick="startDemo()">Découvrir sans compte</button>
       <div class="hint" style="margin-top:6px">Explore l'application librement. Crée un compte quand tu veux enregistrer ton travail.</div>
+      <a class="reset" href="/privacy.html" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px">Politique de confidentialité</a>
     </div>`}
   `;
   main.scrollTop=0;
@@ -1138,6 +1139,8 @@ function openSettings(){
       ${IS_TWA?'':`<button class="btn sec block" onclick="openPricing()">${acc?'Gérer mon abonnement':"S'abonner"}</button>`}
       <button class="btn sec block" style="margin-top:8px" onclick="tryAccessCode()">J'ai un code d'accès</button>
       ${logged?`<button class="btn ghost block" style="margin-top:8px" onclick="lockApp()">Se déconnecter</button>`:''}
+      <a class="btn ghost block" style="margin-top:8px;text-align:center;text-decoration:none" href="/privacy.html" target="_blank" rel="noopener">Politique de confidentialité</a>
+      ${logged?`<button class="btn ghost block" style="margin-top:8px;color:var(--bad)" onclick="deleteAccount()">Supprimer mon compte</button>`:''}
     </div>
     <div class="card">
       <h3>Données</h3>
@@ -1639,6 +1642,25 @@ async function tryLogin(){
   const h=await hashPw(pw);
   if(h===DB.auth.hash){ _authed=true; sfx('ok'); render(); }
   else flash('Mot de passe incorrect');
+}
+// Suppression de compte depuis l'application (exigence Google Play, ajoutée le 2026-09-30).
+// Double confirmation, puis la fonction serveur efface les données et le compte avec la clé de service.
+async function deleteAccount(){
+  if(!(supaOn()&&supaUser)){ flash("Aucun compte connecté"); return; }
+  if(!confirm("Supprimer ton compte PIVOT ? Ton effectif, tes séances, tes matchs et ton accès seront effacés définitivement, sur tous tes appareils.")) return;
+  const typed=prompt("Pour confirmer, écris SUPPRIMER");
+  if(String(typed||'').trim().toUpperCase()!=="SUPPRIMER"){ flash("Suppression annulée"); return; }
+  let authH={}; try{ const s=await supa.auth.getSession(); if(s&&s.data&&s.data.session) authH={"Authorization":"Bearer "+s.data.session.access_token}; }catch(e){}
+  try{
+    const r=await fetch('/api/delete-account',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authH),body:'{}'});
+    const j=await r.json().catch(function(){return {};});
+    if(!r.ok||!j.ok){ alert("La suppression n'a pas abouti ("+(j.error||r.status)+"). Écris à ibougalsen1980@gmail.com depuis l'adresse de ton compte, elle sera faite à la main."); return; }
+  }catch(e){ alert("Connexion impossible. Réessaie avec du réseau, ou écris à ibougalsen1980@gmail.com depuis l'adresse de ton compte."); return; }
+  try{ await supa.auth.signOut(); }catch(e){}
+  supaUser=null; _cloudLoaded=false;
+  try{ localStorage.removeItem(LS_KEY); }catch(e){}
+  alert("Ton compte et tes données ont été supprimés.");
+  location.reload();
 }
 function lockApp(){
   if(supaOn()){ if(confirm("Se déconnecter de ton compte sur cet appareil ?")){ try{ supa.auth.signOut(); }catch(e){} supaUser=null; _cloudLoaded=false; render(); } return; }
@@ -6376,7 +6398,11 @@ function _bytesStr(b){ return new TextDecoder().decode(b); }
 function _b64urlFrom(bytes){ let bin=""; for(let i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]); return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
 function _b64urlTo(str){ str=str.replace(/-/g,'+').replace(/_/g,'/'); while(str.length%4)str+='='; const bin=atob(str); const a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i); return a; }
 function shareEncodeFrames(frames){ return (frames||[]).map(function(fr){ return (fr.tokens||[]).map(function(t){ return [t.id,t.kind,t.label,Math.round(t.x),Math.round(t.y)]; }); }); }
-function shareDecodeFrames(cf){ return (cf||[]).map(function(f){ return {tokens:(f||[]).map(function(a){ return {id:a[0],kind:a[1],label:a[2],x:a[3],y:a[4]}; })}; }); }
+// Sécurité (2026-09-30) : un lien de partage vient de l'extérieur. Chaque valeur est contrôlée avant d'être
+// injectée dans le dessin, sinon un lien piégé pouvait exécuter du code dans PIVOT et prendre le compte du coach.
+function _shId(v){ return String(v==null?'':v).replace(/[^A-Za-z0-9_-]/g,'').slice(0,40); }
+function _shNum(v){ const n=Number(v); return isFinite(n)?Math.max(-2000,Math.min(2000,n)):0; }
+function shareDecodeFrames(cf){ return (Array.isArray(cf)?cf:[]).map(function(f){ return {tokens:(Array.isArray(f)?f:[]).map(function(a){ a=Array.isArray(a)?a:[]; return {id:_shId(a[0]),kind:_shId(a[1]),label:esc(String(a[2]==null?'':a[2]).slice(0,12)),x:_shNum(a[3]),y:_shNum(a[4])}; })}; }); }
 function encodePlainShare(obj){ return 'v1.'+_b64urlFrom(_strBytes(JSON.stringify(obj))); }
 async function _deriveKey(pw,salt){ const base=await crypto.subtle.importKey('raw',_strBytes(pw),'PBKDF2',false,['deriveKey']); return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:120000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']); }
 async function encryptShare(obj,pw){

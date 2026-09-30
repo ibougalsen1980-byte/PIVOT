@@ -36,6 +36,20 @@
   status = 200
   force = true
 
+# Suppression de compte depuis l'application (exigence Google Play), ajoutee le 2026-09-30.
+[[redirects]]
+  from = "/api/delete-account"
+  to = "/.netlify/functions/delete-account"
+  status = 200
+  force = true
+
+# Le site est publie depuis la racine du depot : on refuse de servir le code source des fonctions serveur.
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
 [[headers]]
   for = "/sw.js"
   [headers.values]
