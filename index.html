@@ -781,7 +781,7 @@ const UPDATES=[
     "Les séances générées suivent la trame de terrain : activation en début, corps de séance selon la dominante, bloc tirs et lancers, puis retour au calme et étirements."
   ]},
   {v:23, date:"01/08/2026", title:"Plan de saison semaine par semaine", items:[
-    "Le plan de saison passe du mois à la semaine, du U7 aux seniors, de septembre à juin, sur la base d'une planification annuelle alignée sur le référentiel de formation FFBB.",
+    "Le plan de saison passe du mois à la semaine, du U7 aux seniors, de septembre à juin, sur la base d'une planification annuelle inspirée des principes de formation fédéraux, sans validation officielle de la FFBB.",
     "Chaque semaine a son thème et son objectif. Par exemple en U11 les arrêts et départs, la main faible, le tir en course, le surnombre 2 contre 1, la défense du porteur, le jeu à deux. Un clic charge la séance dans l'onglet Séance.",
     "Génère toute la saison d'un coup, une trentaine de séances prêtes et enregistrées, à charger semaine par semaine.",
     "Exporte le plan complet en PDF, mois par mois et semaine par semaine, à imprimer ou à partager à ton staff."
@@ -1810,7 +1810,7 @@ function render(){
   { const cont=document.getElementById("content"); let db=document.getElementById("demoBar");
     if(isDemo()&&cont){ if(!db){ db=document.createElement("div"); db.id="demoBar"; cont.insertBefore(db,cont.firstChild); }
       db.style.cssText="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#101317;font-size:12px;font-weight:700;padding:7px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px";
-      db.innerHTML='<span>Mode découverte, ton travail n\'est pas enregistré</span><button onclick="demoSignup()" style="background:#101317;color:#fff;border:0;border-radius:9px;padding:6px 11px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">Créer mon compte</button>';
+      db.innerHTML='<span>Mode découverte, rien n\'est sauvegardé dans un compte</span><button onclick="demoSignup()" style="background:#101317;color:#fff;border:0;border-radius:9px;padding:6px 11px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">Créer mon compte</button>';
     } else if(db){ db.remove(); } }
   document.querySelectorAll('#tabs button').forEach(b=>{const lb=b.querySelector('.lbl'); if(!lb)return; const k=b.dataset.v || (b.dataset.modal && NAV_MODAL_KEY[b.dataset.modal]); if(!k)return; lb.textContent=tr(k); b.setAttribute('aria-label', tr(k));});
   { const mb=document.getElementById('muteBtn'); if(mb) mb.textContent=(DB.profile&&DB.profile.muted)?'volume_off':'volume_up'; }
@@ -1850,7 +1850,7 @@ function _loadSnd(){
   if(!_audio) return;
   Object.keys(SND_URLS).forEach(function(k){
     if(_buf[k]||_buf["_pending_"+k]) return; _buf["_pending_"+k]=true;
-    fetch(SND_URLS[k]).then(function(r){return r.arrayBuffer();}).then(function(a){
+    fetch(SND_URLS[k]).then(function(r){ if(!r.ok) throw new Error('son absent'); return r.arrayBuffer();}).then(function(a){
       _audio.decodeAudioData(a, function(b){ _buf[k]=b; }, function(){});
     }).catch(function(){});
   });
@@ -1970,9 +1970,21 @@ function openModal(html){
 function closeModal(){
   if(typeof terrainModalOpen!=="undefined" && terrainModalOpen){ terrainModalOpen=false; try{ stopTimer(); }catch(e){} timerState=null; clearActiveTimer(); }
   modalBg.classList.remove("on");
-  if(modalOpen){ modalOpen=false; try{ if(history.state && history.state.pvModal){ history.back(); } }catch(e){} }
+  if(modalOpen){ modalOpen=false; try{ if(history.state && history.state.pvModal){ _pvPopIgnore=Date.now(); history.back(); } }catch(e){} }
 }
+// Correctif 02/10/2026 (audit F1) : le retour d'historique lancé par closeModal() est asynchrone.
+// Quand un bouton « Charger » ferme la fenêtre puis change d'onglet, ce retour arrivait après
+// la navigation et ramenait le coach sur Accueil. On ignore ce retour-là : il ne sert qu'à
+// retirer l'entrée d'historique de la fenêtre, jamais à changer d'écran.
+let _pvPopIgnore=0;
 window.addEventListener('popstate', function(e){
+  if(_pvPopIgnore && Date.now()-_pvPopIgnore<2000){
+    _pvPopIgnore=0;
+    // On se resynchronise sur l'écran réellement affiché, sans naviguer.
+    try{ history.replaceState({pvView:view}, ""); }catch(err){}
+    return;
+  }
+  _pvPopIgnore=0;
   if(typeof terrainModalOpen!=="undefined" && terrainModalOpen){ terrainModalOpen=false; try{ stopTimer(); }catch(e){} timerState=null; clearActiveTimer(); }
   if(modalOpen){ modalOpen=false; modalBg.classList.remove("on"); }
   const st=e && e.state;
@@ -2097,6 +2109,8 @@ async function finishOnboarding(){
   flash(lvl==="pro"?"Profil pro, réponses expertes activées":"Profil enregistré, réponses pédagogiques activées");
 }
 function editProfile(){
+  // Correctif 02/10/2026 : en mode découverte, ce bouton ne faisait rien du tout.
+  if(isDemo()){ flash("Crée ton compte pour personnaliser ton profil"); return; }
   ONB={name:DB.profile.name||"",email:(DB.auth&&DB.auth.user)||"",pw:"",pw2:"",years:DB.profile.years||"",diplomas:(DB.profile.diplomas||[]).slice(),level:DB.profile.level||"",category:DB.profile.category||"U13",teamName:T().name||""};
   DB.profile.done=false; save(); render();
 }
@@ -2155,7 +2169,7 @@ function loadDailySession(){
 /* ===== Plan annuel par catégorie, inspiré des repères de formation FFBB ===== */
 const YEAR_PLAN_MONTHS=["Septembre","Octobre","Novembre","Décembre","Janvier","Février","Mars","Avril","Mai","Juin"];
 /* Plan de saison hebdomadaire, du U7 aux seniors. 10 mois, 3 semaines par mois.
-   Modèle : planification annuelle U11 alignée sur le référentiel de formation FFBB. */
+   Modèle : planification annuelle U11 inspirée des principes de formation fédéraux, sans validation officielle de la FFBB. */
 const YEAR_PLANS={
   "U7":[
     [{t:"Prise en main du ballon",f:"Manipuler à deux mains, rouler, lancer et rattraper, plaisir",c:"Maniement"},{t:"Dribble sur place",f:"Dribble main droite puis main gauche, tête relevée",c:"Maniement"},{t:"Se déplacer en dribble",f:"Avancer en marchant puis en trottinant, garder le ballon",c:"Maniement"}],
@@ -2272,7 +2286,7 @@ function renderYearPlanModal(){
   }).join("");
   openModal(`
     <h3>Plan de saison par catégorie</h3>
-    <div class="sub">Progression semaine par semaine, de septembre à juin, alignée sur le référentiel de formation FFBB. Chaque semaine génère une séance d'exercices triés par thème et par âge de la catégorie.</div>
+    <div class="sub">Progression semaine par semaine, de septembre à juin, inspirée des principes de formation fédéraux, sans validation officielle de la FFBB. Chaque semaine génère une séance d'exercices triés par thème et par âge de la catégorie.</div>
     <div class="row" style="flex-wrap:wrap;gap:6px;margin:12px 0 8px">
       ${keys.map(k=>`<button class="btn sm ${k===_planCat?'':'sec'}" onclick="_planCat='${k}';renderYearPlanModal()">${k}</button>`).join("")}
     </div>
@@ -2314,7 +2328,7 @@ function exportYearPlanPDF(){
   try{
     const weeks=planWeeks(_planCat);
     const se=(T().seasonPlan && T().seasonPlan.cat===_planCat) ? T().seasonPlan : null;
-    const secs=[{body:"Catégorie "+_planCat+".  Progression hebdomadaire de septembre à juin, alignée sur le référentiel de formation FFBB. Repère à adapter à ton groupe et à ton calendrier."}];
+    const secs=[{body:"Catégorie "+_planCat+".  Progression hebdomadaire de septembre à juin, inspirée des principes de formation fédéraux, sans validation officielle de la FFBB. Repère à adapter à ton groupe et à ton calendrier."}];
     let curMonth="";
     weeks.forEach(function(w,i){
       if(w.mois!==curMonth){ curMonth=w.mois; secs.push({h:curMonth, body:""}); }
@@ -2368,7 +2382,7 @@ function renderHome(){
       <div class="kpi"><div class="n">${present}/${total}</div><div class="l">Présents prévus</div></div>
       <div class="kpi"><div class="n">${T().session.blocks.length}</div><div class="l">Blocs de séance</div></div>
       <div class="kpi"><div class="n">${DB.plays.length}</div><div class="l">Systèmes créés</div></div>
-      <div class="kpi"><div class="n">${lastMatch?teamPts:"-"}</div><div class="l">Pts dernier match</div></div>
+      <div class="kpi"><div class="n">${lastMatchPts()===null?"-":lastMatchPts()}</div><div class="l">Pts dernier match</div></div>
     </div>
 
     <div class="card">
@@ -2525,6 +2539,8 @@ function stepsCardHTML(){
   </div>`;
 }
 function pricingBannerHTML(){
+  // Correctif 02/10/2026 (audit F6) : en mode découverte, le bandeau affichait « Encore 0 jour, Renouveler ».
+  if(isDemo()) return "";
   const d=subDaysLeft();
   if(d>7) return `<div class="pp">
     <div class="ppt">Accès actif</div>
@@ -3107,7 +3123,11 @@ async function realAI(q){
   const ri=rosterInfo(), p=DB.profile||{};
   let authH={};
   if(supaOn()){ try{ const s=await supa.auth.getSession(); if(s&&s.data&&s.data.session) authH={'Authorization':'Bearer '+s.data.session.access_token}; }catch(e){} }
-  const r=await fetch('/api/coach',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authH),
+  // Correctif 02/10/2026 (audit F5) : sans délai maximum, une requête bloquée laissait
+  // « PIVOT réfléchit… » affiché indéfiniment. Au-delà de 35 s, on abandonne et la réponse locale prend le relais.
+  const _ctl=(typeof AbortController!=='undefined')?new AbortController():null;
+  const _to=_ctl?setTimeout(function(){ try{_ctl.abort();}catch(e){} },35000):null;
+  const r=await fetch('/api/coach',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authH), signal:_ctl?_ctl.signal:undefined,
     body:JSON.stringify({message:q, level:aiLevel,
       team:{name:T().name, category:T().category, level:T().level, opponent:T().match.opponent,
         players:ri.total, present:ri.present, postes:ri.postes},
@@ -3115,6 +3135,7 @@ async function realAI(q){
   // Distinction ajoutée le 20/09/2026 : avant, un quota dépassé (429) déclenchait exactement la même
   // erreur générique qu'une vraie panne, et le coach recevait une réponse locale de secours sans
   // jamais savoir que ce n'était pas l'IA qui avait répondu.
+  if(_to) clearTimeout(_to);
   if(r.status===429) throw new Error('rate_limit');
   if(!r.ok) throw new Error('api');
   const d=await r.json();
@@ -4306,6 +4327,51 @@ function nextBlock(){stopTimer();if(timerState.idx<T().session.blocks.length-1){
 
 /* ============ MATCH / STATS EN DIRECT ============ */
 function matchIsPlayed(){return T().match.events.length>0;}
+/* Fin de match et historique (ajout 02/10/2026, audit F2) : avant, un match ne se terminait jamais,
+   les actions s'accumulaient d'une rencontre à l'autre et l'adversaire restait « Adversaire ». */
+function editOpponent(){
+  openModal(`
+    <h3>Adversaire du match</h3>
+    <label class="fld">Nom de l'équipe adverse</label>
+    <input id="m_opp" value="${String(T().match.opponent||"").replace(/"/g,'&quot;')}" placeholder="Ex : BC Roubaix U15" maxlength="60">
+    <div style="height:12px"></div>
+    <button class="btn block" onclick="applyOpponent()">Enregistrer</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Annuler</button>
+  `);
+  setTimeout(function(){ const e=document.getElementById("m_opp"); if(e){e.focus();e.select();} },60);
+}
+function applyOpponent(){
+  const v=(val("m_opp")||"").trim().slice(0,60);
+  T().match.opponent=v||"Adversaire"; save(); closeModal(); renderMatch(); flash("Adversaire enregistré");
+}
+function endMatch(){
+  const m=T().match;
+  if(!m.events.length){ flash("Aucune action saisie pour ce match"); return; }
+  const bs=boxScore();
+  if(!confirm("Terminer le match contre "+(m.opponent||"Adversaire")+" ("+bs.team.pts+"-"+bs.opp+") ? Il sera rangé dans « Matchs joués » et un nouveau match vide démarrera.")) return;
+  const top=Object.entries(bs.players).map(([id,st])=>({id,...st})).sort((a,b)=>b.pts-a.pts)[0];
+  if(!T().matchHistory) T().matchHistory=[];
+  T().matchHistory.unshift({id:uid(), date:Date.now(), opponent:m.opponent||"Adversaire", us:bs.team.pts, opp:bs.opp,
+    top: top && top.pts ? (plName(top.id)+" ("+top.pts+" pts)") : "", events:m.events.slice()});
+  m.events=[]; m.opponent="Adversaire"; m.live=false;
+  try{ pendingShot=null; }catch(e){}
+  save(); renderMatch(); flash("Match rangé dans Matchs joués");
+}
+function openMatchHistory(){
+  const h=T().matchHistory||[];
+  openModal(`
+    <h3>Matchs joués</h3>
+    ${h.length?h.map(x=>`<div class="listitem"><div class="num" style="background:${x.us>x.opp?'var(--ok)':x.us<x.opp?'var(--bad)':'var(--muted)'}">${x.us>x.opp?'V':x.us<x.opp?'D':'N'}</div>
+      <div style="flex:1"><b>${esc(x.opponent)}</b> · ${x.us}-${x.opp}<br><small class="muted">${new Date(x.date).toLocaleDateString('fr-FR')}${x.top?' · Meilleur marqueur : '+esc(x.top):''}</small></div></div>`).join("")
+      :`<div class="muted" style="font-size:13px">Aucun match terminé pour l'instant. Touche « Terminer le match » à la fin d'une rencontre pour la ranger ici.</div>`}
+    <div style="height:10px"></div>
+    <button class="btn sec block" onclick="closeModal()">Fermer</button>
+  `);
+}
+function lastMatchPts(){
+  if(matchIsPlayed()) return boxScore().team.pts;
+  const h=T().matchHistory||[]; return h.length?h[0].us:null;
+}
 function boxScore(){
   const players={}, team={pts:0,fg2m:0,fg2a:0,fg3m:0,fg3a:0,ftm:0,fta:0,reb:0,ast:0,stl:0,tov:0,blk:0,foul:0};
   let opp=0;
@@ -4432,6 +4498,13 @@ function voiceLogHTML(){
   return voiceLog.slice(0,4).map(l=>'<div class="reco" style="margin-top:6px">'+l+'</div>').join("");
 }
 function boxScoreRowsHTML(onCourt,bs){
+  // Correctif 02/10/2026 (audit F6) : un joueur sorti sur le banc après avoir marqué restait
+  // invisible dans la box score. On ajoute, après les cinq sur le terrain, tout joueur qui a déjà une action.
+  try{
+    const ids=new Set(onCourt.map(p=>p.id));
+    const extra=T().players.filter(p=>!ids.has(p.id) && bs.players[p.id] && (T().match.events||[]).some(e=>e.pid===p.id));
+    onCourt=onCourt.concat(extra);
+  }catch(e){}
   return onCourt.map(p=>{const s=bs.players[p.id];return `<tr><td class="name">${p.num} ${p.first}</td><td><b>${s.pts}</b></td><td>${s.fg2m}/${s.fg2a}</td><td>${s.fg3m}/${s.fg3a}</td><td>${s.ftm}/${s.fta}</td><td>${s.reb}</td><td>${s.ast}</td><td>${s.stl}</td><td>${s.tov}</td><td>${s.foul}</td></tr>`;}).join("");
 }
 function bindMatchShotButtons(){
@@ -4457,6 +4530,11 @@ function renderMatch(){
   const onCourt = onCourtPlayers();
   main.innerHTML=`
     <h2 class="view-title">Match en direct</h2>
+    <div class="linkrow" style="margin:0 0 10px">
+      <button class="linkbtn" onclick="editOpponent()"><span class="mi">edit</span><span class="lbl">Adversaire</span></button>
+      <button class="linkbtn" onclick="endMatch()"><span class="mi">flag</span><span class="lbl">Terminer le match</span></button>
+      <button class="linkbtn" onclick="openMatchHistory()"><span class="mi">history</span><span class="lbl">Matchs joués${(T().matchHistory||[]).length?` (${T().matchHistory.length})`:""}</span></button>
+    </div>
     <div class="scorebar" id="matchScore">${matchScoreHTML(bs)}</div>
 
     ${onCourt.length===0?`<div class="card" style="text-align:center;padding:16px 10px">
