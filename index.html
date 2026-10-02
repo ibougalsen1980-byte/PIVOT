@@ -487,6 +487,108 @@
   @media (min-width:760px) and (max-height:639px){
     nav.tabs button[data-modal]{display:none}
   }
+
+  /* ===================== ALLÈGEMENT v3 (octobre 2026) =====================
+     Retour des testeurs : interface trop chargée. Rien n'est retiré, on calme la matière :
+     fond uni, cartes plates, titres en minuscules, un seul bouton orange par bloc,
+     plus d'effets décoratifs (texture parquet, reflets, inclinaison 3D, pulsation). */
+  #app{background:#f7f4ee !important}
+  #app::before{display:none}
+  header.top{background:rgba(247,244,238,.92);border-bottom:1px solid var(--line);border-image:none;padding:12px 16px 10px}
+  .brand{font-size:19px;letter-spacing:1.5px}
+  .teampill.mi{background:transparent;border:0;box-shadow:none;width:36px;height:36px;border-radius:50%;color:#4b525a;
+    -webkit-backdrop-filter:none;backdrop-filter:none}
+  @media (hover:hover){ .teampill.mi:hover{background:#ece6da} }
+  #datePill{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}
+  main{padding:18px 16px 110px}
+  h2.view-title{font-size:24px;letter-spacing:.6px;margin:2px 0 6px}
+  .sub{font-size:13px;margin:0 0 16px}
+  .card{background:#fff;border:1px solid #ece5d8;border-radius:16px;padding:16px;margin-bottom:12px;
+    box-shadow:0 1px 2px rgba(40,33,26,.04)}
+  .card:active,.card.tilted{transform:none !important}
+  .card.tilted{box-shadow:0 1px 2px rgba(40,33,26,.04)}
+  @media (hover:hover){ .card:hover{transform:none;box-shadow:0 1px 2px rgba(40,33,26,.04),0 6px 16px rgba(40,33,26,.05)} }
+  .card h3{font-family:'Inter',sans-serif;text-transform:none;letter-spacing:0;font-size:15px;font-weight:700;margin:0 0 10px}
+  .hint{font-size:11.5px;line-height:1.45}
+  .btn{box-shadow:none;letter-spacing:0;font-weight:700;border-radius:12px}
+  .btn:not(.sec):not(.ghost)::after{display:none}
+  .btn.sec{background:#fff;border:1px solid #e3dccf}
+  .btn.ghost{border-color:#e3dccf}
+  .kpi{background:#fff;border:1px solid #ece5d8;box-shadow:none;border-radius:14px;padding:10px 12px}
+  .kpi:active{transform:none}
+  .kpi .n{font-size:21px}
+  .kpi .l{font-size:9.5px;letter-spacing:.4px}
+  .num{box-shadow:none}
+  .pchip.sel{box-shadow:none}
+  .block-item{background:#fff;border-color:#ece5d8;border-radius:12px;padding:10px 10px 10px 12px}
+  .iconbtn{border:0;background:transparent;color:#8a9097;width:32px;height:32px;min-width:32px;min-height:32px;border-radius:9px}
+  @media (hover:hover){ .iconbtn:hover{background:#f1ece2;color:var(--txt)} }
+  .tool{background:#fff;border-color:#e3dccf}
+  .seg{box-shadow:none;background:#efe9de}
+  .seg button.active{box-shadow:none}
+  .listitem{padding:11px 0}
+  .alert{padding:9px 0}
+  .reco{background:#fdf6f1;border-left-width:3px;border-radius:10px}
+  #aiFab{animation:none;box-shadow:0 6px 16px rgba(232,99,31,.32);right:16px;bottom:96px;width:50px;height:50px}
+  .modal{border-top:0;border-radius:22px 22px 0 0}
+  .modal h3{font-family:'Inter',sans-serif;text-transform:none;letter-spacing:0;font-size:18px;font-weight:800}
+  main.enter > *{animation-name:vfade !important;animation-duration:.32s !important}
+  .foot-links a{background:transparent;border:0;padding:4px 6px;text-decoration:underline;text-underline-offset:3px;text-decoration-color:#d6cfc2}
+  .foot-links{gap:2px 10px}
+  /* Pensée du jour et horloge dans un bandeau d'accueil sobre */
+  .welcome{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:0 2px 16px}
+  .welcome .eyebrow{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .welcome .big{font-family:'Oswald',sans-serif;font-size:25px;line-height:1.1;text-transform:uppercase;letter-spacing:.6px;margin-top:3px;color:var(--txt)}
+  .welcome .clock{text-align:right;flex:0 0 auto}
+  .welcome .clock .sb-time{font-family:'Oswald',sans-serif;font-size:22px;font-weight:600;color:var(--txt);letter-spacing:1px;text-shadow:none;font-variant-numeric:tabular-nums}
+  .welcome .clock .sb-date{font-family:'Inter',sans-serif;font-size:11px;color:var(--muted);letter-spacing:.2px;text-transform:none}
+  .quote{font-size:13px;line-height:1.5;color:#4b525a;font-style:italic;border-left:3px solid var(--accent);padding:2px 0 2px 12px;margin:0 2px 18px}
+  .quote .lbl2{display:block;font-style:normal;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:3px}
+  .kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+  .kpi-strip .kpi{padding:10px 8px;text-align:center}
+  .kpi-strip .kpi .n{font-size:19px}
+  .kpi-strip .kpi .l{font-size:9px;line-height:1.25;margin-top:3px}
+  .streak{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--accent);background:#fdf0e8;padding:4px 9px;border-radius:20px;white-space:nowrap}
+  .streak .mi{font-size:16px}
+  /* Grille d'accès rapides : remplace les cartes empilées, mêmes fonctions */
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tile{display:flex;align-items:center;gap:10px;text-align:left;background:#faf7f2;border:1px solid #efe8dc;border-radius:13px;
+    padding:11px 11px;cursor:pointer;color:var(--txt);font:inherit;min-height:56px;transition:background-color .15s ease,transform .12s ease}
+  .tile:active{transform:scale(.97)}
+  @media (hover:hover){ .tile:hover{background:#f3eee5} }
+  .tile .mi{font-size:22px;color:var(--accent);flex:0 0 auto}
+  .tile .lbl{font-size:12.5px;font-weight:600;line-height:1.25}
+  .tile.wide{grid-column:span 2}
+  .tile.accent{background:#fdf3ec;border-color:#f6dccb}
+  .sect-title{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin:20px 4px 8px}
+  /* Actions secondaires compactes (séance) */
+  .qa{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 14px}
+  .qa button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#fff;border:1px solid #e9e2d5;
+    border-radius:13px;padding:11px 4px;cursor:pointer;color:var(--txt);font:inherit;min-height:66px;transition:background-color .15s ease,transform .12s ease}
+  .qa button:active{transform:scale(.97)}
+  @media (hover:hover){ .qa button:hover{background:#faf7f2} }
+  .qa button .mi{font-size:22px;color:var(--accent)}
+  .qa button .lbl{font-size:11.5px;font-weight:600;line-height:1.2;text-align:center}
+  .linkrow{display:flex;gap:6px;flex-wrap:wrap;margin:-6px 0 14px}
+  .linkbtn{display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid #e3dccf;border-radius:20px;
+    padding:6px 11px;font:600 12px/1 'Inter',sans-serif;color:#4b525a;cursor:pointer}
+  .linkbtn .mi{font-size:16px}
+  @media (hover:hover){ .linkbtn:hover{background:#fff} }
+  /* Accordéons (posture) : tout le texte reste, on l'ouvre à la demande */
+  details.acc{background:#fff;border:1px solid #ece5d8;border-radius:14px;margin-bottom:8px;overflow:hidden}
+  details.acc > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 14px;font-weight:700;font-size:14px}
+  details.acc > summary::-webkit-details-marker{display:none}
+  details.acc > summary .lbl{flex:1}
+  details.acc > summary::after{content:"expand_more";font-family:'Material Symbols Rounded';font-size:22px;color:var(--muted);transition:transform .2s ease;font-weight:normal}
+  details.acc[open] > summary::after{transform:rotate(180deg)}
+  details.acc .acc-body{padding:0 14px 14px;font-size:13px;line-height:1.6;color:#333a42}
+  details.acc.alert-acc{border-color:#f3c9b0}
+  .acc-group{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin:20px 4px 8px}
+  /* Bouton d'avis : discret, sans perdre sa place */
+  #pvAvisBtn{background:#fff !important;color:var(--accent) !important;border:1px solid #f0d6c4 !important;
+    box-shadow:0 4px 12px rgba(40,33,26,.10) !important;padding:9px 13px !important;font-size:12.5px !important;
+    right:16px !important;bottom:91px !important}
+  @media (min-width:760px) and (min-height:640px){ #pvAvisBtn{bottom:28px !important} }
 </style>
 </head>
 <body>
@@ -2232,41 +2334,37 @@ function renderHome(){
   const absent=T().players.filter(p=>!p.present);
   const lastMatch = matchIsPlayed();
   const teamPts = boxScore().team.pts;
+  const sw=streakWeeks();
+  const evs=upcomingEvents();
+  // Allègement v3 (octobre 2026) : mêmes contenus et mêmes boutons qu'avant, regroupés.
+  // L'horloge et la pensée du jour passent dans un bandeau d'accueil sobre, les modules
+  // secondaires (références, plan annuel, posture, physique, santé, réglages) dans une grille d'accès rapides.
   main.innerHTML = `
-    <div class="hero">
-      <div class="sheen"></div>
-      <img src="logo.png" alt="PIVOT" class="hero-logo" onerror="this.style.display='none'">
-      <div class="hero-txt">
+    <div class="welcome">
+      <div style="min-width:0">
         <div class="eyebrow">${T().name} · Saison ${T().season}</div>
         <div class="big">${tr('hello')} ${coachName()}</div>
       </div>
+      <div class="clock"><div class="sb-time" id="sbTime">--:--</div><div class="sb-date" id="sbDate">--</div></div>
     </div>
-
-    ${scoreboardHTML()}
+    <div class="quote"><span class="lbl2">Pensée du jour</span>"${quoteOfDay()}"</div>
 
     <div class="card">
-      <div class="row between" style="align-items:center">
-        <div>
+      <div class="row between" style="align-items:flex-start;gap:10px">
+        <div style="min-width:0">
           <h3 style="margin:0">Ta régularité</h3>
-          <div class="muted" style="font-size:12.5px;margin-top:2px">${(function(){const s=streakWeeks();return s>0?(s+" semaine"+(s>1?"s":"")+" d'affilée, garde le rythme"):"Prépare une séance cette semaine pour lancer ta série";})()}</div>
+          <div class="muted" style="font-size:12.5px;margin-top:3px">${sw>0?(sw+" semaine"+(sw>1?"s":"")+" d'affilée, garde le rythme"):"Prépare une séance cette semaine pour lancer ta série"}</div>
         </div>
-        <div class="kpi" style="min-width:64px"><div class="n">${streakWeeks()}</div><div class="l">sem.</div></div>
+        <span class="streak"><span class="mi">local_fire_department</span>${sw} sem.</span>
       </div>
-      <button class="btn block" style="margin-top:10px" onclick="loadDailySession()">Séance du jour, dominante ${dailyTheme().label}</button>
-      <div class="hint" style="margin-top:6px">Une base équilibrée construite depuis la bibliothèque, à ajuster ensuite dans l'onglet Séance.</div>
+      <button class="btn block" style="margin-top:12px" onclick="loadDailySession()">Séance du jour, dominante ${dailyTheme().label}</button>
+      <div class="hint" style="margin-top:7px">Une base équilibrée construite depuis la bibliothèque, à ajuster ensuite dans l'onglet Séance.</div>
     </div>
 
     ${stepsCardHTML()}
     ${pricingBannerHTML()}
 
-    <div class="card">
-      <h3>Alertes</h3>
-      ${upcomingEvents().map(u=>`<div class="alert"><span class="badge ${u.e.kind==='Match'?'bad':'ok'}">${u.when.toUpperCase()}</span> ${u.e.time} · ${u.e.title}${u.e.place?(' · '+u.e.place):''}</div>`).join("")}
-      ${absent.length? absent.map(p=>`<div class="alert"><span class="badge warn">ABSENT</span> ${p.first} ${p.last} n'est pas dispo pour la prochaine séance</div>`).join(""):""}
-      ${!absent.length && !upcomingEvents().length ? `<div class="muted" style="font-size:12.5px">Aucune alerte. Effectif au complet, rien d'imminent au calendrier.</div>`:""}
-    </div>
-
-    <div class="grid2">
+    <div class="kpi-strip">
       <div class="kpi"><div class="n">${present}/${total}</div><div class="l">Présents prévus</div></div>
       <div class="kpi"><div class="n">${T().session.blocks.length}</div><div class="l">Blocs de séance</div></div>
       <div class="kpi"><div class="n">${DB.plays.length}</div><div class="l">Systèmes créés</div></div>
@@ -2275,8 +2373,11 @@ function renderHome(){
 
     <div class="card">
       <h3>À venir</h3>
+      ${evs.map(u=>`<div class="alert"><span class="badge ${u.e.kind==='Match'?'bad':'ok'}">${u.when.toUpperCase()}</span> ${u.e.time} · ${u.e.title}${u.e.place?(' · '+u.e.place):''}</div>`).join("")}
+      ${absent.map(p=>`<div class="alert"><span class="badge warn">ABSENT</span> ${p.first} ${p.last} n'est pas dispo pour la prochaine séance</div>`).join("")}
       <div class="listitem"><div class="num" style="background:var(--blue)">📋</div><div style="flex:1"><b>${T().session.title||"Prochaine séance"}</b><br><small class="muted">${T().session.blocks&&T().session.blocks.length?T().session.blocks.length+" blocs · "+T().session.blocks.reduce((a,b)=>a+(b.dur||0),0)+" min prévues":"À construire dans l'onglet Séance"}</small></div><span class="tag">Séance</span></div>
       ${T().match.opponent?`<div class="listitem"><div class="num">🏀</div><div style="flex:1"><b>Match vs ${T().match.opponent}</b><br><small class="muted">Saisie en direct dans l'onglet Match</small></div><span class="tag">Match</span></div>`:``}
+      ${!absent.length && !evs.length ? `<div class="hint" style="margin-top:8px">Aucune alerte. Effectif au complet, rien d'imminent au calendrier.</div>`:""}
       <button class="btn sec block" style="margin-top:10px" onclick="openTimeline()">Voir le calendrier</button>
     </div>
 
@@ -2286,42 +2387,18 @@ function renderHome(){
       <div class="hint">Chaque suggestion est refusable. L'IA propose, tu décides.</div>
     </div>
 
-    <div class="card">
-      <h3>Références de haut niveau</h3>
-      <div class="grid2">
-        <button class="btn sec" onclick="openSystems()">Systèmes de jeu</button>
-        <button class="btn sec" onclick="openDrillsRef()">Exercices experts</button>
-      </div>
-      <div class="hint">Systèmes animés prêts à charger dans le tableau tactique, du centre de formation au niveau pro.</div>
+    <div class="sect-title">Ressources</div>
+    <div class="tiles">
+      <button class="tile" onclick="openSystems()"><span class="mi">strategy</span><span class="lbl">Systèmes de jeu</span></button>
+      <button class="tile" onclick="openDrillsRef()"><span class="mi">workspace_premium</span><span class="lbl">Exercices experts</span></button>
+      <button class="tile" onclick="openYearPlan()"><span class="mi">calendar_month</span><span class="lbl">Plan de saison par catégorie</span></button>
+      <button class="tile accent" onclick="openPosture()"><span class="mi">shield_person</span><span class="lbl">Posture & protection de l'enfance</span></button>
+      <button class="tile" onclick="openPhysique()"><span class="mi">fitness_center</span><span class="lbl">Préparation physique</span></button>
+      <button class="tile" onclick="openSante()"><span class="mi">health_and_safety</span><span class="lbl">Santé & prévention</span></button>
+      <button class="tile wide" onclick="openSettings()"><span class="mi">settings</span><span class="lbl">Réglages</span></button>
     </div>
 
-    <div class="card">
-      <h3>Plan de saison par catégorie</h3>
-      <div class="muted" style="font-size:12.5px;margin-bottom:10px">Une progression mois par mois, du U7 aux seniors, inspirée des repères de formation FFBB. Charge la séance du mois en un clic.</div>
-      <button class="btn block" onclick="openYearPlan()">Ouvrir le plan annuel</button>
-    </div>
-
-    <div class="card" style="border:1px solid var(--accent)">
-      <h3>Posture & protection de l'enfance</h3>
-      <div class="muted" style="font-size:12.5px;margin-bottom:10px">Des repères pour accompagner les jeunes en difficulté, tenir un cadre, et savoir quand alerter.</div>
-      <button class="btn block" onclick="openPosture()">Ouvrir les repères</button>
-    </div>
-
-    <div class="card">
-      <h3>Autres modules</h3>
-      <div class="grid2">
-        <button class="btn sec" onclick="openPhysique()">Préparation physique</button>
-        <button class="btn sec" onclick="openSante()">Santé & prévention</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Réglages</h3>
-      <div class="muted" style="font-size:12.5px;margin-bottom:10px">Langue, son, notifications, compte et données, tout au même endroit.</div>
-      <button class="btn sec block" onclick="openSettings()">Ouvrir les réglages</button>
-    </div>
-
-    <div class="footer">
+    <div class="footer" style="margin-top:22px">
       <div class="foot-links">
         <a onclick="openPricing()">Abonnement</a>
         <a onclick="openFAQ()">FAQ</a>
@@ -2331,6 +2408,7 @@ function renderHome(){
         <a onclick="exportData()">Sauvegarder</a>
         <a onclick="importData()">Restaurer</a>
         <a onclick="resetAll()">Réinitialiser</a>
+        <a onclick="var b=document.getElementById('pvAvisBtn'); if(b) b.click();">Donner mon avis</a>
       </div>
       <div class="foot-copy">© 2026 PIVOT · Sarr Ibrahima. Tous droits réservés. · <a href="https://pivotcoach.netlify.app/">pivotcoach.netlify.app</a> · <a href="mailto:contact.pivotcoach@gmail.com">contact.pivotcoach@gmail.com</a></div>
     </div>
@@ -2882,22 +2960,23 @@ const VSS_PRECOS=[
   "Écouter sans enquêter : si un jeune se confie, accueille, ne mets pas sa parole en doute, ne promets pas le secret, note ses mots exacts et transmets. En France, le 119 et la cellule de signalement du ministère des Sports, Signal-sports, existent pour ça.",
 ];
 function postureSectionsHTML(){
-  const head=function(txt){ return `<div style="font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);font-size:13px;margin:14px 2px 4px">${txt}</div>`; };
-  const cards=function(arr){ return arr.map(function(p){ return `<div class="card"><h3>${p.t}</h3><div style="font-size:13px;line-height:1.55">${p.d}</div></div>`; }).join(""); };
+  // Allègement v3 (octobre 2026) : tout le contenu reste, chaque repère se déplie à la demande.
+  // Les deux blocs de sécurité (protocole d'alerte, danger immédiat) restent ouverts en permanence.
+  const head=function(txt){ return `<div class="acc-group">${txt}</div>`; };
+  const acc=function(title,body,opts){ opts=opts||{}; return `<details class="acc${opts.alert?' alert-acc':''}"${opts.open?' open':''}><summary><span class="lbl">${title}</span></summary><div class="acc-body">${body}</div></details>`; };
+  const cards=function(arr){ return arr.map(function(p){ return acc(p.t,p.d); }).join(""); };
   return `
     ${head("Les repères de posture")}
-    ${POSTURE.map(function(p,i){ return `<div class="card"><h3>${i+1}. ${p.t}</h3><div style="font-size:13px;line-height:1.55">${p.d}</div></div>`; }).join("")}
+    ${POSTURE.map(function(p,i){ return acc((i+1)+". "+p.t, p.d); }).join("")}
     ${head("Psychologie de l'enfant à l'adolescent")}
     ${cards(PSYCHO_AGES)}
     ${head("Honorabilité et casier judiciaire")}
-    <div class="hint" style="margin:0 2px 6px">Repères à transmettre aux présidents de club.</div>
+    <div class="hint" style="margin:-2px 4px 8px">Repères à transmettre aux présidents de club.</div>
     ${cards(HONORABILITE)}
     ${head("Violences sexuelles dans le sport")}
-    <div class="card" style="border:1px solid var(--accent)"><h3>En parler, c'est protéger</h3><div style="font-size:13px;line-height:1.55">${VSS_INTRO}</div></div>
-    <div class="card"><h3>Préconisations concrètes</h3><ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${VSS_PRECOS.map(function(v){return `<li style="margin-bottom:4px">${v}</li>`;}).join("")}</ul></div>
-    <div class="card"><h3>Grille de vigilance</h3>
-      <div class="hint" style="margin-bottom:6px">Un signal isolé n'est pas une preuve. Plusieurs signaux appellent l'attention.</div>
-      <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${VIGILANCE.map(function(v){return `<li>${v}</li>`;}).join("")}</ul></div>
+    ${acc("En parler, c'est protéger", VSS_INTRO, {alert:true})}
+    ${acc("Préconisations concrètes", `<ul style="margin:0;padding-left:18px">${VSS_PRECOS.map(function(v){return `<li style="margin-bottom:4px">${v}</li>`;}).join("")}</ul>`)}
+    ${acc("Grille de vigilance", `<div class="hint" style="margin:0 0 6px">Un signal isolé n'est pas une preuve. Plusieurs signaux appellent l'attention.</div><ul style="margin:0;padding-left:18px">${VIGILANCE.map(function(v){return `<li>${v}</li>`;}).join("")}</ul>`)}
     <div class="card" style="border:1px solid var(--accent)"><h3>Protocole d'alerte</h3>
       <ol style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${PROTOCOLE.map(function(s){return `<li>${s}</li>`;}).join("")}</ol></div>
     <div class="card" style="border:1px solid var(--bad)">
@@ -3842,20 +3921,21 @@ function renderSession(){
   main.innerHTML=`
     <h2 class="view-title">Constructeur de séance</h2>
     <div class="sub">${T().session.title||"Nouvelle séance"} · ${sessionDuration()} min · ${T().session.blocks.length} bloc${T().session.blocks.length>1?"s":""}</div>
-    <div class="row" style="gap:6px;margin-bottom:8px">
-      <button class="btn sm sec" style="flex:1" onclick="renameSession()">Titre</button>
-      <button class="btn sm sec" style="flex:1" onclick="newSession()">Nouvelle</button>
-      <button class="btn sm sec" style="flex:1" onclick="openMySessions()">Mes séances${sv?` (${sv})`:""}</button>
+    <div class="linkrow">
+      <button class="linkbtn" onclick="renameSession()"><span class="mi">edit</span><span class="lbl">Titre</span></button>
+      <button class="linkbtn" onclick="newSession()"><span class="mi">add</span><span class="lbl">Nouvelle</span></button>
+      <button class="linkbtn" onclick="openMySessions()"><span class="mi">folder_open</span><span class="lbl">Mes séances${sv?` (${sv})`:""}</span></button>
     </div>
-    <button class="btn block" style="margin-bottom:8px" onclick="customBlockModal()">＋ Ajouter un bloc, saisie rapide</button>
-    <button class="btn sec block" style="margin-bottom:8px" onclick="openResources()">Piocher dans la bibliothèque d'exercices</button>
-    <div class="row between" style="margin-bottom:10px">
-      <button class="btn sm sec" onclick="addBlockModal()">Bloc express</button>
-      <!-- Libellé corrigé le 20/09/2026 : ce bouton lance un algorithme de règles (thème -> progression
-           geste simple vers match), aucun appel à une IA n'a lieu ici. L'ancien texte "Générer par IA"
-           annonçait une fonction qui n'existe pas dans ce parcours. -->
-      <button class="btn sm sec" onclick="sessionThemeModal()">Générer une séance</button>
-      <button class="btn sm ghost" onclick="terrainView()">▶ Vue terrain</button>
+    <button class="btn block" onclick="customBlockModal()">＋ Ajouter un bloc, saisie rapide</button>
+    <!-- Libellé corrigé le 20/09/2026 : "Générer une séance" lance un algorithme de règles
+         (thème -> progression geste simple vers match), aucun appel à une IA n'a lieu ici. -->
+    <div class="qa">
+      <button onclick="openResources()"><span class="mi">menu_book</span><span class="lbl">Bibliothèque d'exercices</span></button>
+      <button onclick="addBlockModal()"><span class="mi">bolt</span><span class="lbl">Bloc express</span></button>
+      <button onclick="sessionThemeModal()"><span class="mi">auto_fix_high</span><span class="lbl">Générer une séance</span></button>
+    </div>
+    <div class="row" style="justify-content:flex-end;margin:-6px 0 8px">
+      <button class="linkbtn" onclick="terrainView()"><span class="mi">play_arrow</span><span class="lbl">Vue terrain</span></button>
     </div>
     <div id="blocks"></div>
     ${!has?`<div class="card" style="text-align:center;padding:16px 10px">
@@ -3866,9 +3946,11 @@ function renderSession(){
       <button class="btn sec block" style="margin-top:8px" onclick="customBlockModal()">＋ Créer mon premier bloc</button>
     </div>`:`
       <button class="btn block" style="margin-top:10px" onclick="saveCurrentSession()">Enregistrer cette séance dans Mes séances</button>
-      <button class="btn sec block" style="margin-top:8px" onclick="openAppel()">Faire l'appel de la séance</button>
-      <button class="btn sec block" style="margin-top:8px" onclick="addObservation()">Noter une observation après la séance</button>
-      <button class="btn sec block" style="margin-top:8px" onclick="exportSessionOnePDF()">Fiche de séance, 1 page pour le banc</button>`}
+      <div class="qa" style="margin-top:10px">
+        <button onclick="openAppel()"><span class="mi">how_to_reg</span><span class="lbl">Faire l'appel</span></button>
+        <button onclick="addObservation()"><span class="mi">edit_note</span><span class="lbl">Noter une observation</span></button>
+        <button onclick="exportSessionOnePDF()"><span class="mi">description</span><span class="lbl">Fiche pour le banc</span></button>
+      </div>`}
   `;
   drawBlocks();
 }
