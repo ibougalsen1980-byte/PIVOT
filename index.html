@@ -5002,6 +5002,43 @@ function addFrame(){
   flash(moved?"Étape ajoutée, joueurs déplacés au bout des flèches":"Étape ajoutée");
 }
 function clearFrame(){curFrame().tokens=[];curFrame().paths=[];drawTokens();drawPaths();}
+// Avance un point à la fraction k (0 à 1) le long d'une ligne brisée, en respectant sa forme
+// réelle (courbe, crochet, zigzag), pas seulement son point de départ et d'arrivée. Utilisé
+// par playAnim pour que l'animation suive la flèche dessinée par le coach, au lieu de faire
+// filer chaque joueur en ligne droite entre deux positions.
+function tacPointAlongPath(points,k){
+  if(!points||points.length<2) return points&&points[0];
+  let total=0; const segLens=[];
+  for(let i=1;i<points.length;i++){
+    const d=Math.hypot(points[i].x-points[i-1].x,points[i].y-points[i-1].y);
+    segLens.push(d); total+=d;
+  }
+  if(total<=0) return points[points.length-1];
+  let target=Math.max(0,Math.min(1,k))*total;
+  for(let i=0;i<segLens.length;i++){
+    const segLen=segLens[i];
+    if(target<=segLen||i===segLens.length-1){
+      const t=segLen>0?Math.min(1,target/segLen):1;
+      const p0=points[i],p1=points[i+1];
+      return {x:p0.x+(p1.x-p0.x)*t,y:p0.y+(p1.y-p0.y)*t};
+    }
+    target-=segLen;
+  }
+  return points[points.length-1];
+}
+// Associe chaque jeton de la frame de départ au tracé qui le fait bouger (le même lien que
+// advanceTokens utilise déjà pour poser la position finale), pour que playAnim puisse suivre
+// ce tracé image par image plutôt que la seule ligne droite début/fin.
+function tacMovementPaths(frameA){
+  const map={};
+  (frameA.paths||[]).forEach(function(p){
+    if(!p||!p.points||p.points.length<2) return;
+    if(p.type==="move"||p.type==="screen"){ if(p.from) map[p.from]=p; }
+    else if(p.type==="dribble"){ if(p.from) map[p.from]=p; map["ball"]=p; }
+    else if(p.type==="pass"||p.type==="shot"){ map["ball"]=p; }
+  });
+  return map;
+}
 function playAnim(){
   if(tac.frames.length<2){flash("Ajoute une 2e image pour animer");return;}
   if(tac.playing)return;tac.playing=true;
@@ -5011,6 +5048,7 @@ function playAnim(){
   const step=()=>{
     if(seg>=tac.frames.length-1){tac.playing=false;tac.cur=tac.frames.length-1;drawTokens();drawPaths();return;}
     const A=tac.frames[seg],B=tac.frames[seg+1];const dur=900;let t0=null;
+    const movePaths=tacMovementPaths(A);
     // Un seul rebuild HTML par étape (pas un par frame d'animation) : ensuite on ne fait
     // plus que déplacer chaque jeton via son transform, ce qui élimine le clignotement et
     // les à-coups pendant la lecture.
@@ -5019,7 +5057,10 @@ function playAnim(){
       if(!t0)t0=ts;const k=Math.min(1,(ts-t0)/dur);
       A.tokens.forEach(a=>{
         const b=B.tokens.find(x=>x.id===a.id)||a;
-        const x=a.x+(b.x-a.x)*k, y=a.y+(b.y-a.y)*k;
+        const mp=movePaths[a.id];
+        let x,y;
+        if(mp){ const pt=tacPointAlongPath(mp.points,k); x=pt.x; y=pt.y; }
+        else { x=a.x+(b.x-a.x)*k; y=a.y+(b.y-a.y)*k; }
         moveTokenDOM({id:a.id,kind:a.kind,label:a.label,x,y});
       });
       if(k<1)requestAnimationFrame(frame);else{seg++;setTimeout(step,120);}
