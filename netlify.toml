@@ -36,6 +36,14 @@
   status = 200
   force = true
 
+# Verification des abonnements Google Play achetes dans l'application Android (index.html appelle
+# fetch('/api/play-verify')), ajoutee le 2026-10-07 avec Google Play Billing.
+[[redirects]]
+  from = "/api/play-verify"
+  to = "/.netlify/functions/play-verify"
+  status = 200
+  force = true
+
 # Suppression de compte depuis l'application (exigence Google Play), ajoutee le 2026-09-30.
 [[redirects]]
   from = "/api/delete-account"
