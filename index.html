@@ -1345,6 +1345,7 @@ function openSettings(){
       ${(IS_TWA&&!_playReady)?'':`<button class="btn sec block" onclick="openPricing()">${acc?'Gérer mon abonnement':"S'abonner"}</button>`}
       <button class="btn sec block" style="margin-top:8px" onclick="tryAccessCode()">J'ai un code d'accès</button>
       ${logged?`<button class="btn ghost block" style="margin-top:8px" onclick="lockApp()">Se déconnecter</button>`:''}
+      ${hasAiConsent()?`<button class="btn ghost block" style="margin-top:8px" onclick="revokeAiConsent()">Retirer mon accord pour l'assistant IA</button>`:''}
       <a class="btn ghost block" style="margin-top:8px;text-align:center;text-decoration:none" href="/privacy.html" target="_blank" rel="noopener">Politique de confidentialité</a>
       ${logged?`<button class="btn ghost block" style="margin-top:8px;color:var(--bad)" onclick="deleteAccount()">Supprimer mon compte</button>`:''}
     </div>
@@ -3025,6 +3026,10 @@ function openSante(){
   openModal(`
     <h3>Santé et prévention</h3>
     <div class="sub">Repères de terrain pour prévenir et réagir. L'app aide au suivi, elle ne pose jamais de diagnostic.</div>
+    <div class="card" style="border-left:3px solid var(--warn,#f59e0b)">
+      <h3 style="margin:0 0 6px">Information, pas avis médical</h3>
+      <div class="muted" style="font-size:12.5px;line-height:1.5">Ces fiches donnent des repères de prévention pour l'entraîneur. Elles ne remplacent ni un médecin, ni un kiné, ni les secours, et ne servent pas à décider seul d'une reprise après blessure ou commotion.</div>
+    </div>
     <div class="card" style="border-left:3px solid var(--bad)">
       <h3 style="margin:0 0 6px">Urgences</h3>
       <div class="muted" style="font-size:12.5px;line-height:1.5">En France : 15 SAMU, 18 pompiers, 112 numéro d'urgence européen, 114 par SMS pour les personnes sourdes. Ailleurs, garde le numéro local affiché dans le gymnase. En cas de doute vital, on appelle d'abord, on agit ensuite.</div>
@@ -3394,6 +3399,48 @@ function addObservation(){
   if(!T().obs) T().obs=[]; T().obs.unshift({ts:Date.now(), txt:v.slice(0,300)});
   save(); try{sfx("ok");}catch(e){} flash("Observation notée, l'assistant IA en tiendra compte");
 }
+/* Consentement IA (ajout 08/10/2026, règle App Store 5.1.2) : avant la première question
+   envoyée à l'assistant, le coach est informé que sa demande part chez Anthropic et donne
+   son accord explicite. Accord mémorisé dans le profil (synchronisé), retirable dans Réglages. */
+const AI_CONSENT_V=1;
+function hasAiConsent(){ const c=DB.profile&&DB.profile.aiConsent; return !!(c&&c.v>=AI_CONSENT_V); }
+let _aiConsentPending="";
+function openAiConsent(q){
+  _aiConsentPending=q||"";
+  openModal(`
+    <h3>Avant ta première question</h3>
+    <div class="sub">L'assistant IA de PIVOT fonctionne avec Claude, un modèle d'intelligence artificielle fourni par la société Anthropic.</div>
+    <div class="card">
+      <h3>Ce qui est envoyé</h3>
+      <div class="muted" style="font-size:12.5px;line-height:1.5">Ta question, et le contexte utile pour y répondre : nom, catégorie et niveau de l'équipe, prochain adversaire, nombre de joueurs et postes, ton profil de coach (nom, expérience, diplômes), tes dernières séances et observations. Les noms, photos, numéros de licence et blessures de tes joueurs ne sont pas envoyés.</div>
+    </div>
+    <div class="card">
+      <h3>Ce qu'il faut savoir</h3>
+      <div class="muted" style="font-size:12.5px;line-height:1.5">Anthropic traite ta demande pour produire la réponse, en partie aux États-Unis, sous garanties contractuelles. N'écris dans tes messages ni nom de joueur, ni information de santé. Les réponses de l'IA sont des propositions : garde ton jugement de coach, et pour toute blessure, oriente vers un professionnel de santé.</div>
+    </div>
+    <a class="btn ghost block" style="text-align:center;text-decoration:none" href="/privacy.html" target="_blank" rel="noopener">Lire la politique de confidentialité</a>
+    <button class="btn block" style="margin-top:8px" onclick="acceptAiConsent()">J'accepte et je continue</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="refuseAiConsent()">Refuser</button>
+  `);
+}
+function acceptAiConsent(){
+  if(!DB.profile) DB.profile={};
+  DB.profile.aiConsent={v:AI_CONSENT_V, ts:Date.now()};
+  save();
+  const q=_aiConsentPending; _aiConsentPending="";
+  aiChat();
+  if(q) askAI(q);
+}
+function refuseAiConsent(){
+  _aiConsentPending="";
+  closeModal();
+  flash("Assistant IA non activé. Le reste de PIVOT fonctionne normalement.");
+}
+function revokeAiConsent(){
+  if(DB.profile) delete DB.profile.aiConsent;
+  save(); flash("Accord retiré, l'assistant IA te redemandera ton accord avant toute question");
+  try{ render(); }catch(e){}
+}
 async function askAI(q){
   q=(q||"").trim();if(!q)return;
   if(isDemo()){
@@ -3402,6 +3449,7 @@ async function askAI(q){
     drawChat();
     return;
   }
+  if(!hasAiConsent()){ openAiConsent(q); return; }
   chatLog.push({who:"me",txt:q});
   chatLog.push({who:"ai",txt:"<span class='muted'>PIVOT réfléchit…</span>"});
   drawChat();
