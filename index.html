@@ -4949,7 +4949,7 @@ function svgPt(evt){
 }
 function tokenAt(pt){
   const f=curFrame();let best=null,bd=1e9;
-  f.tokens.forEach(t=>{const d=Math.hypot(t.x-pt.x,t.y-pt.y);if(d<24&&d<bd){bd=d;best=t;}});
+  f.tokens.forEach(t=>{const d=Math.hypot(t.x-pt.x,t.y-pt.y);if(d<42&&d<bd){bd=d;best=t;}});
   return best;
 }
 // Cherche un item (joueur ou ballon) proche d'un point, en excluant celui d'où part le trait :
