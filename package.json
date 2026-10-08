@@ -4,9 +4,10 @@
   "private": true,
   "description": "PIVOT, application coach de basket avec assistant IA Claude",
   "engines": {
-    "node": "18"
+    "node": "24.x"
   },
   "dependencies": {
     "web-push": "^3.6.7"
   }
 }
+Correction version Node pour Vercel
