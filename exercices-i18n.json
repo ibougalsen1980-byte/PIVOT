@@ -4921,6 +4921,856 @@
       "vHard": "All three modules back to back with the goal changed mid-play.",
       "postes": "All",
       "stats": "Last possessions converted, end-of-game execution"
+    },
+    "e1": {
+      "titre": "Mirror drill",
+      "objectif": "Wake up the body and the focus while having fun.",
+      "setup": "Players in pairs, face to face, one leader and one copier.",
+      "material": "None",
+      "orga": "Everyone plays at the same time, in pairs. No waiting.",
+      "steps": [
+        "(3 min) The leader moves slowly: arms, footwork, jumps. The copier mirrors every move.",
+        "(2 min) Switch roles on the whistle.",
+        "(3 min) Add one ball each, dribbling."
+      ],
+      "say": "Your partner is your mirror. Never take your eyes off them.",
+      "error": "They go too fast and look at their feet. Slow them down, heads up.",
+      "keys": "Eyes on your partner, slow moves at first.",
+      "vEasy": "No ball.",
+      "vHard": "Everyone dribbling a ball."
+    },
+    "e2": {
+      "titre": "Both hands count",
+      "objectif": "Improve dribbling with both hands.",
+      "setup": "One player, one ball, a 3-meter space.",
+      "material": "1 ball per player",
+      "orga": "Everyone with their own ball, all at once, an arm's length apart.",
+      "steps": [
+        "(3 min) 30 seconds strong-hand dribble, eyes up. Repeat.",
+        "(3 min) 30 seconds weak hand. Repeat.",
+        "(4 min) 30 seconds switching hands on every bounce, then moving forward."
+      ],
+      "say": "Push the ball, don't slap it. Eyes up, not on the ball.",
+      "error": "The weak hand slaps the ball and the eyes drop. Slow the weak hand down: control first, speed later.",
+      "keys": "Push the ball into the floor, don't slap it. Eyes up.",
+      "vEasy": "Stationary.",
+      "vHard": "Moving forward through a cone course."
+    },
+    "e3": {
+      "titre": "Red light, green light",
+      "objectif": "Dribble while controlling speed and stopping.",
+      "setup": "Everyone lined up on one line, ball in hand.",
+      "material": "1 ball per player",
+      "orga": "The whole group starts from the same line. The coach is the traffic light.",
+      "steps": [
+        "(3 min) Green light: dribble forward. Red light: stop and hold the ball.",
+        "(3 min) The last one to stop on red does an extra down-and-back.",
+        "(4 min) Add a yellow light: switching hands is mandatory."
+      ],
+      "say": "Red light, I freeze, ball squeezed tight in my hands.",
+      "error": "They stop off balance. Make them stop with feet wide and knees bent.",
+      "keys": "Stop on balance, ball protected.",
+      "vEasy": "Walking.",
+      "vHard": "Running, with a hand switch on yellow."
+    },
+    "e4": {
+      "titre": "Star shooting",
+      "objectif": "Rep shots from 5 spots.",
+      "setup": "Five cones around the paint, one rebounder under the rim.",
+      "material": "1 or 2 balls",
+      "orga": "One shooter, one rebounder, the rest in line. Rotate after a full round.",
+      "steps": [
+        "(5 min) Shoot from cone 1, the rebounder grabs it and passes back.",
+        "(5 min) Go through all 5 cones in order.",
+        "(5 min) Count the makes, do another round, change rebounders."
+      ],
+      "say": "Same form at every cone. Get set before you shoot.",
+      "error": "They shoot on the run, off balance. Demand a clean stop before every shot.",
+      "keys": "Same form on every shot, balanced before you shoot.",
+      "vEasy": "Shorter distance.",
+      "vHard": "Shoot off one dribble, then a stop."
+    },
+    "e5": {
+      "titre": "Free throw duel",
+      "objectif": "Stick to your free throw routine with a little pressure on.",
+      "setup": "Two players, one free throw line, taking turns.",
+      "material": "1 ball",
+      "orga": "Pairs on every available basket. One shoots, the other rebounds and keeps count.",
+      "steps": [
+        "(3 min) Each player shoots 5 free throws with their routine.",
+        "(3 min) Count the makes, call out the score.",
+        "(2 min) The loser does 3 quick footwork reps, then play another round."
+      ],
+      "say": "Same routine every time. Breathe before you let it go.",
+      "error": "The routine changes on every shot. Demand the exact same pre-shot moves.",
+      "keys": "Same routine on every shot, breathe before release.",
+      "vEasy": "No score kept.",
+      "vHard": "After a down-and-back sprint."
+    },
+    "e6": {
+      "titre": "Partner chest passing",
+      "objectif": "Pass fast and on target, at chest height.",
+      "setup": "Two players face to face, 4 meters apart.",
+      "material": "1 ball per pair",
+      "orga": "In pairs, one ball per pair, everyone working at the same time.",
+      "steps": [
+        "(4 min) Two-hand chest pass, 10 in a row with no mistake.",
+        "(3 min) After each clean set, take one step back.",
+        "(3 min) Add a bounce pass, alternating with the chest pass."
+      ],
+      "say": "Aim for your teammate's chest, hands ready to catch.",
+      "error": "Soft passes that land at the feet. Ask for a step toward the target and thumbs pointing down.",
+      "keys": "Aim for your teammate's chest, hands ready to catch.",
+      "vEasy": "Closer together.",
+      "vHard": "Moving sideways."
+    },
+    "e7": {
+      "titre": "Three passes, then score",
+      "objectif": "Move the ball before finishing.",
+      "setup": "Three players, half court, one rim.",
+      "material": "1 ball",
+      "orga": "Groups of three, one half court per group if possible. Otherwise rotate.",
+      "steps": [
+        "(4 min) At least three passes before a shot, nobody dribbles.",
+        "(4 min) Move after every pass, never stand still.",
+        "(4 min) Finish with a close shot, then add a passive defender."
+      ],
+      "say": "Pass and move right away. Don't stand there watching the ball go.",
+      "error": "They stay planted after the pass. Demand a cut or a relocation after every pass.",
+      "keys": "Move after the pass, never stand still.",
+      "vEasy": "No defender.",
+      "vHard": "With a passive defender."
+    },
+    "e8": {
+      "titre": "2 on 1",
+      "objectif": "Use the numbers advantage to score easy.",
+      "setup": "Two attackers, one defender, half court.",
+      "material": "1 ball",
+      "orga": "Groups of three. Two attack, one defends, rotate every possession.",
+      "steps": [
+        "(4 min) Both attackers push toward the rim in their own lane.",
+        "(4 min) Draw the defender, then hit the open teammate.",
+        "(4 min) Finish as close to the rim as possible, no rushing."
+      ],
+      "say": "Draw the defender before you pass. Run in your lane.",
+      "error": "They pass too early without drawing the defender. Demand a committed defender before the pass.",
+      "keys": "Draw the defender before passing, run in your lane.",
+      "vEasy": "Passive defender.",
+      "vHard": "A second defender gets back."
+    },
+    "e9": {
+      "titre": "Cone screen drill",
+      "objectif": "Understand the screen and how to use it.",
+      "setup": "A cone at the high post acts as the screen, one ball handler, one finisher.",
+      "material": "1 cone, 1 ball",
+      "orga": "Small group in line. One ball handler works, the others watch, then rotate.",
+      "steps": [
+        "(4 min) The ball handler comes off tight to the cone, shoulder to shoulder.",
+        "(4 min) He attacks the rim or kicks out depending on the open space.",
+        "(4 min) Replace the cone with a real screener."
+      ],
+      "say": "Come off tight to the screen and read the space that opens.",
+      "error": "They go wide of the screen. Get them tight to the cone, shoulder to shoulder.",
+      "keys": "Come off shoulder to the screen, read the open space.",
+      "vEasy": "No defense.",
+      "vHard": "Two defenders who switch."
+    },
+    "e10": {
+      "titre": "Five stops in a row",
+      "objectif": "Defend with intensity and talk.",
+      "setup": "5 on 5, only the defense counts.",
+      "material": "1 ball",
+      "orga": "Two teams of five. Switch roles once the goal is reached.",
+      "steps": [
+        "(5 min) The defending team needs five stops in a row.",
+        "(3 min) A basket allowed resets the count to zero.",
+        "(4 min) Switch offense and defense."
+      ],
+      "say": "Talk, help, secure the rebound. Five stops together.",
+      "error": "Silent defense. Demand a loud call on every pass.",
+      "keys": "Talk, help, secure the rebound.",
+      "vEasy": "Three stops.",
+      "vHard": "Seven stops, no fouls."
+    },
+    "e11": {
+      "titre": "Defensive slides",
+      "objectif": "Work defensive footwork without crossing the feet.",
+      "setup": "A zigzag course with cones.",
+      "material": "Cones",
+      "orga": "One line per course. Go as soon as the player ahead has passed two cones.",
+      "steps": [
+        "(3 min) Low stance, active hands, slide from cone to cone.",
+        "(3 min) No crossing the feet, touch each cone with your hand.",
+        "(2 min) Add an attacker to mirror."
+      ],
+      "say": "Stay low. Feet slide, they never cross.",
+      "error": "They stand up and cross their legs. Get them low, weight on the balls of the feet.",
+      "keys": "Stay low, weight on the balls of the feet.",
+      "vEasy": "Slowly.",
+      "vHard": "Mirroring an attacker."
+    },
+    "e12": {
+      "titre": "Reaction start",
+      "objectif": "Reaction speed and first step.",
+      "setup": "Players in a split stance, ready.",
+      "material": "None",
+      "orga": "The whole group faces the coach. Waves of 4 to 6 players.",
+      "steps": [
+        "(3 min) On the visual signal, sprint 5 meters.",
+        "(2 min) Walk back to recover.",
+        "(3 min) Vary the signal, left or right hand, and the starting position."
+      ],
+      "say": "Explode on that first step. Eyes locked on my signal.",
+      "error": "They jump early on sound. Use a visual signal, not your voice.",
+      "keys": "Explosive first step, eyes on the signal.",
+      "vEasy": "Standing start.",
+      "vHard": "Start sitting or lying down."
+    },
+    "e13": {
+      "titre": "Core plank circuit",
+      "objectif": "Strengthen the core, injury prevention.",
+      "setup": "Everyone on a mat or on the floor.",
+      "material": "None",
+      "orga": "All at once, lined up, the coach sets the pace with a stopwatch.",
+      "steps": [
+        "(2 min) Front plank 20 seconds, rest 20 seconds.",
+        "(2 min) Side plank 15 seconds on each side.",
+        "(2 min) Two rounds, recovery in between."
+      ],
+      "say": "Your body is a board. Don't let your back sag.",
+      "error": "Hips drop and the lower back arches. Have them squeeze their abs and glutes.",
+      "keys": "Body in a straight line, no arched back.",
+      "vEasy": "On the knees.",
+      "vHard": "Add an arm raise."
+    },
+    "e14": {
+      "titre": "One on one from the top",
+      "objectif": "Attack and defend a one on one.",
+      "setup": "Attacker with the ball in the middle, defender in front, one rim.",
+      "material": "1 ball",
+      "orga": "In pairs. One matchup, then switch roles and the next pair steps in.",
+      "steps": [
+        "(4 min) Two dribbles max to attack the rim.",
+        "(4 min) The defender takes away the straight line and pushes to one side.",
+        "(4 min) Switch roles every possession."
+      ],
+      "say": "Change speeds to attack. On defense, stay low and in front.",
+      "error": "The attacker dribbles with no purpose. Demand a sharp change of pace.",
+      "keys": "Attacker: change of pace. Defender: stay low.",
+      "vEasy": "Start farther out.",
+      "vHard": "Only one dribble allowed."
+    },
+    "e15": {
+      "titre": "Last minute",
+      "objectif": "Handle the end of a game under pressure.",
+      "setup": "5 on 5, one minute on the clock, two-point gap.",
+      "material": "1 ball",
+      "orga": "Two teams of five. Replay several scenarios, switching sides.",
+      "steps": [
+        "(4 min) The team that's down has to come back before time runs out.",
+        "(3 min) Manage fouls and the clock, pick the right shot.",
+        "(3 min) Replay with the scenario reversed."
+      ],
+      "say": "Keep a cool head. Look for the right shot, not the first one.",
+      "error": "Rushing and bad shots. Demand a clear first and second option.",
+      "keys": "Good shot selection, don't panic.",
+      "vEasy": "Two minutes.",
+      "vHard": "One possession, one-point gap."
+    },
+    "e16": {
+      "titre": "Crocodile river",
+      "objectif": "Learn to dribble by crossing the river without getting chomped.",
+      "setup": "Two lines, a big river in the middle, one crocodile without a ball.",
+      "material": "1 ball per child",
+      "orga": "All the kids on one side with their ball. One crocodile in the river.",
+      "steps": [
+        "(3 min) Story: the river is full of crocodiles, you have to dribble across without getting chomped.",
+        "(4 min) When the crocodile touches a child's ball, that child becomes a crocodile too.",
+        "(3 min) Play until the last child, who wins and becomes the crocodile chief."
+      ],
+      "say": "Protect your ball like a treasure, look ahead, run fast to your friends.",
+      "error": "They watch their ball and forget the crocodile. Get their heads up so they see the danger.",
+      "keys": "Look ahead, protect your ball.",
+      "vEasy": "Walking, only one crocodile.",
+      "vHard": "Two crocodiles, weak hand only."
+    },
+    "e17": {
+      "titre": "Magic colors",
+      "objectif": "Combine listening and dribbling by racing to the right color.",
+      "setup": "Colored cones scattered all over the gym.",
+      "material": "Colored cones, balls",
+      "orga": "All the kids dribble in the middle. The coach is the wizard who calls the colors.",
+      "steps": [
+        "(2 min) Dribble everywhere while listening to the wizard.",
+        "(4 min) The wizard shouts a color, everyone dribbles fast to put a hand on a cone of that color.",
+        "(2 min) The last one there makes a funny face, then off we go again."
+      ],
+      "say": "Open your ears wide, listen for the color, then go fast without losing your ball.",
+      "error": "They take off before hearing the color. Pause for a moment before you call it.",
+      "keys": "Listen, then dribble, head up.",
+      "vEasy": "No ball, running.",
+      "vHard": "Two colors in a row to remember."
+    },
+    "e18": {
+      "titre": "Rebound and outlet",
+      "objectif": "Secure the rebound, then push fast.",
+      "setup": "One shooter, one rebounder, two lanes.",
+      "material": "1 ball",
+      "orga": "Two lines in the lanes, a shooter and a rebounder who rotate.",
+      "steps": [
+        "(3 min) The shot is missed on purpose.",
+        "(4 min) The rebounder grabs it with two hands and makes a quick outlet pass.",
+        "(3 min) 2-player fast break to the other rim, finish close."
+      ],
+      "say": "Grab the rebound strong with two hands, outlet it right away up the lane.",
+      "error": "Soft rebound and slow outlet. Demand a two-hand grab and an immediate pass.",
+      "keys": "Two-hand rebound, quick outlet.",
+      "vEasy": "No opposition.",
+      "vHard": "One opponent fighting for the rebound."
+    },
+    "e19": {
+      "titre": "Shooting minute",
+      "objectif": "Shoot in rhythm with a rebounder.",
+      "setup": "One shooter moves, one rebounder feeds.",
+      "material": "1 ball",
+      "orga": "Pairs on every basket. One shoots for a minute, the other rebounds, then switch.",
+      "steps": [
+        "(4 min) For one minute, the shooter goes catch and shoot, over and over.",
+        "(3 min) The rebounder gets the ball back fast to keep the rhythm.",
+        "(3 min) Count the makes, switch roles."
+      ],
+      "say": "Hands ready before the ball. Get set, then shoot.",
+      "error": "He shoots on the move without getting set. Demand a balanced stop before every shot.",
+      "keys": "Hands ready, balanced stop before the shot.",
+      "vEasy": "Short distance.",
+      "vHard": "Three-point shots."
+    },
+    "e20": {
+      "titre": "Simple half-court offense",
+      "objectif": "Install a first 5-player set.",
+      "setup": "Five attackers, clear starting spots.",
+      "material": "1 ball",
+      "orga": "Five attackers in position, the coach runs it. Repeat the same sequence.",
+      "steps": [
+        "(5 min) Pass, then cut to the rim.",
+        "(5 min) The high post moves the ball on.",
+        "(4 min) Finish with a close shot or a give-and-go."
+      ],
+      "say": "Pass and cut hard to the rim. Fill the open space.",
+      "error": "They pass and watch. Demand a sharp cut after every pass.",
+      "keys": "Move without the ball, fill the spaces.",
+      "vEasy": "No defense.",
+      "vHard": "Defense that follows."
+    },
+    "e21": {
+      "titre": "Sharks and sardines",
+      "objectif": "Dribble fast while staying in control, chased by a shark.",
+      "setup": "The sardines with their balls on one side, one or two sharks without a ball in the ocean in the middle.",
+      "material": "1 ball per sardine",
+      "orga": "All the sardines go together. One or two sharks in the middle.",
+      "steps": [
+        "(2 min) Story: the sardines have to cross the ocean without getting caught by the shark.",
+        "(4 min) On the signal, they dribble across. When the shark touches a ball, that sardine becomes a shark.",
+        "(2 min) Play until the last sardine, the survivor wins."
+      ],
+      "say": "Hold on to your ball, switch hands to dodge, keep your head up.",
+      "error": "They stop dead and lose the ball. Teach them to change direction while dribbling.",
+      "keys": "Protect the ball, eyes up, switch hands.",
+      "vEasy": "Walking, only one shark.",
+      "vHard": "Weak hand only, two sharks."
+    },
+    "e22": {
+      "titre": "21 cones",
+      "objectif": "Shoot in rhythm in a team game.",
+      "setup": "Two teams, a pile of cones in the middle.",
+      "material": "Cones, balls",
+      "orga": "Two teams on two baskets. Each player shoots, rebounds, shoots again.",
+      "steps": [
+        "(4 min) Every basket made earns a trip to grab one cone for your team.",
+        "(4 min) Shoot, get your own rebound, shoot again, taking turns.",
+        "(4 min) The team with the most cones wins."
+      ],
+      "say": "Quick but under control. Take your time on the shot, no panic.",
+      "error": "The competition breaks down technique. Remind them to be balanced before every shot.",
+      "keys": "Quick but balanced, everyone shoots in turn.",
+      "vEasy": "Short distance.",
+      "vHard": "Shots only from behind the three-point line."
+    },
+    "e23": {
+      "titre": "Agility ladder",
+      "objectif": "Coordination and foot speed.",
+      "setup": "One ladder on the floor, one line of players.",
+      "material": "Agility ladder or cones",
+      "orga": "One line per ladder. The next player goes when the one ahead has finished.",
+      "steps": [
+        "(3 min) One foot in each box, one way.",
+        "(3 min) Then two feet per box.",
+        "(2 min) Finally an in-in-out-out pattern."
+      ],
+      "say": "Quick feet on the balls of your feet, arms moving with you.",
+      "error": "They look at their feet and tighten up. Get their eyes up and their shoulders loose.",
+      "keys": "Quick feet on the balls of the feet, arms moving with the rhythm.",
+      "vEasy": "Slowly, no mistakes.",
+      "vHard": "Add a dribble through the ladder."
+    },
+    "e24": {
+      "titre": "Quick catch and shoot",
+      "objectif": "Shoot right off the catch, like in a game.",
+      "setup": "One passer at the top of the key, shooting spots around the arc.",
+      "material": "1 ball, one passer",
+      "orga": "One fixed passer, a line of shooters who rotate after each shot.",
+      "steps": [
+        "(4 min) The shooter runs to a spot.",
+        "(4 min) He catches and shoots in one motion, no dribble.",
+        "(4 min) He works through the spots in order."
+      ],
+      "say": "Your hands are ready before the ball gets there. Get set and shoot.",
+      "error": "He puts in a useless dribble before shooting. Ban the dribble for this set.",
+      "keys": "Hands ready before the ball, balanced stop.",
+      "vEasy": "One dribble allowed.",
+      "vHard": "A defender comes out to contest."
+    },
+    "e25": {
+      "titre": "Finishing package",
+      "objectif": "Expand the finishing moves around the rim.",
+      "setup": "One line on the right side, then the left side.",
+      "material": "1 ball",
+      "orga": "One line on each side of the rim. Alternate sides.",
+      "steps": [
+        "(4 min) Regular layup on the run, from both sides.",
+        "(4 min) Reverse layup on the other side of the rim.",
+        "(4 min) Euro step, an offset step to get around a cone defender."
+      ],
+      "say": "Look at the little square on the glass, protect the ball with your body.",
+      "error": "They finish on the wrong side of the rim on the move. Fix the footwork and the finishing hand.",
+      "keys": "Eyes on the target on the glass, protect the ball.",
+      "vEasy": "Standing still under the rim.",
+      "vHard": "With a passive defender getting in the way."
+    },
+    "e26": {
+      "titre": "Dribble relay",
+      "objectif": "Dribble fast and clean in a team race.",
+      "setup": "Two teams in a column, a cone course in front of each one.",
+      "material": "Cones, 1 ball per team",
+      "orga": "Two relay columns. Each player goes when the previous one hands back the ball.",
+      "steps": [
+        "(3 min) The first player dribbles through the course and comes back.",
+        "(3 min) They pass the ball to the next player.",
+        "(4 min) The first team to get everyone through wins."
+      ],
+      "say": "Control first, speed second, switch hands at every cone.",
+      "error": "They give up control to win. Lose the ball and you restart your course.",
+      "keys": "Control before speed, switch hands at every cone.",
+      "vEasy": "Short course.",
+      "vHard": "Weak hand only, or two balls."
+    },
+    "e27": {
+      "titre": "The movers",
+      "objectif": "Move, pick up and carry while dribbling, like little movers.",
+      "setup": "A big pile of balls in the middle, one hoop house per team.",
+      "material": "Lots of balls, 2 hoops",
+      "orga": "Two teams, each with its own hoop house. Everyone starts at the same time.",
+      "steps": [
+        "(2 min) Story: we're moving house, and we have to bring all the ball-boxes home.",
+        "(4 min) On the signal, everyone dribbles to get one ball and drops it in their hoop.",
+        "(2 min) The team that brings home the most balls has finished moving and wins."
+      ],
+      "say": "One ball at a time, dribble and walk all the way home.",
+      "error": "They grab the ball in their arms and run. Remind them: we dribble, one ball at a time.",
+      "keys": "One ball at a time, dribble while walking.",
+      "vEasy": "Ball carried in the arms for the youngest ones.",
+      "vHard": "Dribbling required both ways."
+    },
+    "e28": {
+      "titre": "Eyes-up dribbling",
+      "objectif": "Dribble without looking at the ball.",
+      "setup": "Everyone dribbling inside a square, a leader in front.",
+      "material": "1 ball per player",
+      "orga": "Everyone dribbles inside a marked square. The coach stands in front, facing the group.",
+      "steps": [
+        "(3 min) Everyone dribbles with their head up inside the square.",
+        "(4 min) The leader holds up a number of fingers, players call out the number.",
+        "(3 min) Switch hands on the signal without looking down."
+      ],
+      "say": "Eyes on my hands, never on your ball, push it to the side.",
+      "error": "Their eyes drop as soon as they switch hands. Slow the move down and keep a number to read.",
+      "keys": "Eyes forward, ball pushed to the side.",
+      "vEasy": "Stationary.",
+      "vHard": "On the move with changes of direction."
+    },
+    "e29": {
+      "titre": "Around the world",
+      "objectif": "Score from spots that get farther and farther away.",
+      "setup": "Five to seven spots around the paint.",
+      "material": "1 ball",
+      "orga": "Small group, one at a time. Remember the spot where you stopped.",
+      "steps": [
+        "(4 min) Shoot from a spot. Make it and you move to the next one.",
+        "(4 min) Miss it and you wait your turn, then shoot again from the same spot.",
+        "(4 min) First player to go all the way around wins."
+      ],
+      "say": "Same shot everywhere, get set before you shoot.",
+      "error": "The shot changes with distance. Remind them the mechanics stay the same, only the leg drive increases.",
+      "keys": "Same shot everywhere, balance before the shot.",
+      "vEasy": "Close spots.",
+      "vHard": "Three-point spots, catch and shoot."
+    },
+    "e30": {
+      "titre": "Pass and follow",
+      "objectif": "Make an accurate pass, then move right away.",
+      "setup": "Two lines facing each other, one on each side.",
+      "material": "1 or 2 balls",
+      "orga": "Two lines facing each other. Pass, then follow your ball to the other line.",
+      "steps": [
+        "(3 min) Pass to the line across, at chest height.",
+        "(3 min) Run to the back of the line you passed to.",
+        "(4 min) Add a second ball once it flows."
+      ],
+      "say": "Pass hard, then go fast and follow your ball.",
+      "error": "They pass and walk. Demand a sprint after every pass.",
+      "keys": "Chest-height pass, leave fast after the pass.",
+      "vEasy": "One ball only, slowly.",
+      "vHard": "Two balls, fast pace."
+    },
+    "e31": {
+      "titre": "Full-court 3 on 3",
+      "objectif": "Play fast, defend, and link offense straight into transition defense.",
+      "setup": "3 on 3 full court, two rims.",
+      "material": "1 ball",
+      "orga": "Two teams of three. A third team waits and replaces the losing team.",
+      "steps": [
+        "(5 min) Score, then defend the other end right away.",
+        "(5 min) At least one pass before shooting.",
+        "(5 min) Two stops in a row earn a bonus point."
+      ],
+      "say": "As soon as we lose the ball, get back fast and talk.",
+      "error": "Lazy transition defense after the offense. Count the baskets given up in transition.",
+      "keys": "Get back fast, talk on defense.",
+      "vEasy": "Half court.",
+      "vHard": "A foul gives the ball and a point to the other team."
+    },
+    "e32": {
+      "titre": "Contain without fouling",
+      "objectif": "Stay in front of your player without touching them.",
+      "setup": "One offensive player, one defender, from half court to the rim.",
+      "material": "1 ball",
+      "orga": "In pairs. One duel, then switch roles and the next pair steps in.",
+      "steps": [
+        "(4 min) The offensive player dribbles toward the rim.",
+        "(3 min) The defender slides and pushes them toward the sideline.",
+        "(3 min) A stop with no foul is worth one point for the defender."
+      ],
+      "say": "Stay in front, wide stance, hands moving but not grabbing.",
+      "error": "They grab or push to make up for it. Call every hand contact.",
+      "keys": "Wide stance, active hands without grabbing.",
+      "vEasy": "Offensive player in slow motion.",
+      "vHard": "Start after a shoulder bump."
+    },
+    "e33": {
+      "titre": "Quick core circuit",
+      "objectif": "Strengthen the core, which helps balance on the shot.",
+      "setup": "Four stations, 30 seconds each, 15 seconds rest.",
+      "material": "None, or mats",
+      "orga": "Groups spread across the four stations, rotate on the signal.",
+      "steps": [
+        "(3 min) Station 1: forearm plank.",
+        "(3 min) Station 2: side plank, left then right.",
+        "(4 min) Station 3: glute bridge. Station 4: high knees in place."
+      ],
+      "say": "Body in line, stomach tight, steady breathing, don't arch your back.",
+      "error": "They hold their breath and arch. Remind them to breathe out and stay in line.",
+      "keys": "Body in line, no arched back, steady breathing.",
+      "vEasy": "20 seconds per station.",
+      "vHard": "45 seconds, two rounds."
+    },
+    "e34": {
+      "titre": "Last possession",
+      "objectif": "Manage the end of a game, one possession to win.",
+      "setup": "Made-up close score, 14 seconds on the clock, inbound play.",
+      "material": "1 ball, a stopwatch",
+      "orga": "Two teams of five. Run it several times, switching roles.",
+      "steps": [
+        "(4 min) The offense has to find a good shot before time runs out.",
+        "(4 min) The defense is not allowed to foul.",
+        "(4 min) Run it again with offense and defense switched."
+      ],
+      "say": "A clear plan, a first option, and a second one if it gets taken away.",
+      "error": "They make it up with no plan. Set the play before the inbound.",
+      "keys": "A clear plan, a first and a second option.",
+      "vEasy": "24 seconds.",
+      "vHard": "8 seconds, on a sideline inbound."
+    },
+    "e35": {
+      "titre": "4 on 4 shell drill",
+      "objectif": "Build a team defense that sees the ball, helps early and recovers fast.",
+      "setup": "Four offensive players around the paint, four defenders each on their own player. The ball moves with no dribbling at first.",
+      "material": "1 ball",
+      "orga": "4 on 4. The other eight watch and track the calls, then rotate in.",
+      "steps": [
+        "(6 min) On every pass, every defender adjusts: one step toward the ball, ready to give weak-side help.",
+        "(5 min) On a pass to the perimeter, short controlled closeout, hand high on the shooter.",
+        "(5 min) Allow dribbling and penetration: the closest player helps, another covers, and the defense rotates."
+      ],
+      "say": "See your player and the ball at the same time, talk on every pass, help early.",
+      "error": "They lock onto their player and lose sight of the ball. Demand a call on every pass.",
+      "keys": "See your player and the ball at the same time. Talk on every pass. Help early, recover fast to the shooter.",
+      "vEasy": "No dribbling, passes only.",
+      "vHard": "Live 4 on 4 with rebound, then transition."
+    },
+    "e36": {
+      "titre": "Closeout into one on one",
+      "objectif": "Guard a shooter on the catch, then contain the drive.",
+      "setup": "One defender under the rim in help position, one offensive player on the wing. The coach passes, the defender closes out.",
+      "material": "1 ball",
+      "orga": "One line of defenders, one line of offensive players. Rotate after every duel.",
+      "steps": [
+        "(4 min) The defender closes the gap, then slows down on the last two steps, hand up.",
+        "(4 min) They push the offensive player toward the help and take away the baseline.",
+        "(4 min) Play one on one until a shot or a stop, then rebound."
+      ],
+      "say": "Run the first two thirds, chop your feet at the end, don't bite on the fake.",
+      "error": "They arrive at full speed and get beaten. Demand short, controlled steps at the end of the closeout.",
+      "keys": "Controlled approach so you don't get beaten, low stance, don't bite on the first fake.",
+      "vEasy": "Closeout only, no one on one.",
+      "vHard": "Long closeout starting from the opposite side."
+    },
+    "e37": {
+      "titre": "Spot shooting under fatigue",
+      "objectif": "Keep a steady shot as fatigue builds, like at the end of a game.",
+      "setup": "Five spots around the arc, a passer and a rebounder, a target score to reach.",
+      "material": "1 or 2 balls",
+      "orga": "Groups of two or three per basket. One shoots, one passes, one rebounds, then rotate.",
+      "steps": [
+        "(4 min) Before each shot, the shooter sprints to touch the baseline and comes back to the spot.",
+        "(4 min) Catch and shoot on balance, count the makes.",
+        "(4 min) The set only counts once the target score is reached."
+      ],
+      "say": "Same mechanics tired or fresh, balance before you load up, follow through with your wrist.",
+      "error": "Technique falls apart with fatigue. Slow the pace down rather than the quality of the shot.",
+      "keys": "Same mechanics tired or fresh. Balance before loading up, wrist follow-through, eyes on the rim.",
+      "vEasy": "No sprint.",
+      "vHard": "Shot off the dribble right after the sprint."
+    },
+    "e38": {
+      "titre": "Pick and roll reads, 2 on 2",
+      "objectif": "Teach the ball handler to read the defensive coverage and choose the right answer.",
+      "setup": "A ball handler and a screener against two defenders who change coverage every possession.",
+      "material": "1 ball",
+      "orga": "One 2 on 2 on the floor, the others wait and read the coverage, then rotate.",
+      "steps": [
+        "(5 min) The defense calls its coverage: hedge, drop, or switch.",
+        "(5 min) The ball handler reads before the screen, then chooses: shot, pass to the roller, or kick-out.",
+        "(5 min) Alternate coverages to force the read."
+      ],
+      "say": "Read early, keep your dribble alive, pick the right option, not the highlight play.",
+      "error": "They decide before reading the defense. Have the defense call its coverage so the handler has to look.",
+      "keys": "Read early. Keep the dribble alive, don't rush, go for the right option rather than the highlight play.",
+      "vEasy": "Passive defense that calls its coverage.",
+      "vHard": "Add weak-side help, move to 3 on 3."
+    },
+    "e39": {
+      "titre": "3 on 2 into 2 on 1",
+      "objectif": "Decide fast with the advantage, then defend outnumbered.",
+      "setup": "Three offensive players attack two defenders. On the rebound or the basket, two go back the other way against one.",
+      "material": "1 ball",
+      "orga": "Continuous waves. One line of offensive players, defenders replaced every wave.",
+      "steps": [
+        "(5 min) The three fill the three lanes, ball in the middle.",
+        "(5 min) Draw a defender, hit the open player as close to the rim as possible.",
+        "(4 min) Two players go right back the other way 2 on 1, no break."
+      ],
+      "say": "Run wide, keep the last pass simple, finish close to the rim, then get back right away.",
+      "error": "The last pass is too fancy. Remind them: the simplest pass gets the open basket.",
+      "keys": "Run wide, simple last pass, finish close to the rim, get back on defense right away.",
+      "vEasy": "Stop after the 3 on 2.",
+      "vHard": "Add a third advantage wave."
+    },
+    "e40": {
+      "titre": "Hand-off and flow",
+      "objectif": "Use the hand-off to start a smooth offense.",
+      "setup": "A player at the high post with the ball, a perimeter player coming to get the hand-off, a finisher.",
+      "material": "1 ball",
+      "orga": "In threes. A giver, a receiver, a finisher, rotate every round.",
+      "steps": [
+        "(4 min) The perimeter player cuts toward the ball handler and takes the hand-off, shoulder to shoulder.",
+        "(4 min) The giver follows with a screen on the defender, like a pick and roll.",
+        "(4 min) The receiver attacks the rim, shoots, or hits the giver diving to the basket."
+      ],
+      "say": "Protect the hand-off, change speed as you take the ball.",
+      "error": "The hand-off is soft and easy to read. Get shoulder to shoulder and accelerate on the catch.",
+      "keys": "Protected hand-off, change of speed as you take the ball, read the defender's reaction.",
+      "vEasy": "No defense.",
+      "vHard": "Two defenders who mix up their coverage."
+    },
+    "e41": {
+      "titre": "One-hand form shooting",
+      "objectif": "Build a clean shooting motion before talking about distance. A standard in American shooting schools.",
+      "setup": "The player one meter from the rim, square to it, ball in the shooting hand, other hand behind the back.",
+      "material": "1 ball per player",
+      "orga": "Everyone with their own ball, spread across the available baskets, or in a line at one basket.",
+      "steps": [
+        "(3 min) Elbow under the ball, wrist loaded, one-hand shot right next to the rim.",
+        "(3 min) Snap the wrist, fingers finish pointing at the floor, hold the arm up for one second.",
+        "(2 min) Five makes in a row, then take one small step back."
+      ],
+      "say": "You only move back if the shot stays clean, hold your follow-through.",
+      "error": "They move back too fast and break the shot. Only add distance after five clean shots.",
+      "keys": "Distance only goes up if the shot stays clean. Backspin on the ball, nothing but net if possible.",
+      "vEasy": "Seated on a chair to isolate the arm.",
+      "vHard": "Add the guide hand, then a shot off a pass."
+    },
+    "e42": {
+      "titre": "Mikan drill, alternating finishes",
+      "objectif": "Make right-hand and left-hand finishes under the rim automatic. George Mikan's drill, from minibasket to the NBA.",
+      "setup": "The player under the rim, ball in hand, slightly to the right of the basket.",
+      "material": "1 ball",
+      "orga": "One player per basket, or a short line, 30 seconds each.",
+      "steps": [
+        "(3 min) Right-hand layup on the right side, taking the ball high.",
+        "(3 min) Grab the ball before it hits the floor, step to the left side.",
+        "(2 min) Left-hand layup, keep going without stopping for 30 seconds."
+      ],
+      "say": "Ball always above your shoulders, eyes on the little square, alternate without stopping.",
+      "error": "The ball drops between finishes. Keep it high, catch it before it bounces.",
+      "keys": "Ball always above the shoulders, takeoff foot opposite the shooting hand, eyes on the little square.",
+      "vEasy": "Allow one bounce on the floor between finishes.",
+      "vHard": "Count your makes in 30 seconds, beat your record, then two-foot power layups."
+    },
+    "e43": {
+      "titre": "Timed dribble shuttle",
+      "objectif": "Dribble fast while staying in control. A classic drill from top international coaching references.",
+      "setup": "Start on the free throw line, facing the opposite free throw line.",
+      "material": "1 ball per player",
+      "orga": "Everyone with their own ball and lane. Everyone starts on the same signal.",
+      "steps": [
+        "(3 min) Speed dribble to the opposite line, touch it with your off hand.",
+        "(3 min) Turn around and dribble back, never carrying the ball.",
+        "(2 min) One minute on the clock, count the lengths. The benchmark is 14 to 15."
+      ],
+      "say": "Push the ball out in front, head up, switch hands every length.",
+      "error": "They carry the ball on the turns. Call the carry, keep the dribble alive.",
+      "keys": "Push the ball out in front at hip height, head up, switch hands every length.",
+      "vEasy": "45 seconds, jogging.",
+      "vHard": "Weak hand only, or two changes of direction per length."
+    },
+    "e44": {
+      "titre": "Two-ball dribbling",
+      "objectif": "Make the weak hand as reliable as the strong hand by doubling the load.",
+      "setup": "One player, two balls, a five-meter space.",
+      "material": "2 balls per player",
+      "orga": "Everyone with their own two balls, well spaced, all at the same time.",
+      "steps": [
+        "(3 min) Dribble both balls at the same time in place, at the same height.",
+        "(4 min) Then alternate, one ball high, one ball low.",
+        "(3 min) Move forward five meters, turn around, come back without losing a ball."
+      ],
+      "say": "Stay low, both hands push, your eyes never drop.",
+      "error": "The weak hand loses its ball. Slow down until both hands are equal.",
+      "keys": "Stay low, both hands push the ball, eyes never drop.",
+      "vEasy": "Stationary only.",
+      "vHard": "One between-the-legs dribble with one ball while the other keeps going."
+    },
+    "e45": {
+      "titre": "Wall passing",
+      "objectif": "Get lots of passing reps without a partner, with instant feedback.",
+      "setup": "The player facing a wall, three meters away, a target drawn or imagined at chest height.",
+      "material": "1 ball, a wall",
+      "orga": "Everyone facing their own section of wall, spaced out. Everyone works at the same time.",
+      "steps": [
+        "(2 min) Twenty two-hand chest passes, the target has to be hit.",
+        "(2 min) Twenty bounce passes, the ball bounces two thirds of the way.",
+        "(2 min) Ten one-hand passes, right then left."
+      ],
+      "say": "No soft passes, step toward the target, thumbs finish pointing at the floor.",
+      "error": "Passes with no power and no target. Demand a precise target and a step forward on every pass.",
+      "keys": "No soft passes, thumbs finish down on the chest pass, step toward the target on every pass.",
+      "vEasy": "Move closer to the wall.",
+      "vHard": "Move back one meter, add a 45-second clock per set."
+    },
+    "e46": {
+      "titre": "Three-man weave",
+      "objectif": "Run, pass and finish full court with no dribble. The great American classic for passing on the move.",
+      "setup": "Three columns on the baseline, ball in the middle.",
+      "material": "1 ball per 3 players",
+      "orga": "One trio goes down the floor, the next one leaves as soon as the previous trio crosses half court.",
+      "steps": [
+        "(4 min) The passer passes and runs behind the receiver: you go behind the player you pass to.",
+        "(3 min) Passes keep flowing as you move forward, nobody dribbles.",
+        "(3 min) Finish with a layup at the other end, the rebounder starts a new trio."
+      ],
+      "say": "Pass ahead of the runner, never at their feet, run behind your pass.",
+      "error": "Pass at the feet or a sneaky dribble. Pass ahead, no dribble, or the trio starts over.",
+      "keys": "Pass ahead of the runner, never at their feet. No dribble, no travel, or the trio starts over.",
+      "vEasy": "Walking, to learn the running pattern.",
+      "vHard": "Team goal, ten baskets in a row with no mistake, then five-man weave."
+    },
+    "e47": {
+      "titre": "Closeout star drill",
+      "objectif": "Repeat short, balanced closeouts from every help position.",
+      "setup": "Five players in a star around the paint, one ball.",
+      "material": "1 ball",
+      "orga": "Five in a star, one ball moving around. Each player closes out, then passes on.",
+      "steps": [
+        "(4 min) The ball handler passes to a player in the star and sprints at them on a closeout.",
+        "(4 min) Short, quick last steps, high hand on the ball side, hips low.",
+        "(4 min) The receiver passes somewhere else and follows with their own closeout, no stopping."
+      ],
+      "say": "Sprint the first two thirds, chop your feet at the end, never jump at the fake.",
+      "error": "They arrive at full speed and jump. Demand short, controlled steps on the last third.",
+      "keys": "Sprint the first two thirds, chop the feet on the last third, never jump at the fake.",
+      "vEasy": "Three players, slower pace.",
+      "vHard": "The receiver attacks one on one after the catch."
+    },
+    "e48": {
+      "titre": "Continuous 4 on 3 advantage",
+      "objectif": "Decide fast with an extra player, punish every help with the extra pass.",
+      "setup": "Four offensive players around the arc, three defenders in the paint, half court.",
+      "material": "1 ball",
+      "orga": "The offense stays, three new defenders come in after every possession, then switch sides.",
+      "steps": [
+        "(5 min) The offense moves the ball, no holding it for more than two seconds.",
+        "(5 min) Defenders rotate and close out on the ball, the offense looks for the open player.",
+        "(5 min) Basket or turnover, three new defenders come in."
+      ],
+      "say": "The pass travels faster than the run, attack the closeout, the extra pass gets the basket.",
+      "error": "They hold the ball and dribble too much. Two seconds max with the ball in hand.",
+      "keys": "The pass travels faster than the run, attack the closeout, the extra pass gets the open basket.",
+      "vEasy": "3 on 2 with no time limit.",
+      "vHard": "One second per individual possession, count baskets as a team."
+    },
+    "e49": {
+      "titre": "One on one, three dribbles",
+      "objectif": "Decide before dribbling, play smart rather than play a lot. A rule inherited from French player development.",
+      "setup": "Offensive player on the wing behind the arc, defender in position, the others wait their turn.",
+      "material": "1 ball",
+      "orga": "One line of offensive players, one line of defenders. The defender becomes the offensive player next.",
+      "steps": [
+        "(4 min) The offensive player catches and freezes the defender with a fake before any dribble.",
+        "(3 min) Three dribbles max to finish, shot or layup.",
+        "(3 min) The defender gets the ball back, then plays offense on the next turn."
+      ],
+      "say": "Your first dribble has to beat the defender's shoulder, every dribble is for moving forward.",
+      "error": "They dribble to think. Demand a fake and a decision before the first dribble.",
+      "keys": "The first dribble has to beat the defender's shoulder, every dribble is for moving forward, never for thinking.",
+      "vEasy": "Five dribbles, passive defender.",
+      "vHard": "One dribble only, start after a closeout by the defender."
+    },
+    "e50": {
+      "titre": "Rebound battle",
+      "objectif": "Make the box out a reflex on every shot.",
+      "setup": "Two players in the paint, the coach or a third player shoots from the free throw line.",
+      "material": "1 ball",
+      "orga": "In pairs in the paint. Rotate pairs and roles after every shot.",
+      "steps": [
+        "(4 min) As the shot goes up, the defender pivots and puts their back in contact with the offensive player.",
+        "(3 min) They widen their stance, elbows out, and hold the contact for two seconds.",
+        "(3 min) Then they go get the ball with two hands at its highest point, balanced landing."
+      ],
+      "say": "Contact first, ball second, whoever forgets their player loses the battle.",
+      "error": "They watch the ball without touching their player. Contact and pivot first, ball second.",
+      "keys": "Contact first, ball second. Whoever watches the ball without touching their player loses the battle.",
+      "vEasy": "No shot, on the coach's signal.",
+      "vHard": "2 on 2, the team that gets the rebound attacks right away."
     }
   },
   "es": {},
