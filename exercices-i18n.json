@@ -6,7 +6,23 @@
     },
     "x2": {
       "titre": "Agility ladder and reaction",
-      "objectif": "Improve foot speed and the response to a signal."
+      "objectif": "Improve foot speed and the response to a signal.",
+      "placement": "One ladder on the floor, players in a single line, coach facing the group.",
+      "materiel": "Agility ladder or cones",
+      "etapes": [
+        "(3 min) One foot per box going up, light jog back. 3 reps, stay on the balls of your feet, eyes up.",
+        "(3 min) In-and-out pattern, two feet per box. 4 reps, arms moving with the rhythm.",
+        "(2 min) Lateral shuffle along the ladder, shoulders facing it. 3 reps each side.",
+        "(2 min) Exit the ladder and sprint 3 meters on the coach's visual signal. 6 starts, full recovery between each."
+      ],
+      "consignes": "Short, quick steps on the balls of the feet, head up to read the signal, active arms. Quality before speed: a clean pattern beats a fast, sloppy one.",
+      "erreurs": "Eyes glued to the floor, stiff shoulders.",
+      "corrections": "Put a marker on the wall to force the eyes forward.",
+      "reussite": "Quick feet with no pattern mistake on two reps in a row.",
+      "vEasy": "Slow rhythm, no final sprint.",
+      "vHard": "Left or right hand signal decides the sprint direction.",
+      "postes": "All",
+      "stats": "Speed, transition"
     },
     "x3": {
       "titre": "Movement mirror",
@@ -22,7 +38,22 @@
     },
     "x6": {
       "titre": "Low dribble under pressure",
-      "objectif": "Protect the ball with a low dribble and change hands under light pressure."
+      "objectif": "Protect the ball with a low dribble and change hands under light pressure.",
+      "placement": "Each player in a marked square, ball in hand.",
+      "materiel": "1 ball per player",
+      "etapes": [
+        "(3 min) Low dribble with the strong hand, chest forward, off arm protecting.",
+        "(3 min) Crossover in front of the body on every signal.",
+        "(2 min) A passive defender tries to touch the ball, the dribbler protects it."
+      ],
+      "consignes": "Dribble below the knee, off arm out, eyes up.",
+      "erreurs": "Dribble too high, off hand doing nothing.",
+      "corrections": "Lower the dribble and get the off arm up to protect.",
+      "reussite": "The ball stays under control despite the defender's pressure.",
+      "vEasy": "Stationary, no defender.",
+      "vHard": "Active defender, or weak hand only.",
+      "postes": "Point guard, Shooting guard, Wing",
+      "stats": "Turnovers"
     },
     "x7": {
       "titre": "Two synchronized balls",
@@ -46,7 +77,22 @@
     },
     "x12": {
       "titre": "Timed wall passes",
-      "objectif": "Repeat passing without a partner with instant feedback."
+      "objectif": "Repeat passing without a partner with instant feedback.",
+      "placement": "Facing a wall, three meters away, a target at chest height.",
+      "materiel": "1 ball, a wall",
+      "etapes": [
+        "(2 min) Twenty two-hand chest passes at the target.",
+        "(2 min) Twenty bounce passes, bouncing two thirds of the way.",
+        "(2 min) Ten one-hand passes, right then left."
+      ],
+      "consignes": "Push the ball through, thumbs down, step toward the target on every pass.",
+      "erreurs": "Soft pass, target missed.",
+      "corrections": "Move closer, then step back once you hit the target every time.",
+      "reussite": "Clean sequence with no ball on the floor.",
+      "vEasy": "Closer to the wall.",
+      "vHard": "45-second clock per set.",
+      "postes": "All",
+      "stats": "Passing"
     },
     "x13": {
       "titre": "Five-player passing star",
@@ -62,7 +108,22 @@
     },
     "x16": {
       "titre": "Form shooting, isolated mechanics",
-      "objectif": "Build a clean shooting motion before talking about range."
+      "objectif": "Build a clean shooting motion before talking about range.",
+      "placement": "One meter from the rim, square to the basket, shooting hand under the ball.",
+      "materiel": "1 ball per player",
+      "etapes": [
+        "(3 min) One-hand shots right at the rim, other hand behind the back.",
+        "(3 min) Snap the wrist, fingers pointing to the floor, hold the follow-through for one second.",
+        "(2 min) Five makes in a row, then one small step back."
+      ],
+      "consignes": "Only move back if the form stays clean, ball with backspin.",
+      "erreurs": "Both hands pushing, elbow flaring out.",
+      "corrections": "Go back close to the rim and isolate the shooting hand.",
+      "reussite": "Five clean shots in a row before stepping back.",
+      "vEasy": "Seated on a chair to isolate the arm.",
+      "vHard": "Add the guide hand, then shoot off the catch.",
+      "postes": "All",
+      "stats": "Shooting percentage"
     },
     "x17": {
       "titre": "Catch, stop and spot shot",
@@ -82,7 +143,22 @@
     },
     "x21": {
       "titre": "Floater over the help",
-      "objectif": "Score over a tall defender before he steps up."
+      "objectif": "Score over a tall defender before he steps up.",
+      "placement": "Start on the wing, a tall obstacle in the paint.",
+      "materiel": "1 ball, a tall cone or a partner with arms up",
+      "etapes": [
+        "(4 min) Two dribbles toward the paint, one-foot takeoff, ball pushed up high and soft.",
+        "(3 min) Find the angle off the glass depending on the side.",
+        "(3 min) Alternate both sides."
+      ],
+      "consignes": "Stable vertical jump, soft wrist, ball released before contact.",
+      "erreurs": "Shot too flat or too late, right at the defender's level.",
+      "corrections": "Release the ball earlier and higher.",
+      "reussite": "The shot drops into the rim over the obstacle.",
+      "vEasy": "No obstacle, focus on the motion.",
+      "vHard": "Live help defender stepping up to block.",
+      "postes": "Point guard, Shooting guard",
+      "stats": "Finishing in the paint"
     },
     "x22": {
       "titre": "Post-up, reading the shoulder",
@@ -98,7 +174,22 @@
     },
     "x25": {
       "titre": "Backdoor cut against overplay",
-      "objectif": "Punish a defender who overplays the passing lane with a cut behind his back."
+      "objectif": "Punish a defender who overplays the passing lane with a cut behind his back.",
+      "placement": "A ball handler at the top, a wing guarded tight, an aggressive defender.",
+      "materiel": "1 ball",
+      "etapes": [
+        "(4 min) The wing calls for the ball, the defender overplays in front.",
+        "(4 min) Backdoor cut to the rim, pass on time.",
+        "(4 min) Finish, then rotate roles."
+      ],
+      "consignes": "Read the defender's position, cut hard when his hand is in the passing lane.",
+      "erreurs": "Cut too early or pass too late.",
+      "corrections": "Sync the passer's eyes with the cutter's first step.",
+      "reussite": "The cut creates an easy finish at the rim.",
+      "vEasy": "Defender calls out the overplay.",
+      "vHard": "Weak-side help protecting the rim.",
+      "postes": "Perimeter players",
+      "stats": "Easy baskets"
     },
     "x26": {
       "titre": "Setting and reading the ball screen",
@@ -106,7 +197,22 @@
     },
     "x27": {
       "titre": "Pick and roll, 2-on-2 reads",
-      "objectif": "Teach the handler to read the coverage and choose the right response."
+      "objectif": "Teach the handler to read the coverage and choose the right response.",
+      "placement": "A ball handler and a screener against two defenders who change coverage.",
+      "materiel": "1 ball",
+      "etapes": [
+        "(5 min) The defense calls its coverage: hedge, drop, or switch.",
+        "(5 min) The handler reads before the screen, then chooses: shot, pass to the roller, or kick-out.",
+        "(5 min) Alternate coverages to force the read."
+      ],
+      "consignes": "Read early, keep your dribble alive, go for the right option, not the highlight play.",
+      "erreurs": "Decision made before reading the defense.",
+      "corrections": "Have the defense call its coverage so the handler has to look.",
+      "reussite": "The answer matches the defensive coverage.",
+      "vEasy": "Passive defense that calls its coverage.",
+      "vHard": "Add weak-side help, move to 3 on 3.",
+      "postes": "Point guard, Big",
+      "stats": "Pick and roll efficiency"
     },
     "x28": {
       "titre": "Hand-off and follow-up",
@@ -122,7 +228,22 @@
     },
     "x31": {
       "titre": "One on one, three dribbles",
-      "objectif": "Decide before dribbling, play smart rather than play a lot."
+      "objectif": "Decide before dribbling, play smart rather than play a lot.",
+      "placement": "Attacker on the wing behind the arc, defender set.",
+      "materiel": "1 ball",
+      "etapes": [
+        "(4 min) Catch, sell a fake before any dribble.",
+        "(3 min) Three dribbles max to finish, shot or drive.",
+        "(3 min) The defender gets the ball back and becomes the attacker."
+      ],
+      "consignes": "The first dribble wins the shoulder, every dribble must go somewhere.",
+      "erreurs": "Dribbling with no purpose.",
+      "corrections": "Demand a clear change of pace on the very first dribble.",
+      "reussite": "Finish in three dribbles or fewer.",
+      "vEasy": "Five dribbles, passive defender.",
+      "vHard": "One dribble only, start off a closeout.",
+      "postes": "All",
+      "stats": "One-on-one efficiency"
     },
     "x32": {
       "titre": "Two on two with a screen",
@@ -142,7 +263,22 @@
     },
     "x36": {
       "titre": "Defensive transition after a shot",
-      "objectif": "Cut the opponent's run by getting back fast and talking."
+      "objectif": "Cut the opponent's run by getting back fast and talking.",
+      "placement": "Five offense, five defense, play starts on a shot.",
+      "materiel": "1 ball",
+      "etapes": [
+        "(4 min) On every shot, defenders sprint back, one protects the rim.",
+        "(4 min) Talk: stop the ball first, then find your man.",
+        "(4 min) Count the transition baskets allowed."
+      ],
+      "consignes": "Sprint back on the shot, protect the rim first, talk to match up.",
+      "erreurs": "Lazy getting back, everyone watching their own shot.",
+      "corrections": "Count out loud the transition baskets given up.",
+      "reussite": "Zero easy transition baskets allowed over the set.",
+      "vEasy": "Transition defense 4 on 4.",
+      "vHard": "A foul gives the ball and one point to the opponent.",
+      "postes": "All",
+      "stats": "Transition points allowed"
     },
     "x37": {
       "titre": "3-on-2 then 2-on-1",
@@ -198,7 +334,22 @@
     },
     "x50": {
       "titre": "The ball castle",
-      "objectif": "Dribble while walking and set the ball down, building your castle."
+      "objectif": "Dribble while walking and set the ball down, building your castle.",
+      "placement": "A pile of balls in the middle, one hoop castle per team.",
+      "materiel": "Lots of balls, hoops",
+      "etapes": [
+        "(2 min) The story: each team has to fill its castle with balls.",
+        "(4 min) On the signal, each child dribbles to get a ball and drops it in the hoop.",
+        "(2 min) The team with the most balls built the biggest castle."
+      ],
+      "consignes": "One ball at a time, dribble while walking to the castle, head up.",
+      "erreurs": "Ball carried in the arms, running without dribbling.",
+      "corrections": "Remind the rule: we dribble, one ball at a time.",
+      "reussite": "The children dribble while walking without losing the ball.",
+      "vEasy": "Youngest kids carry the ball.",
+      "vHard": "Dribble required both ways, weak hand.",
+      "postes": "All",
+      "stats": "Ball handling, fun"
     },
     "x51": {
       "titre": "Triple threat and jab step",
