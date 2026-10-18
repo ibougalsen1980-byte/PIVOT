@@ -1146,12 +1146,16 @@ function cloudSave(){
   clearTimeout(_cloudTimer);
   _cloudTimer=setTimeout(async function(){
     try{
-      await supa.from("coach_data").upsert({
+      const _res=await supa.from("coach_data").upsert({
         user_id: supaUser.id,
         data: DB,
         trial_used: !!DB.trialUsed,
         updated_at: new Date().toISOString()
       });
+      // Correctif 18/10/2026 : supabase-js ne lève pas d'exception quand la base refuse l'écriture, il
+      // renvoie {error}. Ce retour n'était jamais lu : depuis le 20/09/2026 les sauvegardes en ligne
+      // échouaient sans que le coach soit prévenu. On traite maintenant ce refus comme un échec.
+      if(_res && _res.error) throw _res.error;
       if(_cloudSyncFailed){ _cloudSyncFailed=false; try{flash("Synchronisation rétablie");}catch(e){} }
     }catch(e){
       // Échec réseau ou session expirée : on prévient une seule fois par coupure, pas à chaque tentative,
