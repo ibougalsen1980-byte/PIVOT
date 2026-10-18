@@ -1022,6 +1022,10 @@ function demoPlayers(){return [];}
 function newTeam(name,category,level,players){return {
     id:uid(), name:name, category:category||"Seniors", level:level||"Départemental", season:"2026-2027",
     players:players||[], session:{title:"Nouvelle séance", blocks:[]}, savedSessions:[], obs:[],
+    // aiChatLog (historique de la conversation avec l'assistant) et aiNotes (réponses explicitement
+    // épinglées par le coach) ajoutés le 18/10/2026 : avant cette date, les réponses de l'assistant
+    // IA n'étaient jamais enregistrées, hors les séances complètes explicitement chargées.
+    aiChatLog:[], aiNotes:[],
     match:{opponent:"Adversaire", live:false, events:[], onCourt:[]}
   };}
 const SEED = {
@@ -3181,12 +3185,38 @@ let chatLog=[{who:"ai",txt:"Salut Coach. Je connais ton effectif, tes séances e
 // Sauvegarde ajoutée le 20/09/2026 : le choix débutant/pro ne vivait qu'en mémoire (variable aiLevel),
 // donc il revenait sur "pro" par défaut à chaque rechargement de l'app, même juste après l'avoir changé.
 function setLevel(l){aiLevel=l;if(DB.profile){DB.profile.aiLevel=l;save();}var b=document.getElementById('lvlBeg'),p=document.getElementById('lvlPro');if(b)b.classList.toggle('active',l==='beg');if(p)p.classList.toggle('active',l==='pro');flash(l==='beg'?'Réponses niveau débutant':'Réponses niveau pro');}
+// Historique de conversation persistant, ajouté le 18/10/2026 : jusqu'ici, chatLog ne vivait qu'en
+// mémoire du navigateur et disparaissait à la fermeture de l'assistant ou au rechargement de la page,
+// y compris pour les conseils tactiques, mentaux ou les exercices isolés qui n'avaient aucun bouton
+// d'enregistrement. On garde maintenant les 30 derniers messages par équipe, synchronisés comme le
+// reste des données du coach (voir save()/cloudSave()).
+const AI_CHATLOG_MAX=30, AI_TEXT_CAP=6000;
+function _capText(s,n){ s=String(s==null?"":s); return s.length>n? s.slice(0,n)+"…" : s; }
+function persistAiChatLog(){
+  try{
+    T().aiChatLog=chatLog.slice(-AI_CHATLOG_MAX).map(function(m){ return {who:m.who, txt:_capText(m.txt,AI_TEXT_CAP)}; });
+    save();
+  }catch(e){}
+}
+function clearAiChatLog(){
+  if(!confirm("Effacer l'historique de conversation avec l'assistant ? Tes notes enregistrées à part ne sont pas touchées.")) return;
+  chatLog=[{who:"ai",txt:"Historique effacé. Dis-moi ce dont tu as besoin."}];
+  T().aiChatLog=[]; save(); drawChat();
+}
 function aiChat(){
+  const hist=T().aiChatLog;
+  chatLog = (hist && hist.length) ? JSON.parse(JSON.stringify(hist))
+    : [{who:"ai",txt:"Salut Coach. Je connais ton effectif, tes séances et tes matchs, et je m'adapte à ton niveau. Dis-moi ce dont tu as besoin, tactique, séance, préparation mentale d'un joueur."}];
+  const nn=(T().aiNotes||[]).length;
   openModal(`
     <h3>Assistant IA basket</h3>
     <div class="seg" style="margin-bottom:10px">
       <button id="lvlBeg" class="${aiLevel==='beg'?'active':''}" onclick="setLevel('beg')">Coach débutant</button>
       <button id="lvlPro" class="${aiLevel==='pro'?'active':''}" onclick="setLevel('pro')">Coach pro</button>
+    </div>
+    <div class="row" style="justify-content:flex-end;gap:14px;margin:-4px 0 6px">
+      <a class="reset" onclick="openAiNotes()">Mes notes IA${nn?` (${nn})`:""}</a>
+      <a class="reset" onclick="clearAiChatLog()">Effacer l'historique</a>
     </div>
     <div class="chat" id="chatBox"></div>
     <div class="chips">
@@ -3205,6 +3235,43 @@ function aiChat(){
     <button class="btn sec block" onclick="closeModal()">Fermer</button>
   `);
   drawChat();
+}
+/* Notes IA : une réponse de l'assistant que le coach choisit explicitement de garder, consultable
+   hors de l'historique de conversation. Ajouté le 18/10/2026 pour la même raison que ci-dessus. */
+function saveAiNote(i){
+  const m=chatLog[i]; if(!m) return;
+  let q=""; for(let k=i-1;k>=0;k--){ if(chatLog[k].who==='me'){ q=chatLog[k].txt; break; } }
+  const txt=String(m.txt||"").replace(/<[^>]+>/g,' ').replace(/\s{2,}/g,' ').trim();
+  if(!txt){ flash("Rien à enregistrer"); return; }
+  if(!T().aiNotes) T().aiNotes=[];
+  T().aiNotes.unshift({id:uid(), ts:Date.now(), q:_capText(q,300), txt:_capText(txt,4000)});
+  save(); try{sfx("ok");}catch(e){}
+  flash("Réponse enregistrée dans tes notes IA");
+}
+function openAiNotes(){
+  const list=T().aiNotes||[];
+  const body=!list.length
+    ? `<div class="hint">Aucune note enregistrée. Dans une conversation, touche « ★ Enregistrer cette réponse » sous une réponse de l'assistant.</div>`
+    : list.map(function(o){
+        return `<div class="sysrow">
+          <div style="flex:1">
+            ${o.q?`<div style="font-weight:700;font-size:13px">${esc(o.q)}</div>`:""}
+            <div class="muted" style="font-size:12px;margin-top:2px;white-space:pre-wrap">${esc(o.txt)}</div>
+            <div class="muted" style="font-size:11px;margin-top:4px">${frDate(new Date(o.ts).toISOString().slice(0,10))}</div>
+          </div>
+          <button class="iconbtn" title="Supprimer" onclick="delAiNote('${o.id}')">🗑</button>
+        </div>`; }).join("");
+  openModal(`
+    <h3>Mes notes IA</h3>
+    <div class="sub">Les réponses de l'assistant que tu as choisi de garder.</div>
+    <div style="margin-top:10px">${body}</div>
+    <button class="btn sec block" style="margin-top:10px" onclick="closeModal()">Fermer</button>
+  `);
+}
+function delAiNote(id){
+  if(!confirm("Supprimer cette note ? Action définitive.")) return;
+  T().aiNotes=(T().aiNotes||[]).filter(x=>x.id!==id);
+  save(); openAiNotes(); flash("Note supprimée");
 }
 function drawChat(){
   const box=document.getElementById("chatBox");if(!box)return;
@@ -3494,6 +3561,7 @@ async function askAI(q){
         weeks.forEach(function(w,idx){ chatLog.push({who:"ai",txt:''+w.label+' — '+w.session.blocks.length+' blocs.<br><button class="btn sm block" style="margin-top:6px" onclick="loadCycleWeek('+idx+')">＋ Charger la séance de cette semaine</button>'}); });
       }
       drawChat();
+      persistAiChatLog();
     } else {
       const sess=(isSession&&!isReprise)?parseAiSession(txt):null;
       let shown=sess?String(txt).replace(/<SEANCE>[\s\S]*?<\/SEANCE>/i,"").trim():txt;
@@ -3506,7 +3574,15 @@ async function askAI(q){
         chatLog.push({who:"ai",txt:'Séance prête, '+sess.blocks.length+' blocs, '+_qa.total+' min au total.'+_qaAlert+'<br><button class="btn sm block" style="margin-top:6px" onclick="loadPendingAiSession()">＋ Charger dans le constructeur</button><button class="btn sm sec block" style="margin-top:6px" onclick="saveAiSession()">Enregistrer dans Mes séances</button>'});
       }
       if(isSession&&isReprise){ chatLog.push({who:"ai",txt:'Séance de reprise chargée, foncier, prévention, technique et collectif léger.<br><button class="btn sm block" style="margin-top:6px" onclick="closeModal();view=\'session\';render()">Ouvrir la séance de reprise</button>'}); }
+      // Cas général (conseil tactique ou mental, exercice isolé, préparation d'adversaire) : aucun des
+      // mécanismes ci-dessus ne s'applique, donc jusqu'au 18/10/2026 cette réponse n'était conservée
+      // nulle part. On propose maintenant de l'épingler dans les notes IA, en plus de l'historique
+      // de conversation désormais persistant.
+      if(!sess && !(isSession&&isReprise)){
+        chatLog.push({who:"ai",txt:'<button class="btn sm sec block" style="margin-top:2px" onclick="saveAiNote('+i+')">★ Enregistrer cette réponse</button>'});
+      }
       drawChat();
+      persistAiChatLog();
     }
   }catch(e){
     await new Promise(r=>setTimeout(r,300));
@@ -3519,6 +3595,7 @@ async function askAI(q){
       chatLog[i].txt="<span class='muted' style='font-size:11px'>Réponse locale, l'IA n'a pas pu être jointe.</span><br><br>"+aiReply(q);
     }
     drawChat();
+    persistAiChatLog();
   }
 }
 // Reponse structuree, adaptee au niveau (contrat de raisonnement du dossier, parties 21 a 23).
