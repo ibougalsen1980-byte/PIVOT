@@ -4325,7 +4325,7 @@ function delSavedSession(id){
   T().savedSessions=(T().savedSessions||[]).filter(x=>x.id!==id);
   save(); openMySessions(); flash("Séance supprimée");
 }
-function exportSessionOnePDF(){
+async function exportSessionOnePDF(){
   if(!window.jspdf){ flash("Export PDF en cours de chargement, réessaie"); return; }
   const s=T().session||{blocks:[]}; const blocks=s.blocks||[];
   if(!blocks.length){ flash("Ajoute des blocs avant d'exporter"); return; }
@@ -4356,6 +4356,44 @@ function exportSessionOnePDF(){
     pdf.text("Total  "+sessionDuration()+" min   ·   "+blocks.length+" blocs",M,y);
     pdf.setFont("helvetica","normal");pdf.setFontSize(9);pdf.setTextColor(150,150,150);
     pdf.text("Fiche de séance, PIVOT",M,ph-24);
+    // Annexe schémas : une page par bloc dont l'exercice a une animation dédiée et fidèle
+    // (EXO_ANIM_BY_ID). Les exercices sans entrée dédiée (animation générique mutualisée par
+    // famille, ou drill personnalisé) n'ont pas de schéma : on ne veut jamais imprimer une
+    // approximation comme si elle représentait exactement l'exercice.
+    const diagBlocks=blocks.filter(function(b){ return b.exoId && EXO_ANIM_BY_ID[b.exoId]; });
+    for(let i=0;i<diagBlocks.length;i++){
+      const b=diagBlocks[i];
+      try{
+        const svg=exoDiagramSVG(b.exoId); if(!svg) continue;
+        const img=await svgToImage(svg);
+        pdf.addPage();
+        let yy=48;
+        pdf.setFont("helvetica","bold");pdf.setFontSize(13);pdf.setTextColor(20,24,34);
+        pdf.text("Schéma : "+String(b.title||""),M,yy); yy+=18;
+        const side=pw-2*M, imgSide=Math.min(side,300);
+        // Résolution modérée (450x480) + JPEG : un export en PNG à cette taille gonfle le PDF
+        // à plusieurs Mo par page (bitmap non compressé réembarqué par jsPDF), déjà constaté
+        // sur l'export des systèmes tactiques. Le fond est opaque, le JPEG ne coûte presque rien.
+        const c=document.createElement("canvas"); c.width=450; c.height=480;
+        const ctx=c.getContext("2d");
+        ctx.fillStyle="#14572b"; ctx.fillRect(0,0,c.width,c.height);
+        ctx.drawImage(img,0,0,c.width,c.height);
+        pdf.addImage(c.toDataURL("image/jpeg",0.88),"JPEG",M,yy,imgSide,imgSide*(480/450));
+        yy+=imgSide*(480/450)+20;
+        const spec=EXO_ANIM_BY_ID[b.exoId];
+        const exoObj=allExos().find(function(x){ return x.id===b.exoId; });
+        const caps=(spec&&spec.cap)||exoCaps(exoObj,3)||[];
+        if(caps.length){
+          pdf.setFont("helvetica","normal");pdf.setFontSize(9);pdf.setTextColor(90,90,90);
+          caps.forEach(function(stepTxt,si){
+            const lines=pdf.splitTextToSize((si+1)+". "+String(stepTxt),side);
+            lines.forEach(function(ln){ pdf.text(ln,M,yy); yy+=12; });
+          });
+        }
+        pdf.setFont("helvetica","normal");pdf.setFontSize(9);pdf.setTextColor(150,150,150);
+        pdf.text("Schéma fidèle à cet exercice, PIVOT",M,ph-24);
+      }catch(eDiag){ /* un schéma en échec n'empêche pas le reste de l'export */ }
+    }
     pdf.save("seance_pivot.pdf");
     flash("Fiche de séance PDF prête");
   }catch(e){ flash("Souci pendant l'export, réessaie"); }
@@ -7406,6 +7444,49 @@ function exoCaps(e,n){
   return caps.length?caps:EXO_ANIM._default.cap;
 }
 function exoHash(s){ let h=0; s=String(s||""); for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; } return h; }
+/* Schéma statique (SVG autonome) d'un exercice, pour impression/export PDF.
+   Uniquement appelé quand EXO_ANIM_BY_ID[id] existe : une animation fidèle,
+   dédiée à cet exercice précis, jamais la version générique mutualisée par famille. */
+function exoDiagramSVG(id){
+  const spec=EXO_ANIM_BY_ID[id]; if(!spec) return null;
+  const colorFor=function(kind){ return kind==="def" ? "#6fb5ff" : "#ffffff"; };
+  let paths="";
+  (spec.actors||[]).forEach(function(a){
+    const pts=(a.keys||[]).map(function(p){ return p[0]+","+p[1]; }).join(" ");
+    paths+=`<polyline points="${pts}" fill="none" stroke="${colorFor(a.kind)}" stroke-width="2.6" stroke-dasharray="${a.kind==="def"?"5,4":"none"}" marker-end="url(#exoArrow_${id})" opacity=".92"/>`;
+  });
+  let ballPath="";
+  if(spec.ball && spec.ball.show!==false && spec.ball.keys){
+    const bpts=spec.ball.keys.map(function(p){ return p[0]+","+p[1]; }).join(" ");
+    ballPath=`<polyline points="${bpts}" fill="none" stroke="#ffd23f" stroke-width="2" stroke-dasharray="2,4" marker-end="url(#exoArrowBall_${id})"/>`;
+  }
+  let cones="";
+  (spec.cones||[]).forEach(function(c){ cones+=`<circle cx="${c[0]}" cy="${c[1]}" r="4" fill="#ff8a4c"/>`; });
+  let tokens="";
+  (spec.actors||[]).forEach(function(a){
+    const keys=a.keys||[]; if(!keys.length) return;
+    const first=keys[0], last=keys[keys.length-1];
+    const fill=a.kind==="off" ? "#e8631f" : "#17304d";
+    if(first[0]!==last[0]||first[1]!==last[1]) tokens+=`<circle cx="${first[0]}" cy="${first[1]}" r="9" fill="${fill}" opacity=".35" stroke="#0b0e12" stroke-width="1"/>`;
+    tokens+=`<circle cx="${last[0]}" cy="${last[1]}" r="10" fill="${fill}" stroke="#0b0e12" stroke-width="1.4"/>`;
+    tokens+=`<text x="${last[0]}" y="${last[1]+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">${(a.label||"").replace(/[<>&]/g,"")}</text>`;
+  });
+  return `<svg viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;background:#14572b;border-radius:10px">
+    <defs>
+      <marker id="exoArrow_${id}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ffffff"/></marker>
+      <marker id="exoArrowBall_${id}" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#ffd23f"/></marker>
+    </defs>
+    <g stroke="#eaeaea" stroke-width="1.8" fill="none" opacity=".85">
+      <rect x="8" y="6" width="284" height="308" rx="4"/>
+      <path d="M46,6 L46,74 A104,104 0 0 0 254,74 L254,6"/>
+      <rect x="110" y="6" width="80" height="116"/>
+      <circle cx="150" cy="122" r="34"/>
+      <circle cx="150" cy="40" r="8" stroke="#ff8a4c" stroke-width="3"/>
+      <line x1="128" y1="26" x2="172" y2="26" stroke="#fff" stroke-width="3"/>
+    </g>
+    ${cones}${paths}${ballPath}${tokens}
+  </svg>`;
+}
 /* Individualise une animation : miroir gauche/droite et léger décalage de départ,
    déterministes par identifiant, pour que deux exercices d'un même thème ne se ressemblent jamais. */
 function personalizeAnim(data,e){
