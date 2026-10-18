@@ -5375,9 +5375,14 @@ async function buildPDFBlob(title){
     pdf.text(title+"   image "+(i+1)+" sur "+tac.frames.length, 40, 46);
     const img=await svgToImage(frameStandaloneSVG(tac.frames[i]));
     const c=document.createElement("canvas"); c.width=CW*2; c.height=CH*2;
-    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    const cx=c.getContext("2d");
+    // JPEG compressé au lieu de PNG, corrigé le 18/10/2026 : le PNG était réembarqué non compressé
+    // par jsPDF, d'où des PDF de 7,5 à 11 Mo. Même correctif que l'export de séance. Fond opaque
+    // peint avant le dessin pour que le JPEG n'ait jamais de zone transparente rendue en noir.
+    cx.fillStyle="#14572b"; cx.fillRect(0,0,c.width,c.height);
+    cx.drawImage(img,0,0,c.width,c.height);
     const iw=pw-80;
-    pdf.addImage(c.toDataURL("image/png"),"PNG",40,64,iw,iw*(CH/CW));
+    pdf.addImage(c.toDataURL("image/jpeg",0.88),"JPEG",40,64,iw,iw*(CH/CW));
     pdf.setFontSize(9); pdf.setTextColor(150,150,150);
     pdf.text("Fait avec PIVOT", 40, ph-28);
   }
