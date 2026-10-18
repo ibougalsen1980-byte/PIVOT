@@ -1716,6 +1716,9 @@ function applyI18n(root){
     // source française mémorisée pour rester réversible
     let src=el.getAttribute('data-i18n');
     if(src===null){ src=(el.textContent||"").trim(); if(!src) return; el.setAttribute('data-i18n',src); }
+    // Correctif 18/10/2026 : une <option> sans attribut value renvoie son texte comme valeur. Traduite,
+    // elle enregistrait "Center" ou "High" à la place de "Pivot" ou "Forte". On fige la valeur française.
+    if(el.tagName==='OPTION' && !el.hasAttribute('value')) el.setAttribute('value',src);
     else if(i18nStale((el.textContent||"").trim(),src)){ src=(el.textContent||"").trim(); el.setAttribute('data-i18n',src); }
     if(l==='fr'||!d){ if((el.textContent||"").trim()!==src) el.textContent=src; return; }
     const rep=i18nPhrase(src,d);
@@ -1748,6 +1751,9 @@ function applyI18n(root){
       if(tn.__i18nSrc===undefined){ if(!/\p{L}{2}/u.test(tn.textContent||"")) return; tn.__i18nSrc=tn.textContent; }
       const raw=tn.__i18nSrc, core=raw.trim();
       if(l==='fr'||!d){ if(tn.textContent!==raw) tn.textContent=raw; return; }
+      // Correctif 18/10/2026 : un mot seul (prénom "Pivot", bloc nommé "Passe") n'est traduit que dans un
+      // élément d'interface, jamais dans un texte libre où il peut s'agir d'une saisie du coach.
+      if(!/\s|\d/.test(core) && !pe.closest('button,label,th,option,.chip,.tag,.badge,.lbl,.lbl2,.lbl3,.hint,.fld,.sub,h2,h3,h4,.levelchip,.seg,a')) { if(tn.textContent!==raw) tn.textContent=raw; return; }
       const rep=i18nPhrase(core,d);
       const out=(rep!==null)?raw.replace(core,rep):raw;
       if(tn.textContent!==out) tn.textContent=out;
@@ -4531,7 +4537,7 @@ function drawBlocks(){
   c.innerHTML=hint+T().session.blocks.map((b,i)=>`
     <div class="block-item">
       <div class="num" style="background:var(--panel);border:1px solid var(--line);color:var(--muted)">${i+1}</div>
-      <div class="bt" style="cursor:pointer" onclick="editBlock(${i})"><b>${b.title}</b><br><small>${b.cat} · ${b.dur} min · intensité ${b.intensity}${b.points?" · ✎":""}</small></div>
+      <div class="bt" style="cursor:pointer" onclick="editBlock(${i})"><b>${blockTitle(b)}</b><br><small>${b.cat} · ${b.dur} min · intensité ${b.intensity}${b.points?" · ✎":""}</small></div>
       <button class="iconbtn" title="Modifier ce bloc" onclick="editBlock(${i})">✎</button>
       ${b.exoId?`<button class="iconbtn" title="Voir la fiche de l'exercice" onclick="exoDetail('${b.exoId}')">📋</button>`:(b.physId!=null?`<button class="iconbtn" title="Voir la fiche" onclick="physDetail(${b.physId})">📋</button>`:"")}
       <button class="iconbtn" onclick="moveBlock(${i},-1)">↑</button>
@@ -4672,7 +4678,7 @@ function drawTerrain(){
     <div class="sub">Bloc ${timerState.idx+1}/${T().session.blocks.length}</div>
     <div class="card" style="text-align:center">
       <div class="tag" style="margin-bottom:6px">${b.cat}</div>
-      <div style="font-size:19px;font-weight:800;margin-bottom:4px">${b.title}</div>
+      <div style="font-size:19px;font-weight:800;margin-bottom:4px">${blockTitle(b)}</div>
       <div class="muted" style="font-size:12px;margin-bottom:10px">Intensité ${b.intensity} · ${b.dur} min prévues</div>
       <div class="timerbig" id="tbig">${mm}:${ss}</div>
       <div class="hint">Temps de parole conseillé : 2 min max avant de lancer</div>
@@ -4698,7 +4704,7 @@ function terrainShowDetail(idx){
 function terrainBlockDetail(idx){
   const b=T().session.blocks[idx];
   openModal(`
-    <h3>${b.title}</h3>
+    <h3>${blockTitle(b)}</h3>
     <div class="sub">${b.cat} · ${b.dur} min · intensité ${b.intensity}</div>
     ${b.points?`<div class="card"><h3>Points clés</h3><div style="font-size:13px">${b.points}</div></div>`:'<div class="hint">Aucun détail supplémentaire enregistré pour ce bloc.</div>'}
     <button class="btn block" style="margin-top:10px" onclick="drawTerrain()">▶ Reprendre le chrono</button>
@@ -6390,10 +6396,13 @@ function libExtraHTML(e){
       ${prog?`<div style="margin-top:8px">${prog}</div>`:""}
     </div>`;
 }
+/* Titre affiché d'un bloc : traduit seulement si le coach n'a pas renommé le bloc (ajouté le 18/10/2026). */
+function blockTitle(b){ try{ if(b&&b.exoId){ const e=allExos().find(x=>x.id===b.exoId); if(e && (b.title===e.title||b.title===dTitle(e))) return dTitle(e); } }catch(err){} return (b&&b.title)||""; }
 function addExoToSession(id){
   const e=allExos().find(x=>x.id===id); if(!e) return;
   const t=T(); if(!t.session) t.session={title:"",blocks:[]}; if(!t.session.blocks) t.session.blocks=[];
-  t.session.blocks.push({title:dTitle(e),cat:e.cat,dur:e.dur,intensity:e.intensity,points:dObj(e),exoId:e.id});
+  // Correctif 18/10/2026 : on enregistre le titre et l'objectif d'origine, la traduction se fait à l'affichage.
+  t.session.blocks.push({title:e.title,cat:e.cat,dur:e.dur,intensity:e.intensity,points:e.objectif,exoId:e.id});
   save(); closeModal(); sfx("ok");
   if(view==="session") renderSession();
   flash("Ajouté à la séance");
