@@ -1480,10 +1480,10 @@ function saveTeamEdit(id){
 
 /* ============ MULTILINGUE ============ */
 const LANG={
-  fr:{home:"Accueil",roster:"Effectif",session:"Séance",match:"Match",tactics:"Tactique",posture:"Posture",physique:"Physique",sante:"Santé",references:"Références",ressources:"Ressources",hello:"Bonjour"},
-  en:{home:"Home",roster:"Roster",session:"Practice",match:"Game",tactics:"Plays",posture:"Mindset",physique:"Fitness",sante:"Health",references:"Library",ressources:"Resources",hello:"Hello"},
-  es:{home:"Inicio",roster:"Plantel",session:"Sesión",match:"Partido",tactics:"Jugadas",posture:"Actitud",physique:"Físico",sante:"Salud",references:"Biblioteca",ressources:"Recursos",hello:"Hola"},
-  pt:{home:"Início",roster:"Elenco",session:"Treino",match:"Jogo",tactics:"Jogadas",posture:"Postura",physique:"Físico",sante:"Saúde",references:"Biblioteca",ressources:"Recursos",hello:"Olá"},
+  fr:{home:"Accueil",roster:"Effectif",session:"Séance",match:"Match",tactics:"Tactique",posture:"Posture",physique:"Physique",sante:"Santé",references:"Références",ressources:"Ressources",hello:"Bonjour","Erreur fréquente":"Erreur fréquente","Correction":"Correction"},
+  en:{home:"Home",roster:"Roster",session:"Practice",match:"Game",tactics:"Plays",posture:"Mindset",physique:"Fitness",sante:"Health",references:"Library",ressources:"Resources",hello:"Hello","Erreur fréquente":"Common mistake","Correction":"Fix"},
+  es:{home:"Inicio",roster:"Plantel",session:"Sesión",match:"Partido",tactics:"Jugadas",posture:"Actitud",physique:"Físico",sante:"Salud",references:"Biblioteca",ressources:"Recursos",hello:"Hola","Erreur fréquente":"Error frecuente","Correction":"Corrección"},
+  pt:{home:"Início",roster:"Elenco",session:"Treino",match:"Jogo",tactics:"Jogadas",posture:"Postura",physique:"Físico",sante:"Saúde",references:"Biblioteca",ressources:"Recursos",hello:"Olá","Erreur fréquente":"Erro frequente","Correction":"Correção"},
 };
 const NAV_MODAL_KEY={openPhysique:"physique",openSante:"sante",openSystems:"references",openResources:"ressources"};
 const ALL_LANGS=[
@@ -1543,6 +1543,40 @@ function dAge(v){ const l=getLang(); if(l==='fr'||!v) return v||""; const w=(l==
 function _exoTr(e){ const l=getLang(); return (l!=='fr'&&EXO_TR[l]&&EXO_TR[l][e.id])?EXO_TR[l][e.id]:null; }
 function dTitle(e){ const t=_exoTr(e); return (t&&t.titre)||e.title||e.titre||""; }
 function dObj(e){ const t=_exoTr(e); return (t&&t.objectif)||e.objectif||""; }
+/* Câblage de traduction pour le reste du contenu d'un exercice (mise en place, déroulé,
+   ce que tu dis, erreur, points clés, variantes, critères de réussite, postes, impact match).
+   Avant ce câblage, exoDetail() et consorts lisaient ces champs directement sur l'objet exercice
+   (toujours en français), même quand une traduction existait pour le titre et l'objectif.
+   Chaque fonction accepte plusieurs noms de clé possibles car les exercices de la bibliothèque
+   (placement/etapes/consignes/erreurs/corrections) et les exercices historiques e1 à e50
+   (setup/steps/say/error/keys) n'utilisent pas le même vocabulaire de champs ; tant qu'aucune
+   traduction n'existe pour un champ donné, le repli est le texte français déjà affiché,
+   à l'identique de avant ce câblage. */
+function dSetup(e){ const t=_exoTr(e); if(t){ if(t.placement!=null&&t.placement!=="") return t.placement; if(t.setup!=null&&t.setup!=="") return t.setup; } return e.setup||""; }
+function dMaterial(e){ const t=_exoTr(e); if(t){ if(t.materiel!=null&&t.materiel!=="") return t.materiel; if(t.material!=null&&t.material!=="") return t.material; } return e.material||""; }
+function dOrga(e){ const t=_exoTr(e); return (t&&t.orga)||e.orga||""; }
+function dSteps(e){ const t=_exoTr(e); if(t){ if(Array.isArray(t.etapes)&&t.etapes.length) return t.etapes; if(Array.isArray(t.steps)&&t.steps.length) return t.steps; } return e.steps||[]; }
+function dSay(e){ const t=_exoTr(e); return (t&&t.say)||e.say||""; }
+function dError(e){
+  const t=_exoTr(e);
+  if(t){
+    if(typeof t.error==="string" && t.error!=="") return t.error;
+    if(t.erreurs || t.corrections){
+      const connErr=tr("Erreur fréquente"), connFix=tr("Correction");
+      let s=t.erreurs?(connErr+" : "+t.erreurs):"";
+      if(t.corrections) s+=(s?" ":"")+connFix+" : "+t.corrections;
+      if(s) return s;
+    }
+  }
+  return e.error||"";
+}
+function dKeys(e){ const t=_exoTr(e); if(t){ if(t.consignes!=null&&t.consignes!=="") return t.consignes; if(t.keys!=null&&t.keys!=="") return t.keys; } return e.keys||""; }
+function dVEasy(e){ const t=_exoTr(e); return (t&&t.vEasy)||e.vEasy||""; }
+function dVHard(e){ const t=_exoTr(e); return (t&&t.vHard)||e.vHard||""; }
+function dVariants(e){ const t=_exoTr(e); if(t&&Array.isArray(t.variants)&&t.variants.length) return t.variants; return e.variants||[]; }
+function dReussite(e){ const t=_exoTr(e); return (t&&t.reussite)||e.reussite||""; }
+function dPostes(e){ const t=_exoTr(e); return (t&&t.postes)||e.postes||""; }
+function dStats(e){ const t=_exoTr(e); return (t&&t.stats)||e.stats||""; }
 function dPlayers(v){ const l=getLang(); if(l==='fr'||!v) return v||""; let s=String(v).replace(/\s+à\s+/g,(l==='en'?' to ':' a '));
   if(l==='en') s=s.replace(/joueurs/g,'players').replace(/joueur/g,'player').replace(/Groupe/g,'Group');
   else if(l==='es') s=s.replace(/joueurs/g,'jugadores').replace(/joueur/g,'jugador').replace(/Groupe/g,'Grupo');
@@ -6221,17 +6255,17 @@ function exoDetail(id){
     </div>
     <button class="btn sm sec block" style="margin-bottom:10px" onclick="if(window.EXO_CURRENT)animateExo(window.EXO_CURRENT,'exoCourt')">▶ Revoir l'animation</button>
     <div class="card"><h3>Objectif</h3><div style="font-size:13px">${dObj(e)}</div></div>
-    <div class="card"><h3>Mise en place</h3><div style="font-size:13px">${e.setup}</div>
-      <div class="hint" style="margin-top:6px">Matériel : ${e.material}</div>
-      ${e.orga?`<div style="font-size:13px;margin-top:8px"><b>Organisation</b><br>${e.orga}</div>`:""}</div>
+    <div class="card"><h3>Mise en place</h3><div style="font-size:13px">${dSetup(e)}</div>
+      <div class="hint" style="margin-top:6px">Matériel : ${dMaterial(e)}</div>
+      ${dOrga(e)?`<div style="font-size:13px;margin-top:8px"><b>Organisation</b><br>${dOrga(e)}</div>`:""}</div>
     <div class="card"><h3>▶ Déroulé</h3>
-      <ol style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${e.steps.map(s=>`<li>${s}</li>`).join("")}</ol></div>
-    ${e.say?`<div class="card" style="border-left:4px solid var(--accent)"><h3>Ce que tu dis</h3><div style="font-size:13px;font-style:italic">« ${e.say} »</div></div>`:""}
-    ${e.error?`<div class="card" style="border-left:4px solid #e0a800"><h3>Erreur à corriger</h3><div style="font-size:13px">${e.error}</div></div>`:""}
-    <div class="card"><h3>Points clés</h3><div style="font-size:13px">${e.keys}</div></div>
+      <ol style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${dSteps(e).map(s=>`<li>${s}</li>`).join("")}</ol></div>
+    ${dSay(e)?`<div class="card" style="border-left:4px solid var(--accent)"><h3>Ce que tu dis</h3><div style="font-size:13px;font-style:italic">« ${dSay(e)} »</div></div>`:""}
+    ${dError(e)?`<div class="card" style="border-left:4px solid #e0a800"><h3>Erreur à corriger</h3><div style="font-size:13px">${dError(e)}</div></div>`:""}
+    <div class="card"><h3>Points clés</h3><div style="font-size:13px">${dKeys(e)}</div></div>
     <div class="grid2">
-      <div class="kpi" style="text-align:left"><div class="l">Plus facile</div><div style="font-size:12px;margin-top:3px">${e.vEasy}</div></div>
-      <div class="kpi" style="text-align:left"><div class="l">Plus dur</div><div style="font-size:12px;margin-top:3px">${e.vHard}</div></div>
+      <div class="kpi" style="text-align:left"><div class="l">Plus facile</div><div style="font-size:12px;margin-top:3px">${dVEasy(e)}</div></div>
+      <div class="kpi" style="text-align:left"><div class="l">Plus dur</div><div style="font-size:12px;margin-top:3px">${dVHard(e)}</div></div>
     </div>
     <div class="card"><h3>Variantes ${e.cat}</h3>
       <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${(VARIANTS_BY_CAT[e.cat]||[]).map(v=>`<li>${v}</li>`).join("")}${(e.variants||[]).map(v=>`<li>${v}</li>`).join("")}</ul>
@@ -6252,12 +6286,12 @@ function libExtraHTML(e){
   };
   const prog=links(e.prerequis,"À travailler avant")+links(e.suivants,"Suite logique")+links(e.similaires,"Exercices proches");
   return `
-    ${e.reussite?`<div class="card"><h3>Critères de réussite</h3><div style="font-size:13px">${e.reussite}</div></div>`:""}
+    ${dReussite(e)?`<div class="card"><h3>Critères de réussite</h3><div style="font-size:13px">${dReussite(e)}</div></div>`:""}
     <div class="card"><h3>Repères</h3>
       <div style="font-size:12.5px;line-height:1.7">
         ${e.theme?`<div><b>${tr('Thème')||'Thème'}</b> · ${dTheme(e.theme)}</div>`:""}
-        ${e.postes?`<div><b>${tr('Postes')||'Postes'}</b> · ${e.postes}</div>`:""}
-        ${e.stats?`<div><b>${tr('Impact match')||'Impact match'}</b> · ${e.stats}</div>`:""}
+        ${e.postes?`<div><b>${tr('Postes')||'Postes'}</b> · ${dPostes(e)}</div>`:""}
+        ${e.stats?`<div><b>${tr('Impact match')||'Impact match'}</b> · ${dStats(e)}</div>`:""}
         ${e.surface?`<div><b>${tr('Surface')||'Surface'}</b> · ${dSurface(e.surface)}</div>`:""}
       </div>
       ${prog?`<div style="margin-top:8px">${prog}</div>`:""}
@@ -6266,7 +6300,7 @@ function libExtraHTML(e){
 function addExoToSession(id){
   const e=allExos().find(x=>x.id===id); if(!e) return;
   const t=T(); if(!t.session) t.session={title:"",blocks:[]}; if(!t.session.blocks) t.session.blocks=[];
-  t.session.blocks.push({title:e.title,cat:e.cat,dur:e.dur,intensity:e.intensity,points:e.objectif,exoId:e.id});
+  t.session.blocks.push({title:dTitle(e),cat:e.cat,dur:e.dur,intensity:e.intensity,points:dObj(e),exoId:e.id});
   save(); closeModal(); sfx("ok");
   if(view==="session") renderSession();
   flash("Ajouté à la séance");
@@ -7445,7 +7479,7 @@ const EXO_ANIM_POOL={
   "Mental":["mA","mB","mC"]
 };
 function exoCaps(e,n){
-  const caps=(e&&e.steps||[]).slice(0,n).map(function(s){ s=String(s).replace(/^\(\d+\s*(min|m)\)\s*/,''); return s.length>70?s.slice(0,67)+'…':s; });
+  const caps=(e?dSteps(e):[]).slice(0,n).map(function(s){ s=String(s).replace(/^\(\d+\s*(min|m)\)\s*/,''); return s.length>70?s.slice(0,67)+'…':s; });
   return caps.length?caps:EXO_ANIM._default.cap;
 }
 function exoHash(s){ let h=0; s=String(s||""); for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; } return h; }
