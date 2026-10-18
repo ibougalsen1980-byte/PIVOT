@@ -6268,7 +6268,7 @@ function exoDetail(id){
       <div class="kpi" style="text-align:left"><div class="l">Plus dur</div><div style="font-size:12px;margin-top:3px">${dVHard(e)}</div></div>
     </div>
     <div class="card"><h3>Variantes ${e.cat}</h3>
-      <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${(VARIANTS_BY_CAT[e.cat]||[]).map(v=>`<li>${v}</li>`).join("")}${(e.variants||[]).map(v=>`<li>${v}</li>`).join("")}</ul>
+      <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6">${(VARIANTS_BY_CAT[e.cat]||[]).map(v=>`<li>${v}</li>`).join("")}${dVariants(e).map(v=>`<li>${v}</li>`).join("")}</ul>
     </div>
     ${e.lib?libExtraHTML(e):""}
     ${cameFromTerrain?'':`<button class="btn block" style="margin-top:10px" onclick="addExoToSession('${e.id}')">＋ Ajouter à ma séance</button>`}
