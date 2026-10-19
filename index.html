@@ -1184,6 +1184,10 @@ async function cloudLoad(){
       try{localStorage.setItem(LS_KEY,JSON.stringify(DB))}catch(e){}
     } else {
       // Première connexion de ce compte : les données locales deviennent les données du compte.
+      // Correctif 19/10/2026 : si la ligne existe déjà sans données (créée par un paiement, un code ou
+      // l'essai côté serveur), l'abonnement serveur s'impose aussi ici. Avant, il n'était appliqué que
+      // quand la ligne contenait des données, donc jamais pour un compte créé après le 20/09.
+      if(row){ DB.sub={until:row.sub_until?new Date(row.sub_until).getTime():0, plan:row.sub_plan||"", since:(DB.sub&&DB.sub.since)||Date.now()}; if(row.trial_used) DB.trialUsed=true; save(); }
       _cloudLoaded=true; cloudSave();
     }
   }catch(e){}
@@ -1908,8 +1912,22 @@ async function tryAccessCode(){
     else flash((d&&d.error)||'Code invalide');
   }catch(e){ flash("Impossible de vérifier le code, réessaie"); }
 }
-function startFreeTrial(){
+// Correctif 19/10/2026 : avec un compte, la semaine offerte est attribuée par la base (fonction
+// pivot_start_trial), une seule fois par compte. Avant, elle ne vivait que dans le navigateur : vider le
+// cache la redonnait, et elle disparaissait au rechargement suivant pour un compte synchronisé.
+async function startFreeTrial(){
   if(DB.trialUsed){ flash("Ta semaine offerte a déjà été utilisée"); return; }
+  if(supaOn() && supaUser){
+    try{
+      const res=await supa.rpc('pivot_start_trial');
+      if(res.error) throw res.error;
+      DB.trialUsed=true;
+      if(!res.data){ save(); flash("Ta semaine offerte a déjà été utilisée sur ce compte"); render(); return; }
+      DB.sub={until:new Date(res.data).getTime(), plan:'essai', since:Date.now()}; save();
+      sfx('ok'); flash('Première semaine offerte activée, bienvenue'); render();
+    }catch(e){ flash("Activation impossible pour le moment, vérifie ta connexion et réessaie"); }
+    return;
+  }
   DB.trialUsed=true; grantAccess(7,'essai'); sfx('ok'); flash('Première semaine offerte activée, bienvenue'); render();
 }
 function stripeGo(k){
