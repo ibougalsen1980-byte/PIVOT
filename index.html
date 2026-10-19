@@ -902,6 +902,10 @@ const IS_TWA=(function(){
     if(localStorage.getItem('pivot_twa')==='1') return true;
     if(document.referrer && document.referrer.indexOf('android-app://')===0){ localStorage.setItem('pivot_twa','1'); return true; }
     if(new URLSearchParams(location.search).get('twa')==='1'){ localStorage.setItem('pivot_twa','1'); return true; }
+    // 19/10/2026 : l'API Digital Goods n'existe que dans l'application Android installée depuis Google Play.
+    // Sa présence suffit à reconnaître l'app, même quand le premier lancement n'a pas transmis le référent
+    // android-app:// (ouverture depuis un lien de confirmation d'email, par exemple).
+    if('getDigitalGoodsService' in window){ localStorage.setItem('pivot_twa','1'); return true; }
   }catch(e){}
   return false;
 })();
@@ -1021,7 +1025,20 @@ function playCardsHTML(){
     <div style="height:6px"></div>
     <a class="reset" onclick="playRestore(false)">Restaurer mes achats</a>`;
 }
-if(IS_TWA){ playInit().then(ok=>{ if(ok){ try{ if(!hasAccess()) render(); }catch(e){} } }); }
+// 19/10/2026 : Google Play renvoie parfois la liste des formules avec retard au démarrage. Avant, un seul
+// essai : s'il échouait, l'écran d'abonnement n'affichait aucune formule. On réessaie trois fois.
+let _playTries=0;
+function playInitRetry(){
+  if(!IS_TWA || _playReady) return;
+  _playTries++;
+  playInit().then(ok=>{
+    if(ok){ try{ if(!hasAccess()) render(); }catch(e){} }
+    else if(_playTries<3){ setTimeout(playInitRetry, 2000*_playTries); }
+    else { try{ if(!hasAccess()) render(); }catch(e){} }
+  });
+}
+function playReload(){ _playTries=0; flash("Chargement des formules Google Play..."); playInitRetry(); }
+if(IS_TWA){ playInitRetry(); }
 
 function demoPlayers(){return [];}
 function newTeam(name,category,level,players){return {
@@ -1970,8 +1987,11 @@ function renderPaywall(){
     <h3 style="margin:16px 2px 8px">${DB.trialUsed?'Choisis ta formule':'Ou passe direct à un abonnement'}</h3>
     ${playCardsHTML()}
     `:`
-    <h3 style="margin:16px 2px 8px">Tu as déjà un accès ?</h3>
-    <div class="card"><div class="hint" style="line-height:1.55">Connecte-toi avec ton compte pour retrouver ton accès sur cet appareil.</div></div>
+    <h3 style="margin:16px 2px 8px">${DB.trialUsed?'Choisis ta formule':'Ou passe direct à un abonnement'}</h3>
+    <div class="card"><div class="hint" style="line-height:1.55">${_playTries>=3?"Les formules Google Play n'ont pas pu être chargées. Vérifie ta connexion, puis réessaie.":"Chargement des formules Google Play..."}</div>
+      <button class="btn sec block" style="margin-top:10px" onclick="playReload()">Réessayer</button>
+      <div style="height:6px"></div>
+      <a class="reset" onclick="playRestore(false)">Restaurer mes achats</a></div>
     `):`
     <h3 style="margin:16px 2px 8px">${DB.trialUsed?'Choisis ta formule':'Ou passe direct à un abonnement'}</h3>
     ${card('semaine')}${card('mois')}${card('annee')}
@@ -2842,7 +2862,7 @@ function openPricing(){
         <button class="btn block" onclick="playManage()">Gérer ou résilier dans Google Play</button>
         <div style="height:6px"></div>
         <a class="reset" onclick="playRestore(false)">Restaurer mes achats</a>
-      `:playCardsHTML()):''}
+      `:playCardsHTML()):`<div class="hint" style="margin:6px 2px">Formules Google Play en cours de chargement.</div><button class="btn sec block" onclick="closeModal();playReload()">Réessayer</button>`}
       <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
     `);
     return;
