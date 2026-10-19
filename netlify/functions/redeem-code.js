@@ -27,11 +27,11 @@ async function _rateLimited(id) {
       },
       body: JSON.stringify({ p_client_id: id, p_window_seconds: RATE_LIMIT_WINDOW_SECONDS, p_max: RATE_LIMIT_MAX })
     });
-    if (!r.ok) return false; // en cas de souci Supabase, on laisse passer plutot que de bloquer tout le monde
+    if (!r.ok) return true; // 19/10/2026 : en cas de souci Supabase, on bloque plutot que de laisser tester des codes sans limite
     const allowed = await r.json();
     return allowed === false;
   } catch (e) {
-    return false;
+    return true;
   }
 }
 //
@@ -42,7 +42,7 @@ async function _rateLimited(id) {
 
 exports.handler = async (event) => {
 const headers = {
-'Access-Control-Allow-Origin': '*',
+'Access-Control-Allow-Origin': 'https://pivotcoach.netlify.app',
 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 'Access-Control-Allow-Methods': 'POST, OPTIONS'
 };
@@ -80,8 +80,32 @@ return { statusCode: 429, headers, body: JSON.stringify({ ok: false, error: 'tro
 const days = codes[code];
 if (!days) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'code invalide' }) };
 
+// Usage unique par compte, ajoute le 19/10/2026 (audit du 18/10) : avant, un meme code pouvait etre
+// saisi a l'infini et chaque saisie rallongeait l'acces. On inscrit d'abord (code, compte) dans
+// code_redemptions, dont la cle primaire refuse un second passage. Plafond global facultatif par code
+// via PIVOT_CODE_MAX_USES ({"CODE":nombre}), pour un code partage a un club par exemple.
+const svc = { 'apikey': process.env.SUPABASE_SERVICE_ROLE, 'authorization': 'Bearer ' + process.env.SUPABASE_SERVICE_ROLE, 'content-type': 'application/json' };
+let maxUses = {};
+try { maxUses = JSON.parse(process.env.PIVOT_CODE_MAX_USES || '{}'); } catch (e) { maxUses = {}; }
+if (maxUses[code]) {
+  const c = await fetch(process.env.SUPABASE_URL + '/rest/v1/code_redemptions?code=eq.' + encodeURIComponent(code) + '&select=code', { method: 'HEAD', headers: Object.assign({}, svc, { 'Prefer': 'count=exact' }) });
+  const total = parseInt(((c.headers.get('content-range') || '').split('/')[1]) || '0', 10);
+  if (!c.ok) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'verification impossible, reessaie' }) };
+  if (total >= maxUses[code]) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'ce code a atteint son nombre maximum d\'utilisations' }) };
+}
+const ins = await fetch(process.env.SUPABASE_URL + '/rest/v1/code_redemptions', {
+  method: 'POST', headers: Object.assign({}, svc, { 'Prefer': 'return=minimal' }),
+  body: JSON.stringify({ code: code, user_id: userId })
+});
+if (ins.status === 409) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'ce code a deja ete utilise sur ton compte' }) };
+if (!ins.ok) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'verification impossible, reessaie' }) };
+
 const grant = await grantServerAccess(userId, days, 'code');
-if (!grant.ok) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'ecriture Supabase impossible' }) };
+if (!grant.ok) {
+  // Acces non credite : on libere le code pour que le coach puisse reessayer.
+  try { await fetch(process.env.SUPABASE_URL + '/rest/v1/code_redemptions?code=eq.' + encodeURIComponent(code) + '&user_id=eq.' + encodeURIComponent(userId), { method: 'DELETE', headers: svc }); } catch (e) {}
+  return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'ecriture Supabase impossible' }) };
+}
 return { statusCode: 200, headers, body: JSON.stringify({ ok: true, days, plan: 'code' }) };
 } catch (e) {
 return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: 'serveur' }) };
