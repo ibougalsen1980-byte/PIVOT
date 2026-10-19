@@ -2380,7 +2380,7 @@ function homeRecosHTML(){
   }
   const absents=(T().players||[]).filter(p=>!p.present).length;
   if(absents>0) recos.push(`${absents} joueur${absents>1?'s':''} indisponible${absents>1?'s':''} : pense à adapter les effectifs de tes exercices avant la séance.`);
-  if((T().match||{}).opponent) recos.push(`Match contre <b>${T().match.opponent}</b> à venir : si tu peux les observer avant, note qui crée le danger et comment ils marquent, on en fera un plan.`);
+  if((T().match||{}).opponent) recos.push(`Match contre <b>${esc(T().match.opponent)}</b> à venir : si tu peux les observer avant, note qui crée le danger et comment ils marquent, on en fera un plan.`);
   if(!recos.length) recos.push(`Ta séance est équilibrée et ton effectif au complet. Bonne préparation.`);
   return recos.slice(0,3).map(r=>`<div class="reco">${r}</div>`).join("");
 }
@@ -2637,9 +2637,9 @@ function renderHome(){
     <div class="card">
       <h3>À venir</h3>
       ${evs.map(u=>`<div class="alert"><span class="badge ${u.e.kind==='Match'?'bad':'ok'}">${u.when.toUpperCase()}</span> ${u.e.time} · ${u.e.title}${u.e.place?(' · '+u.e.place):''}</div>`).join("")}
-      ${absent.map(p=>`<div class="alert"><span class="badge warn">ABSENT</span> ${p.first} ${p.last} n'est pas dispo pour la prochaine séance</div>`).join("")}
+      ${absent.map(p=>`<div class="alert"><span class="badge warn">ABSENT</span> ${esc(p.first)} ${esc(p.last)} n'est pas dispo pour la prochaine séance</div>`).join("")}
       <div class="listitem"><div class="num" style="background:var(--blue)">📋</div><div style="flex:1"><b>${T().session.title||"Prochaine séance"}</b><br><small class="muted">${T().session.blocks&&T().session.blocks.length?T().session.blocks.length+" blocs · "+T().session.blocks.reduce((a,b)=>a+(b.dur||0),0)+" min prévues":"À construire dans l'onglet Séance"}</small></div><span class="tag">Séance</span></div>
-      ${T().match.opponent?`<div class="listitem"><div class="num">🏀</div><div style="flex:1"><b>Match vs ${T().match.opponent}</b><br><small class="muted">Saisie en direct dans l'onglet Match</small></div><span class="tag">Match</span></div>`:``}
+      ${T().match.opponent?`<div class="listitem"><div class="num">🏀</div><div style="flex:1"><b>Match vs ${esc(T().match.opponent)}</b><br><small class="muted">Saisie en direct dans l'onglet Match</small></div><span class="tag">Match</span></div>`:``}
       ${!absent.length && !evs.length ? `<div class="hint" style="margin-top:8px">Aucune alerte. Effectif au complet, rien d'imminent au calendrier.</div>`:""}
       <button class="btn sec block" style="margin-top:10px" onclick="openTimeline()">Voir le calendrier</button>
     </div>
@@ -3935,7 +3935,7 @@ function injuryModal(id){
   const p=T().players.find(x=>x.id===id); if(!p)return;
   const j=p.injury||{};
   openModal(`
-    <h3>Blessure · ${p.first} ${p.last}</h3>
+    <h3>Blessure · ${esc(p.first)} ${esc(p.last)}</h3>
     <div class="sub">Renseigne la nature, la durée estimée et la date de reprise possible. Le joueur reste dans l'effectif mais est marqué indisponible, et ses séances manquées ne pèsent pas sur son taux d'assiduité.</div>
     <label class="fld" style="margin-top:10px">Nature ou zone touchée</label><input id="inj_zone" placeholder="Ex : entorse cheville droite" value="${(j.zone||'').replace(/"/g,'&quot;')}">
     <div class="grid2" style="margin-top:8px">
@@ -3976,14 +3976,15 @@ function appelBtns(id){
   return b("present","Présent","var(--ok)")+b("excuse","Excusé","#c98a12")+b("absent","Absent","var(--bad)")+b("blesse","Blessé","#7a52d1");
 }
 function setAppelMark(id,val){ _appel.marks[id]=val; const c=document.getElementById("apb_"+id); if(c) c.innerHTML=appelBtns(id); }
-function markAllPresent(){ T().players.forEach(function(p){ _appel.marks[p.id]="present"; }); T().players.forEach(function(p){ const c=document.getElementById("apb_"+p.id); if(c) c.innerHTML=appelBtns(p.id); }); }
+// Correctif 19/10/2026 : « Tout présent » ne touche plus aux joueurs blessés, qui restaient sinon notés présents.
+function markAllPresent(){ T().players.forEach(function(p){ _appel.marks[p.id]=(p.injury&&p.injury.active)?"blesse":"present"; }); T().players.forEach(function(p){ const c=document.getElementById("apb_"+p.id); if(c) c.innerHTML=appelBtns(p.id); }); }
 function openAppel(){
   if(!T().players.length){ flash("Ajoute d'abord des joueurs à l'effectif"); return; }
   _appel={date:todayISO(), marks:{}};
   T().players.forEach(function(p){ _appel.marks[p.id]= (p.injury && p.injury.active) ? "blesse" : "present"; }); // tout présent par défaut, les blessés connus sont pré-cochés
   const rows=T().players.slice().sort(function(a,b){return a.num-b.num;}).map(function(p){
     return `<div style="padding:9px 0;border-bottom:1px solid var(--line)">
-      <div style="font-weight:700;font-size:13px;margin-bottom:6px">${p.num}. ${p.first} ${p.last}</div>
+      <div style="font-weight:700;font-size:13px;margin-bottom:6px">${p.num}. ${esc(p.first)} ${esc(p.last)}</div>
       <div id="apb_${p.id}" class="row" style="gap:6px">${appelBtns(p.id)}</div>
     </div>`; }).join("");
   openModal(`
@@ -4035,7 +4036,7 @@ function openAssiduite(){
   const injured=T().players.filter(function(p){ return p.injury && p.injury.active; }).sort(function(a,b){return a.num-b.num;});
   const infHtml = injured.length
     ? `<div class="card" style="margin-top:12px"><h3 style="margin:0 0 6px">Infirmerie <span class="muted" style="font-size:12px;font-weight:400">(${injured.length})</span></h3>`+
-      injured.map(function(p){ return `<div class="sysrow"><div style="flex:1"><div style="font-weight:700;font-size:13px">${p.num}. ${p.first} ${p.last}</div><div class="muted" style="font-size:11.5px;margin-top:2px">${injuryLine(p)||"Blessé"}</div></div>${p.injury.ret?`<span class="badgepos">${frDate(p.injury.ret)}</span>`:`<span class="badgepos" style="background:#7a52d1;color:#fff">Blessé</span>`}</div>`; }).join("")+
+      injured.map(function(p){ return `<div class="sysrow"><div style="flex:1"><div style="font-weight:700;font-size:13px">${p.num}. ${esc(p.first)} ${esc(p.last)}</div><div class="muted" style="font-size:11.5px;margin-top:2px">${injuryLine(p)||"Blessé"}</div></div>${p.injury.ret?`<span class="badgepos">${frDate(p.injury.ret)}</span>`:`<span class="badgepos" style="background:#7a52d1;color:#fff">Blessé</span>`}</div>`; }).join("")+
       `</div>`
     : "";
   const rows=T().players.slice().map(function(p){ return {p:p, a:playerAttendance(p.id)}; })
@@ -4045,7 +4046,7 @@ function openAssiduite(){
     : rows.map(function(o){ const a=o.a; const col=a.rate==null?"var(--muted)":a.rate>=80?"var(--ok)":a.rate>=50?"#c98a12":"var(--bad)";
         return `<div class="sysrow">
           <div style="flex:1">
-            <div style="font-weight:700;font-size:13px">${o.p.num}. ${o.p.first} ${o.p.last}</div>
+            <div style="font-weight:700;font-size:13px">${o.p.num}. ${esc(o.p.first)} ${esc(o.p.last)}</div>
             <div class="muted" style="font-size:11.5px;margin-top:2px">${attBreakdown(a)}${(o.p.injury&&o.p.injury.active)?' · <span style="color:#7a52d1;font-weight:600">blessé actuellement</span>':''}</div>
           </div>
           <div class="kpi" style="min-width:58px"><div class="n" style="color:${col}">${a.rate==null?"–":a.rate+"%"}</div><div class="l">assidu</div></div>
@@ -4105,15 +4106,15 @@ function editPlayerModal(id){
       </div>
     </div>
     <input id="ep_photo" type="file" accept="image/*" style="display:none" onchange="onPhotoPick(this,'epPhotoWrap')">
-    <label class="fld">Prénom</label><input id="ep_first" value="${p.first}">
+    <label class="fld">Prénom</label><input id="ep_first" value="${esc(p.first)}">
     <div style="height:8px"></div>
-    <label class="fld">Nom</label><input id="ep_last" value="${p.last}">
+    <label class="fld">Nom</label><input id="ep_last" value="${esc(p.last)}">
     <div class="grid2" style="margin-top:8px">
       <div><label class="fld">Numéro</label><input id="ep_num" type="number" value="${p.num}"></div>
       <div><label class="fld">Poste</label><select id="ep_pos">${POSITIONS.map(x=>`<option ${x===p.pos?'selected':''}>${x}</option>`).join("")}</select></div>
     </div>
     <div style="height:8px"></div>
-    <label class="fld">Numéro de licence FFBB</label><input id="ep_lic" value="${p.licence||''}">
+    <label class="fld">Numéro de licence FFBB</label><input id="ep_lic" value="${esc(p.licence||'')}">
     <div style="height:14px"></div>
     <button class="btn block" onclick="updatePlayer('${id}')">Enregistrer les modifications</button>
     <div style="height:8px"></div>
@@ -4149,7 +4150,7 @@ function playerDetail(id){
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
       <div class="avatar" style="width:56px;height:56px;font-size:20px;flex:0 0 56px;${avatarBgCss(p.photo)}">${p.photo?'':initials(p)}</div>
       <div style="flex:1">
-        <h3 style="margin:0">${p.first} ${p.last} · #${p.num}</h3>
+        <h3 style="margin:0">${esc(p.first)} ${esc(p.last)} · #${p.num}</h3>
         <div class="sub" style="margin-top:2px">${p.pos} · ${p.present?'Disponible':'Absent'}${p.licence?` · Licence FFBB ${p.licence}`:''}</div>
       </div>
     </div>
@@ -4218,7 +4219,7 @@ function openPassport(id){
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
       <div class="avatar" style="width:52px;height:52px;font-size:18px;${avatarBgCss(p.photo)}">${p.photo?'':initials(p)}</div>
       <div style="flex:1">
-        <div style="font-family:'Oswald',sans-serif;font-size:20px;text-transform:uppercase;letter-spacing:.5px">${p.first} ${p.last}</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:20px;text-transform:uppercase;letter-spacing:.5px">${esc(p.first)} ${esc(p.last)}</div>
         <div class="muted" style="font-size:12px">#${p.num} · ${p.pos}${age?` · ${age} ans`:""}${p.licence?` · Licence FFBB ${p.licence}`:""}</div>
       </div>
       <div style="text-align:right"><div class="badgepos">Passeport</div><div style="font-family:'Oswald',sans-serif;font-size:13px">${p.passportId}</div></div>
@@ -4434,7 +4435,7 @@ function openMySessions(){
     : list.map(function(o){ const dur=(o.blocks||[]).reduce((a,b)=>a+(b.dur||0),0);
         return `<div class="sysrow">
           <div style="flex:1" onclick="loadSavedSession('${o.id}')">
-            <div style="font-weight:700;font-size:13px">${o.title}</div>
+            <div style="font-weight:700;font-size:13px">${esc(o.title)}</div>
             <div class="muted" style="font-size:11.5px;margin-top:2px">${(o.blocks||[]).length} bloc${(o.blocks||[]).length>1?"s":""} · ${dur} min · ${frDate(new Date(o.ts).toISOString().slice(0,10))}</div>
           </div>
           <button class="btn sm sec" onclick="loadSavedSession('${o.id}')">Charger</button>
@@ -4766,7 +4767,7 @@ function endMatch(){
   if(!m.events.length){ flash("Aucune action saisie pour ce match"); return; }
   const bs=boxScore();
   if(!confirm("Terminer le match contre "+(m.opponent||"Adversaire")+" ("+bs.team.pts+"-"+bs.opp+") ? Il sera rangé dans « Matchs joués » et un nouveau match vide démarrera.")) return;
-  const top=Object.entries(bs.players).map(([id,st])=>({id,...st})).sort((a,b)=>b.pts-a.pts)[0];
+  const top=Object.entries(bs.players).map(([id,st])=>({id,...st})).filter(x=>!x.gone).sort((a,b)=>b.pts-a.pts)[0];
   if(!T().matchHistory) T().matchHistory=[];
   T().matchHistory.unshift({id:uid(), date:Date.now(), opponent:m.opponent||"Adversaire", us:bs.team.pts, opp:bs.opp,
     top: top && top.pts ? (plName(top.id)+" ("+top.pts+" pts)") : "", events:m.events.slice()});
@@ -4795,7 +4796,10 @@ function boxScore(){
   T().players.forEach(p=>players[p.id]={pts:0,fg2m:0,fg2a:0,fg3m:0,fg3a:0,ftm:0,fta:0,reb:0,ast:0,stl:0,tov:0,blk:0,foul:0});
   T().match.events.forEach(e=>{
     if(e.side==="opp"){opp+=e.pts||0;return;}
-    const s=players[e.pid]; if(!s)return;
+    // Correctif 19/10/2026 : les actions d'un joueur retiré de l'effectif comptent toujours dans le total
+    // équipe (avant, ses points disparaissaient du score et de l'historique). Il n'a juste plus de ligne.
+    if(!players[e.pid]) players[e.pid]={pts:0,fg2m:0,fg2a:0,fg3m:0,fg3a:0,ftm:0,fta:0,reb:0,ast:0,stl:0,tov:0,blk:0,foul:0,gone:true};
+    const s=players[e.pid];
     switch(e.type){
       case"fg2":s.fg2a++;if(e.made){s.fg2m++;s.pts+=2;}break;
       case"fg3":s.fg3a++;if(e.made){s.fg3m++;s.pts+=3;}break;
@@ -4804,7 +4808,7 @@ function boxScore(){
       case"tov":s.tov++;break; case"blk":s.blk++;break; case"foul":s.foul++;break;
     }
   });
-  Object.values(players).forEach(s=>{team.pts+=s.pts;team.reb+=s.reb;team.ast+=s.ast;team.fg2m+=s.fg2m;team.fg3m+=s.fg3m;team.ftm+=s.ftm;});
+  Object.values(players).forEach(s=>{ Object.keys(team).forEach(k=>{ team[k]+=s[k]||0; }); });
   return {players,team,opp};
 }
 function exportBoxCSV(){
@@ -4815,7 +4819,7 @@ function exportBoxCSV(){
     return [p.num,(p.first+" "+p.last),p.pos,s.pts||0,s.fg2m||0,s.fg2a||0,s.fg3m||0,s.fg3a||0,s.ftm||0,s.fta||0,s.reb||0,s.ast||0,s.stl||0,s.tov||0,s.blk||0,s.foul||0];
   });
   const t=bs.team;
-  rows.push(["","TOTAL EQUIPE","",t.pts,t.fg2m,"",t.fg3m,"",t.ftm,"",t.reb,t.ast,"","","",""]);
+  rows.push(["","TOTAL EQUIPE","",t.pts,t.fg2m,t.fg2a,t.fg3m,t.fg3a,t.ftm,t.fta,t.reb,t.ast,t.stl,t.tov,t.blk,t.foul]);
   rows.push(["","ADVERSAIRE","",bs.opp,"","","","","","","","","","","",""]);
   const esc=v=>{v=String(v);return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
   const csv=[head,...rows].map(r=>r.map(esc).join(";")).join("\r\n");
@@ -4885,7 +4889,7 @@ function swapPlayer(outId,inId){
 function matchScoreHTML(bs){
   return `<div style="text-align:center"><div class="muted" style="font-size:11px">Nous</div><div class="s">${bs.team.pts}</div></div>
     <div class="muted">vs</div>
-    <div style="text-align:center"><div class="muted" style="font-size:11px">${T().match.opponent}</div><div class="s">${bs.opp}</div></div>`;
+    <div style="text-align:center"><div class="muted" style="font-size:11px">${esc(T().match.opponent)}</div><div class="s">${bs.opp}</div></div>`;
 }
 function courtPlayersHTML(onCourt){
   return onCourt.map(p=>`<div class="pchip ${selPlayer===p.id?'sel':''}" onclick="selectPlayer('${p.id}')"><span class="pn">${p.num}</span>${p.first}</div>`).join("");
@@ -5018,11 +5022,11 @@ function oppScore(n){T().match.events.push({id:uid(),side:"opp",pts:n,type:"opp"
 function undo(){if(T().match.events.length){T().match.events.pop();save();refreshMatchLive();flash("Dernière action annulée");}}
 function reportModal(){
   const bs=boxScore();
-  const top=Object.entries(bs.players).map(([id,s])=>({id,...s})).sort((a,b)=>b.pts-a.pts)[0];
+  const top=Object.entries(bs.players).map(([id,s])=>({id,...s})).filter(x=>!x.gone).sort((a,b)=>b.pts-a.pts)[0];
   const topName=top?plName(top.id):"-";
   openModal(`
     <h3>Rapport de match</h3>
-    <div class="sub">Nous ${bs.team.pts}, ${bs.opp} ${T().match.opponent}</div>
+    <div class="sub">Nous ${bs.team.pts}, ${bs.opp} ${esc(T().match.opponent)}</div>
     <div class="card">
       <div class="reco">Résultat : <b>${bs.team.pts>bs.opp?"victoire":bs.team.pts<bs.opp?"défaite":"nul"}</b> ${bs.team.pts}-${bs.opp}.</div>
       <div class="reco">Meilleur marqueur : <b>${topName}</b> avec ${top?top.pts:0} points.</div>
@@ -5109,7 +5113,7 @@ function renderTactics(){
       <button class="btn sm" style="flex:1" onclick="shareMyPlay()">Partager</button>
     </div>
     <div class="hint">Stylo pour dessiner librement. Ajoute des joueurs et le ballon, puis relie-les avec course, passe ou écran. Ajoute une étape pour animer le mouvement.</div>
-    ${DB.plays.length?`<div class="card" style="margin-top:12px"><h3>Mes systèmes (${DB.plays.length})</h3>${DB.plays.map((pl,i)=>`<div class="listitem"><div class="num" style="background:var(--panel2);border:1px solid var(--line);color:var(--muted)">▶</div><div style="flex:1" onclick="loadPlay(${i})"><b>${pl.title}</b><br><small class="muted">${pl.frames.length} image(s)</small></div><button class="iconbtn" onclick="delPlay(${i})">🗑</button></div>`).join("")}</div>`:""}
+    ${DB.plays.length?`<div class="card" style="margin-top:12px"><h3>Mes systèmes (${DB.plays.length})</h3>${DB.plays.map((pl,i)=>`<div class="listitem"><div class="num" style="background:var(--panel2);border:1px solid var(--line);color:var(--muted)">▶</div><div style="flex:1" onclick="loadPlay(${i})"><b>${esc(pl.title)}</b><br><small class="muted">${pl.frames.length} image(s)</small></div><button class="iconbtn" onclick="delPlay(${i})">🗑</button></div>`).join("")}</div>`:""}
   `;
   document.querySelectorAll("#toolbar .tool").forEach(b=>{
     b.classList.toggle("active",b.dataset.t===tac.tool);
