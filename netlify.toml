@@ -102,6 +102,9 @@
   [headers.values]
     Content-Type = "application/manifest+json"
 
+# 19/10/2026 : https://play.google.com ajoute a connect-src. Chrome verifie l'identifiant du moyen de
+# paiement Google Play (https://play.google.com/billing) contre connect-src : sans lui, tout achat dans
+# l'app Android echouait avec "payment method identifier violates Content Security Policy".
 # Content-Security-Policy ajoutee le 2026-09-05 : PIVOT est un fichier unique avec du JS et du CSS
 # inline partout, donc 'unsafe-inline' reste necessaire sur script-src et style-src (une reecriture
 # avec des nonces serait un chantier a part, pas fait ici). Ce que cette politique bloque quand meme :
@@ -111,6 +114,6 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://wgqepkqythrisgwlfvco.supabase.co https://formsubmit.co; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://wgqepkqythrisgwlfvco.supabase.co https://formsubmit.co https://play.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
