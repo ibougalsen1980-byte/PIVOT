@@ -8,8 +8,8 @@
 // l'application (verifie aupres de Supabase). Aucun identifiant n'est accepte depuis le corps de la requete.
 //
 // Ce qui est efface : la ligne coach_data (effectif, seances, matchs, acces), l'abonnement aux
-// notifications, puis l'utilisateur Supabase lui-meme. La table stripe_sessions_used est conservee :
-// elle ne contient qu'un identifiant de paiement deja traite, utile contre la reutilisation d'un paiement.
+// notifications, les achats Google Play, les codes d'acces utilises, puis l'utilisateur Supabase lui-meme.
+// stripe_sessions_used garde l'identifiant de paiement (anti-reutilisation) mais perd le lien au compte.
 //
 // Variables d'environnement Netlify : SUPABASE_URL, SUPABASE_SERVICE_ROLE (deja configurees).
 
@@ -46,6 +46,14 @@ exports.handler = async (event) => {
 
     // L'abonnement aux notifications peut ne pas exister : un echec ici ne bloque pas la suite.
     try { await fetch(base + '/rest/v1/push_subscriptions?user_id=eq.' + uid, { method: 'DELETE', headers: svcHeaders }); } catch (e) {}
+
+    // Ajoute le 19/10/2026 (audit du 18/10) : ces lignes restaient apres la suppression du compte.
+    // Achats Google Play et codes d'acces utilises : effaces. Paiements Stripe deja traites : on garde
+    // l'identifiant de session (protection contre la reutilisation d'un paiement) mais on retire le lien
+    // avec le compte. Un echec ici ne bloque pas la suppression du compte.
+    try { await fetch(base + '/rest/v1/play_purchases?user_id=eq.' + uid, { method: 'DELETE', headers: svcHeaders }); } catch (e) {}
+    try { await fetch(base + '/rest/v1/code_redemptions?user_id=eq.' + uid, { method: 'DELETE', headers: svcHeaders }); } catch (e) {}
+    try { await fetch(base + '/rest/v1/stripe_sessions_used?user_id=eq.' + uid, { method: 'PATCH', headers: Object.assign({ 'content-type': 'application/json' }, svcHeaders), body: JSON.stringify({ user_id: null }) }); } catch (e) {}
 
     const d3 = await fetch(base + '/auth/v1/admin/users/' + uid, { method: 'DELETE', headers: { 'apikey': svc, 'authorization': 'Bearer ' + svc } });
     if (!d3.ok) return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: 'compte non supprime' }) };
