@@ -959,13 +959,18 @@ async function playBuy(k){
   const sku=PLAY_SKUS[k]; if(!sku) return;
   if(!supaOn()||!supaUser){ flash("Connecte-toi d'abord pour t'abonner, ton accès sera lié à ton compte"); return; }
   if(!(await playService()) || !window.PaymentRequest){ flash("Paiement Google Play indisponible sur cet appareil"); return; }
+  // Diagnostic ajouté le 19/10/2026 : si Google Play ne renvoie aucune formule, l'achat ne peut pas
+  // aboutir. On le dit clairement au lieu du message générique « Paiement annulé ou impossible ».
+  if(!_playReady){ try{ await playInit(); }catch(e){} }
+  if(!_playReady){ flash("Formules Google Play introuvables pour cette app (code PLAY-0). Réessaie plus tard."); try{ console.warn("PIVOT play: getDetails vide pour", Object.values(PLAY_SKUS)); }catch(e){} return; }
   let resp;
   try{
     const req=new PaymentRequest([{supportedMethods:PLAY_METHOD, data:{sku:sku}}],
       {total:{label:'Total', amount:{currency:'EUR', value:'0'}}});
     resp=await req.show();
   }catch(e){
-    if(!(e&&e.name==='AbortError')) flash("Paiement annulé ou impossible");
+    // Le nom et le message de l'erreur Google sont affichés (19/10/2026) pour pouvoir diagnostiquer.
+    if(!(e&&e.name==='AbortError')) flash("Paiement impossible ("+((e&&e.name)||"erreur")+(e&&e.message?" : "+String(e.message).slice(0,120):"")+")");
     return;
   }
   const token=resp&&resp.details&&resp.details.purchaseToken;
