@@ -3459,6 +3459,8 @@ async function realAI(q){
   // jamais savoir que ce n'était pas l'IA qui avait répondu.
   if(_to) clearTimeout(_to);
   if(r.status===429) throw new Error('rate_limit');
+  // 19/10/2026 : l'assistant exige maintenant un compte connecté côté serveur.
+  if(r.status===401) throw new Error('auth');
   if(!r.ok) throw new Error('api');
   const d=await r.json();
   if(!d||!d.reply) throw new Error('reply');
@@ -3726,7 +3728,9 @@ async function askAI(q){
     // Transparence ajoutée le 20/09/2026 : la bascule vers la réponse locale (mots-clés, sans IA)
     // était invisible pour le coach, qui pouvait croire que Claude avait répondu alors que non.
     // Un quota dépassé (429) est désormais annoncé clairement plutôt que masqué par ce repli silencieux.
-    if(e && e.message==='rate_limit'){
+    if(e && e.message==='auth'){
+      chatLog[i].txt="<span style='color:#c0392b'>L'assistant IA demande d'être connecté à ton compte PIVOT. Reconnecte-toi depuis les Réglages, puis repose ta question.</span> En attendant, voici une réponse à partir des repères de l'app :<br><br>"+aiReply(q);
+    } else if(e && e.message==='rate_limit'){
       chatLog[i].txt="<span style='color:#c0392b'>Trop de questions envoyées à l'IA en peu de temps, réessaie dans quelques minutes.</span> En attendant, voici une réponse à partir des repères de l'app :<br><br>"+aiReply(q);
     } else {
       chatLog[i].txt="<span class='muted' style='font-size:11px'>Réponse locale, l'IA n'a pas pu être jointe.</span><br><br>"+aiReply(q);
