@@ -23,7 +23,7 @@
     <img src="logo.png" alt="PIVOT">
     <div>
       <h1>Politique de confidentialité</h1>
-      <div class="muted">PIVOT, application de coaching de basket. Dernière mise à jour : 30 septembre 2026.</div>
+      <div class="muted">PIVOT, application de coaching de basket. Dernière mise à jour : 19 octobre 2026.</div>
     </div>
   </header>
 
@@ -41,7 +41,7 @@
     <li><strong>Données de match et de suivi</strong> : statistiques, grilles de tir, présences, indicateurs de suivi des joueurs.</li>
     <li><strong>Photos des joueurs</strong> : si l'entraîneur en ajoute une à la fiche d'un joueur, elle est enregistrée avec les données du compte.</li>
     <li><strong>Suivi des blessures</strong> : zone concernée, dates et état de reprise, si l'entraîneur les renseigne. Ce sont des données de santé : ne les saisis qu'avec l'accord du joueur ou, pour un mineur, de son représentant légal.</li>
-    <li><strong>Abonnement</strong> : statut et date de fin de l'accès payant.</li>
+    <li><strong>Abonnement</strong> : statut et date de fin de l'accès payant, date de début de la semaine offerte, codes d'accès utilisés, et pour l'application Android l'identifiant d'achat Google Play.</li>
     <li><strong>Assistant IA</strong> : les questions que tu poses à l'assistant et le contexte nécessaire pour y répondre : ton profil de coach, le nom et la catégorie de l'équipe, le nom de l'adversaire, l'historique récent de tes séances et les observations que tu as notées.</li>
     <li><strong>Notifications</strong> : si tu les actives, un identifiant technique d'abonnement aux notifications de ton appareil.</li>
     <li><strong>Avis</strong> : ta note, ton commentaire et, si tu le renseignes, ton nom.</li>
@@ -64,22 +64,24 @@
     <li><strong>Supabase</strong> : authentification et sauvegarde des données du compte.</li>
     <li><strong>Netlify</strong> : hébergement du site et fonctions serveur.</li>
     <li><strong>Anthropic</strong> : traitement des questions posées à l'assistant IA. Ne mets pas de données de santé ou d'informations permettant d'identifier un joueur dans tes questions.</li>
-    <li><strong>Stripe</strong> : paiement de l'abonnement, sur le site web uniquement. PIVOT ne stocke pas tes coordonnées bancaires.</li>
+    <li><strong>Stripe</strong> : paiement de l'abonnement sur le site web. PIVOT ne stocke pas tes coordonnées bancaires.</li>
+    <li><strong>Google Play</strong> : paiement et gestion de l'abonnement dans l'application Android. PIVOT reçoit seulement l'identifiant d'achat et la date de fin, jamais tes coordonnées bancaires.</li>
+    <li><strong>Google Fonts</strong> : chargement des polices d'écriture de l'application. Ce service reçoit l'adresse IP de l'appareil qui affiche l'application.</li>
     <li><strong>FormSubmit</strong> : envoi des avis par courrier électronique à l'éditeur.</li>
   </ul>
   <p>Ces prestataires n'accèdent qu'aux données nécessaires à leur fonction. Certains traitent des données en dehors de l'Union européenne, notamment aux États-Unis, dans le cadre de garanties contractuelles.</p>
 
   <h2>Paiement</h2>
-  <p>L'abonnement se souscrit sur le site pivotcoach.netlify.app, où le paiement est traité par Stripe, qui applique sa propre politique de confidentialité. L'application Android ne propose ni paiement ni souscription, elle reconnaît un accès déjà actif sur ton compte.</p>
+  <p>L'abonnement se souscrit sur le site pivotcoach.netlify.app, où le paiement est traité par Stripe, qui applique sa propre politique de confidentialité. Dans l'application Android, l'abonnement se souscrit et se gère via Google Play, qui traite le paiement selon sa propre politique de confidentialité. Un abonnement Google Play se résilie dans Google Play : la suppression du compte PIVOT ne l'arrête pas.</p>
 
   <h2>Les mineurs</h2>
   <p>PIVOT s'adresse aux entraîneurs, pas aux joueurs. L'application traite des données concernant des joueurs mineurs, saisies par leur entraîneur. La collecte est limitée au nécessaire. Le consentement d'un parent ou d'un représentant légal est requis avant de renseigner les données d'un mineur. Un parent ou un représentant légal peut demander l'accès, la rectification ou l'effacement des données d'un mineur en écrivant à l'adresse ci-dessous.</p>
 
   <h2>Combien de temps</h2>
-  <p>Les données sont conservées tant que ton compte existe. Tu peux supprimer à tout moment un joueur, une séance ou un match depuis l'application. À la suppression du compte, les données associées sont effacées. Les avis envoyés par courrier sont conservés le temps utile à l'amélioration du produit.</p>
+  <p>Les données sont conservées tant que ton compte existe. Tu peux supprimer à tout moment un joueur, une séance ou un match depuis l'application. À la suppression du compte, les données associées sont effacées, y compris les achats Google Play et les codes d'accès enregistrés. Seul l'identifiant technique d'un paiement Stripe déjà traité est conservé, sans lien avec ton compte, pour empêcher qu'un même paiement soit utilisé deux fois. Les avis envoyés par courrier sont conservés le temps utile à l'amélioration du produit.</p>
 
   <h2>Supprimer ton compte</h2>
-  <p><strong>Depuis l'application</strong> : Réglages, rubrique Compte, « Supprimer mon compte ». Après confirmation, ton compte et toutes les données associées (effectif, séances, matchs, accès) sont effacés immédiatement, sur tous tes appareils.</p>
+  <p><strong>Depuis l'application</strong> : Réglages, rubrique Compte, « Supprimer mon compte ». Après confirmation, ton compte et toutes les données associées (effectif, séances, matchs, accès) sont effacés immédiatement, sur tous tes appareils. Si tu as un abonnement Google Play, résilie-le d'abord dans Google Play : l'application te le rappelle avant la suppression.</p>
   <p><strong>Sans l'application</strong> : écris à <a href="mailto:ibougalsen1980@gmail.com?subject=Suppression%20de%20mon%20compte%20PIVOT">ibougalsen1980@gmail.com</a> depuis l'adresse de ton compte, avec l'objet « Suppression de mon compte PIVOT ». La suppression est effectuée sous 30 jours.</p>
 
   <h2>Tes droits</h2>

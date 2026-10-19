@@ -58,6 +58,39 @@
   status = 404
   force = true
 
+# Ajoute le 19/10/2026 (audit du 18/10) : fichiers internes qui etaient servis publiquement, dont une
+# ancienne version complete de l'application (index_1.html) et l'ancienne fonction Vercel sans limite.
+[[redirects]]
+  from = "/index_1.html"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/README.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/api/coach.js"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+
 [[headers]]
   for = "/sw.js"
   [headers.values]

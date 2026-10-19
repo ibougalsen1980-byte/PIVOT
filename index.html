@@ -2016,6 +2016,11 @@ async function tryLogin(){
 // Double confirmation, puis la fonction serveur efface les données et le compte avec la clé de service.
 async function deleteAccount(){
   if(!(supaOn()&&supaUser)){ flash("Aucun compte connecté"); return; }
+  // Ajouté le 19/10/2026 : supprimer le compte n'arrête pas un abonnement Google Play, que seul Google
+  // peut résilier. On le dit avant, avec un accès direct à la page de gestion des abonnements.
+  if(IS_TWA || (DB.sub && /play/i.test(DB.sub.plan||""))){
+    if(confirm("Important : supprimer ton compte n'arrête pas ton abonnement Google Play. Résilie-le d'abord dans Google Play, sinon il continuera d'être prélevé. Ouvrir la gestion de tes abonnements Google Play maintenant ?")){ playManage(); return; }
+  }
   if(!confirm("Supprimer ton compte PIVOT ? Ton effectif, tes séances, tes matchs et ton accès seront effacés définitivement, sur tous tes appareils.")) return;
   const typed=prompt("Pour confirmer, écris SUPPRIMER");
   if(String(typed||'').trim().toUpperCase()!=="SUPPRIMER"){ flash("Suppression annulée"); return; }
@@ -4627,9 +4632,13 @@ function exoFitsAge(exo,catLabel){
 // Catégorie d'âge de l'équipe active, si elle correspond à une tranche connue.
 function teamAgeCat(){ const c=(T()&&T().category)||""; return ageOrd(c)!=null ? c : ""; }
 function buildSessionBlocks(themeCat, ageCat){
-  const pool=allExos();
+  const pool=allExos().filter(e=>!/fauteuil/i.test([e.title,e.theme,(e.tags||[]).join(' ')].join(' ')));
   const inAge = ageCat ? pool.filter(e=>exoFitsAge(e,ageCat)) : pool;
-  const sortLvl=function(a,b){ return (LEVEL_ORDER[exoLevel(a)]||2)-(LEVEL_ORDER[exoLevel(b)]||2); };
+  // Correctif 19/10/2026 : "Initiation" vaut 0, et `0||2` le classait comme Intermédiaire, ce qui
+  // faussait l'ordre. Le basket fauteuil n'est plus tiré dans une séance générée : il reste
+  // dans la bibliothèque pour les coachs qui l'ajoutent eux-mêmes.
+  const _lv=function(e){ const v=LEVEL_ORDER[exoLevel(e)]; return v==null?2:v; };
+  const sortLvl=function(a,b){ return _lv(a)-_lv(b); };
   // Par thème : d'abord les exercices de la tranche d'âge, sinon repli sur toute la bibliothèque.
   const byCat=function(cat){ let l=inAge.filter(e=>e.cat===cat); if(l.length<1) l=pool.filter(e=>e.cat===cat); return l.slice().sort(sortLvl); };
   const blocks=[];

@@ -2,7 +2,10 @@
 // Deux rôles : garder l'application consultable sans réseau (exercices, plaquette, effectif déjà chargés),
 // et afficher les notifications poussées (le code d'abonnement existe déjà dans index.html, il ne lui manquait que ce fichier).
 
-const CACHE_NAME = 'pivot-cache-v3';
+const CACHE_NAME = 'pivot-cache-v4';
+// v4 (19/10/2026) : l'application elle-meme (navigation, index.html) passe en priorite reseau. Avant,
+// l'ancienne version en cache s'affichait d'abord et chaque mise a jour n'arrivait qu'au lancement suivant.
+// Les adresses avec parametres (retour de paiement ?session_id=...) ne sont plus mises en cache.
 // v2 : ajout des deux fichiers de donnees (bibliotheque d'exercices et traductions) a l'app shell,
 // pour qu'un coach qui ouvre l'app hors ligne juste apres l'installation ait quand meme sa bibliotheque,
 // plutot que de dependre d'une premiere visite en ligne reussie.
@@ -38,10 +41,24 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/.netlify/')) return;
 
+  const isApp = req.mode === 'navigate' || url.pathname === '/' || url.pathname === '/index.html';
+  if (isApp) {
+    event.respondWith(
+      fetch(req).then((res) => {
+        if (res && res.ok && !url.search) {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', copy));
+        }
+        return res;
+      }).catch(() => caches.match('/index.html').then((c) => c || caches.match('/')))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(req).then((cached) => {
       const network = fetch(req).then((res) => {
-        if (res && res.ok) {
+        if (res && res.ok && !url.search) {
           const copy = res.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
         }
