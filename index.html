@@ -642,6 +642,11 @@ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){ ret
 
 // Journal des nouveautés. Ajoute une entrée en tête à chaque amélioration.
 const UPDATES=[
+  {v:54, date:"02/11/2026", title:"Abonnement à renouvellement automatique", items:[
+    "Les formules semaine, mois et année se renouvellent maintenant automatiquement, plus besoin de repayer à chaque échéance.",
+    "Tu résilies quand tu veux depuis Mon abonnement, l'accès reste ouvert jusqu'à la fin de la période payée.",
+    "Tu changes ta carte et tu retrouves tes factures au même endroit."
+  ]},
   {v:53, date:"26/08/2026", title:"Plaquette tactique en plein écran", items:[
     "Un bouton Agrandir la plaquette passe le plateau en plein écran pour dessiner plus à l'aise. Les outils, les étapes et l'animation restent accessibles.",
     "Le tracé reste précis à toutes les tailles, et le mode se garde quand tu changes de fond ou de couleur. En tournant le téléphone en paysage, le plateau devient encore plus grand."
@@ -910,11 +915,11 @@ const IS_TWA=(function(){
   return false;
 })();
 
-// Abonnement Stripe, pass qui expirent. Les liens sont publics, la clé secrète reste sur Netlify.
+// Abonnement Stripe à renouvellement automatique depuis le 02/11/2026. Les liens sont publics, la clé secrète reste sur Netlify.
 const STRIPE_LINKS={
-  semaine:{url:"https://buy.stripe.com/28EbJ0cLj4yx4Vz5RV4sE03", prix:"2,99€", label:"Semaine", sub:"Pass 7 jours"},
-  mois:{url:"https://buy.stripe.com/5kQ9AS5iRc0Z9bP3JN4sE04", prix:"8,99€", label:"Mois", sub:"Pass 30 jours", best:true},
-  annee:{url:"https://buy.stripe.com/eVq3cu6mV7KJ0Fj1BF4sE05", prix:"79,99€", label:"Année", sub:"Pass 12 mois, environ 3 mois offerts"}
+  semaine:{url:"https://buy.stripe.com/8x26oG26Ffdb0Fj2FJ4sE08", prix:"2,99€", label:"Semaine", sub:"Renouvelé chaque semaine"},
+  mois:{url:"https://buy.stripe.com/4gMeVc6mVghfds55RV4sE06", prix:"8,99€", label:"Mois", sub:"Renouvelé chaque mois", best:true},
+  annee:{url:"https://buy.stripe.com/5kQ28q8v34yxco13JN4sE07", prix:"79,99€", label:"Année", sub:"Renouvelé chaque année, environ 3 mois offerts"}
 };
 // Les codes d'accès maîtres ne sont plus stockés ici : un fichier envoyé à tout le monde qui visite le
 // site est lisible par n'importe qui (affichage du code source), un code d'accès qui y figure en clair
@@ -1634,7 +1639,7 @@ const I18N={
     "Calendrier":"Calendar","Ma semaine":"My week","Jour":"Day","Semaine":"Week","Mois":"Month","Année":"Year","Aujourd'hui":"Today","Ajouter un évènement":"Add an event","Nouvel évènement":"New event","Quand":"When","À une date précise":"On a specific date","Chaque semaine, créneau récurrent":"Every week, recurring slot","Date":"Date","Jour de la semaine":"Day of the week","Heure":"Time","Intitulé":"Name","Lieu (facultatif)":"Place (optional)","Type":"Type","Enregistrer":"Save","Activer les rappels d'échéances":"Enable deadline reminders","Rien de prévu ce jour-là.":"Nothing planned that day.",
     "Bienvenue sur PIVOT":"Welcome to PIVOT","Ton nom":"Your name","Ton compte":"Your account","Crée ton accès":"Create your access","Identifiant (email)":"Login (email)","Mot de passe":"Password","Confirme le mot de passe":"Confirm the password","Ton expérience de coach":"Your coaching experience","Tes diplômes et formations":"Your diplomas and training","Niveau de l'équipe entraînée":"Level of the team you coach","Catégorie d'âge":"Age category","Nom de ta première équipe":"Name of your first team","C'est parti ▸":"Let's go ▸","Langue de l'application":"App language",
     "Content de te revoir":"Good to see you again","Ton compte te suit sur tous tes appareils":"Your account follows you on all your devices","Email":"Email","Se connecter":"Sign in","Créer mon compte":"Create my account","Pas encore de compte ? Crée-le ici":"No account yet? Create it here","Déjà un compte ? Connecte-toi":"Already have an account? Sign in","Mot de passe oublié":"Forgot password","Nouveau mot de passe":"New password","Entrer":"Enter",
-    "Coache mieux,":"Coach better,","gagne du temps":"save time","Première semaine offerte":"First week free","Commencer gratuitement":"Start for free","Choisis ta formule":"Choose your plan","Ou passe direct à un abonnement":"Or go straight to a subscription","Semaine":"Week","Mois":"Month","Année":"Year","J'ai un code d'accès":"I have an access code","Mon abonnement":"My subscription","Mon accès":"My access","Renouveler":"Renew","Nouveautés":"What's new","Ce qui a changé dans PIVOT":"What changed in PIVOT",
+    "Coache mieux,":"Coach better,","gagne du temps":"save time","Première semaine offerte":"First week free","Commencer gratuitement":"Start for free","Choisis ta formule":"Choose your plan","Ou passe direct à un abonnement":"Or go straight to a subscription","Semaine":"Week","Mois":"Month","Année":"Year","J'ai un code d'accès":"I have an access code","Mon abonnement":"My subscription","Renouvelé chaque semaine":"Renews every week","Renouvelé chaque mois":"Renews every month","Renouvelé chaque année, environ 3 mois offerts":"Renews every year, about 3 months free","Paiement sécurisé par Stripe. L'abonnement se renouvelle automatiquement à la fin de chaque période, au même prix, tant que tu ne le résilies pas. Tu peux le résilier à tout moment dans Mon abonnement, l'accès reste ouvert jusqu'à la fin de la période payée.":"Secure payment by Stripe. Your subscription renews automatically at the end of each period, at the same price, until you cancel it. You can cancel at any time in My subscription, and your access stays open until the end of the paid period.","Gérer ou résilier mon abonnement":"Manage or cancel my subscription","Mon accès":"My access","Renouveler":"Renew","Nouveautés":"What's new","Ce qui a changé dans PIVOT":"What changed in PIVOT",
     "Mes équipes":"My teams","Nouvelle équipe":"New team","Créer l'équipe":"Create the team","Nom de l'équipe":"Team name","Retour":"Back","Langue":"Language","Coach débutant":"Beginner coach","Coach pro":"Pro coach",
     "Ton avis sur PIVOT":"Your feedback on PIVOT","Envoyer mon avis":"Send my feedback",
     "Préparation physique":"Physical preparation","Ajouter à la séance":"Add to practice","Santé et prévention":"Health and prevention",
@@ -1659,7 +1664,7 @@ const I18N={
     "Calendrier":"Calendario","Ma semaine":"Mi semana","Jour":"Día","Semaine":"Semana","Mois":"Mes","Année":"Año","Aujourd'hui":"Hoy","Ajouter un évènement":"Añadir un evento","Nouvel évènement":"Nuevo evento","Quand":"Cuándo","À une date précise":"En una fecha concreta","Chaque semaine, créneau récurrent":"Cada semana, franja recurrente","Date":"Fecha","Jour de la semaine":"Día de la semana","Heure":"Hora","Intitulé":"Título","Lieu (facultatif)":"Lugar (opcional)","Type":"Tipo","Enregistrer":"Guardar","Activer les rappels d'échéances":"Activar recordatorios","Rien de prévu ce jour-là.":"Nada previsto ese día.",
     "Bienvenue sur PIVOT":"Bienvenido a PIVOT","Ton nom":"Tu nombre","Ton compte":"Tu cuenta","Crée ton accès":"Crea tu acceso","Identifiant (email)":"Usuario (email)","Mot de passe":"Contraseña","Confirme le mot de passe":"Confirma la contraseña","Ton expérience de coach":"Tu experiencia como entrenador","Tes diplômes et formations":"Tus diplomas y formación","Niveau de l'équipe entraînée":"Nivel del equipo","Catégorie d'âge":"Categoría de edad","Nom de ta première équipe":"Nombre de tu primer equipo","C'est parti ▸":"Vamos ▸","Langue de l'application":"Idioma de la app",
     "Content de te revoir":"Qué bueno verte de nuevo","Ton compte te suit sur tous tes appareils":"Tu cuenta te sigue en todos tus dispositivos","Email":"Email","Se connecter":"Iniciar sesión","Créer mon compte":"Crear mi cuenta","Pas encore de compte ? Crée-le ici":"¿Sin cuenta? Créala aquí","Déjà un compte ? Connecte-toi":"¿Ya tienes cuenta? Inicia sesión","Mot de passe oublié":"Contraseña olvidada","Nouveau mot de passe":"Nueva contraseña","Entrer":"Entrar",
-    "Coache mieux,":"Entrena mejor,","gagne du temps":"gana tiempo","Première semaine offerte":"Primera semana gratis","Commencer gratuitement":"Empezar gratis","Choisis ta formule":"Elige tu plan","Ou passe direct à un abonnement":"O ve directo a una suscripción","Semaine":"Semana","Mois":"Mes","Année":"Año","J'ai un code d'accès":"Tengo un código de acceso","Mon abonnement":"Mi suscripción","Mon accès":"Mi acceso","Renouveler":"Renovar","Nouveautés":"Novedades","Ce qui a changé dans PIVOT":"Lo que cambió en PIVOT",
+    "Coache mieux,":"Entrena mejor,","gagne du temps":"gana tiempo","Première semaine offerte":"Primera semana gratis","Commencer gratuitement":"Empezar gratis","Choisis ta formule":"Elige tu plan","Ou passe direct à un abonnement":"O ve directo a una suscripción","Semaine":"Semana","Mois":"Mes","Année":"Año","J'ai un code d'accès":"Tengo un código de acceso","Mon abonnement":"Mi suscripción","Renouvelé chaque semaine":"Se renueva cada semana","Renouvelé chaque mois":"Se renueva cada mes","Renouvelé chaque année, environ 3 mois offerts":"Se renueva cada año, unos 3 meses gratis","Paiement sécurisé par Stripe. L'abonnement se renouvelle automatiquement à la fin de chaque période, au même prix, tant que tu ne le résilies pas. Tu peux le résilier à tout moment dans Mon abonnement, l'accès reste ouvert jusqu'à la fin de la période payée.":"Pago seguro con Stripe. La suscripción se renueva automáticamente al final de cada periodo, al mismo precio, hasta que la canceles. Puedes cancelarla en cualquier momento en Mi suscripción, y el acceso sigue abierto hasta el final del periodo pagado.","Gérer ou résilier mon abonnement":"Gestionar o cancelar mi suscripción","Mon accès":"Mi acceso","Renouveler":"Renovar","Nouveautés":"Novedades","Ce qui a changé dans PIVOT":"Lo que cambió en PIVOT",
     "Mes équipes":"Mis equipos","Nouvelle équipe":"Nuevo equipo","Créer l'équipe":"Crear el equipo","Nom de l'équipe":"Nombre del equipo","Retour":"Volver","Langue":"Idioma","Coach débutant":"Entrenador principiante","Coach pro":"Entrenador pro",
     "Ton avis sur PIVOT":"Tu opinión sobre PIVOT","Envoyer mon avis":"Enviar mi opinión",
     "Préparation physique":"Preparación física","Ajouter à la séance":"Añadir a la sesión","Santé et prévention":"Salud y prevención",
@@ -1684,7 +1689,7 @@ const I18N={
     "Calendrier":"Calendário","Ma semaine":"A minha semana","Jour":"Dia","Semaine":"Semana","Mois":"Mês","Année":"Ano","Aujourd'hui":"Hoje","Ajouter un évènement":"Adicionar um evento","Nouvel évènement":"Novo evento","Quand":"Quando","À une date précise":"Numa data precisa","Chaque semaine, créneau récurrent":"Toda semana, horário recorrente","Date":"Data","Jour de la semaine":"Dia da semana","Heure":"Hora","Intitulé":"Título","Lieu (facultatif)":"Local (opcional)","Type":"Tipo","Enregistrer":"Guardar","Activer les rappels d'échéances":"Ativar lembretes","Rien de prévu ce jour-là.":"Nada previsto nesse dia.",
     "Bienvenue sur PIVOT":"Bem-vindo ao PIVOT","Ton nom":"O teu nome","Ton compte":"A tua conta","Crée ton accès":"Cria o teu acesso","Identifiant (email)":"Utilizador (email)","Mot de passe":"Palavra-passe","Confirme le mot de passe":"Confirma a palavra-passe","Ton expérience de coach":"A tua experiência de treinador","Tes diplômes et formations":"Os teus diplomas e formações","Niveau de l'équipe entraînée":"Nível da equipa","Catégorie d'âge":"Categoria de idade","Nom de ta première équipe":"Nome da tua primeira equipa","C'est parti ▸":"Vamos ▸","Langue de l'application":"Idioma da app",
     "Content de te revoir":"Que bom ver-te de novo","Ton compte te suit sur tous tes appareils":"A tua conta segue-te em todos os aparelhos","Email":"Email","Se connecter":"Entrar","Créer mon compte":"Criar a minha conta","Pas encore de compte ? Crée-le ici":"Sem conta? Cria aqui","Déjà un compte ? Connecte-toi":"Já tens conta? Entra","Mot de passe oublié":"Palavra-passe esquecida","Nouveau mot de passe":"Nova palavra-passe","Entrer":"Entrar",
-    "Coache mieux,":"Treina melhor,","gagne du temps":"ganha tempo","Première semaine offerte":"Primeira semana grátis","Commencer gratuitement":"Começar grátis","Choisis ta formule":"Escolhe o teu plano","Ou passe direct à un abonnement":"Ou vai direto a uma assinatura","Semaine":"Semana","Mois":"Mês","Année":"Ano","J'ai un code d'accès":"Tenho um código de acesso","Mon abonnement":"A minha assinatura","Mon accès":"O meu acesso","Renouveler":"Renovar","Nouveautés":"Novidades","Ce qui a changé dans PIVOT":"O que mudou no PIVOT",
+    "Coache mieux,":"Treina melhor,","gagne du temps":"ganha tempo","Première semaine offerte":"Primeira semana grátis","Commencer gratuitement":"Começar grátis","Choisis ta formule":"Escolhe o teu plano","Ou passe direct à un abonnement":"Ou vai direto a uma assinatura","Semaine":"Semana","Mois":"Mês","Année":"Ano","J'ai un code d'accès":"Tenho um código de acesso","Mon abonnement":"A minha assinatura","Renouvelé chaque semaine":"Renova todas as semanas","Renouvelé chaque mois":"Renova todos os meses","Renouvelé chaque année, environ 3 mois offerts":"Renova todos os anos, cerca de 3 meses grátis","Paiement sécurisé par Stripe. L'abonnement se renouvelle automatiquement à la fin de chaque période, au même prix, tant que tu ne le résilies pas. Tu peux le résilier à tout moment dans Mon abonnement, l'accès reste ouvert jusqu'à la fin de la période payée.":"Pagamento seguro pela Stripe. A assinatura renova automaticamente no fim de cada período, ao mesmo preço, até a cancelares. Podes cancelá-la a qualquer momento em A minha assinatura, e o acesso mantém-se aberto até ao fim do período pago.","Gérer ou résilier mon abonnement":"Gerir ou cancelar a minha assinatura","Mon accès":"O meu acesso","Renouveler":"Renovar","Nouveautés":"Novidades","Ce qui a changé dans PIVOT":"O que mudou no PIVOT",
     "Mes équipes":"As minhas equipas","Nouvelle équipe":"Nova equipa","Créer l'équipe":"Criar a equipa","Nom de l'équipe":"Nome da equipa","Retour":"Voltar","Langue":"Idioma","Coach débutant":"Treinador iniciante","Coach pro":"Treinador pro",
     "Ton avis sur PIVOT":"A tua opinião sobre o PIVOT","Envoyer mon avis":"Enviar a minha opinião",
     "Préparation physique":"Preparação física","Ajouter à la séance":"Adicionar ao treino","Santé et prévention":"Saúde e prevenção",
@@ -1913,7 +1918,7 @@ async function checkStripeReturn(){
   try{
     const r=await fetch('/api/verify?session_id='+encodeURIComponent(sid));
     const d=await r.json();
-    if(d&&d.ok&&d.days){ if(DB.lastSession!==sid){ grantAccess(d.days,d.plan); DB.lastSession=sid; save(); } sfx('ok'); flash('Abonnement activé, bienvenue'); ok=true; }
+    if(d&&d.ok&&d.days){ if(d.subscription){ DB.sub={until:Date.now()+d.days*86400000, plan:d.plan, since:(DB.sub&&DB.sub.since)||Date.now()}; DB.lastSession=sid; save(); try{ await cloudLoad(); }catch(e){} } else if(DB.lastSession!==sid){ grantAccess(d.days,d.plan); DB.lastSession=sid; save(); } sfx('ok'); flash('Abonnement activé, bienvenue'); ok=true; }
     else { flash("Paiement non confirmé pour le moment"); }
   }catch(e){}
   try{ history.replaceState({}, document.title, location.pathname); }catch(e){}
@@ -1952,15 +1957,34 @@ async function startFreeTrial(){
   }
   DB.trialUsed=true; grantAccess(7,'essai'); sfx('ok'); flash('Première semaine offerte activée, bienvenue'); render();
 }
+// 02/11/2026 : un abonnement se renouvelle seul, il doit toujours être rattaché à un compte. Sans compte,
+// le coach serait prélevé chaque mois sans accès possible. Stripe a donc besoin de l'identifiant du compte.
 function stripeGo(k){
   if(IS_TWA) return;
   const o=STRIPE_LINKS[k]; if(!o) return;
-  let u=o.url;
-  if(supaOn() && supaUser){
-    u+=(u.indexOf("?")>=0?"&":"?")+"client_reference_id="+encodeURIComponent(supaUser.id);
-    if(supaUser.email) u+="&prefilled_email="+encodeURIComponent(supaUser.email);
+  if(!(supaOn() && supaUser)){
+    flash("Crée ton compte ou connecte-toi d'abord pour t'abonner");
+    if(supaOn()){ closeModal(); demoSignup(); }
+    return;
   }
+  let u=o.url;
+  u+=(u.indexOf("?")>=0?"&":"?")+"client_reference_id="+encodeURIComponent(supaUser.id);
+  if(supaUser.email) u+="&prefilled_email="+encodeURIComponent(supaUser.email);
   location.href=u;
+}
+// Formule Stripe à renouvellement automatique en cours (les codes, l'essai et Google Play sont à part).
+function hasStripeSub(){ return hasAccess() && ['semaine','mois','annee'].indexOf(String((DB.sub&&DB.sub.plan)||''))>=0; }
+// Espace Stripe du coach : résiliation, changement de carte, factures.
+async function stripeManage(){
+  if(!(supaOn()&&supaUser)){ flash("Connecte-toi d'abord"); return; }
+  flash("Ouverture de ton espace abonnement...");
+  try{
+    let authH={}; try{ const s=await supa.auth.getSession(); if(s&&s.data&&s.data.session) authH={'Authorization':'Bearer '+s.data.session.access_token}; }catch(e){}
+    const r=await fetch('/api/stripe-portal',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},authH),body:'{}'});
+    const d=await r.json().catch(()=>null);
+    if(r.ok&&d&&d.url){ location.href=d.url; return; }
+    flash((d&&d.error)||"Espace abonnement indisponible, réessaie");
+  }catch(e){ flash("Connexion impossible, réessaie"); }
 }
 function renderPaywall(){
   const card=(k)=>{ const o=STRIPE_LINKS[k]; return `
@@ -1995,7 +2019,7 @@ function renderPaywall(){
     `):`
     <h3 style="margin:16px 2px 8px">${DB.trialUsed?'Choisis ta formule':'Ou passe direct à un abonnement'}</h3>
     ${card('semaine')}${card('mois')}${card('annee')}
-    <div class="hint" style="margin-top:10px">Paiement sécurisé par Stripe. Après le paiement, l'application s'ouvre automatiquement. Sans engagement, le pass s'arrête à la fin de la période.</div>
+    <div class="hint" style="margin-top:10px;line-height:1.55">Paiement sécurisé par Stripe. L'abonnement se renouvelle automatiquement à la fin de chaque période, au même prix, tant que tu ne le résilies pas. Tu peux le résilier à tout moment dans Mon abonnement, l'accès reste ouvert jusqu'à la fin de la période payée.</div>
     `}
     <div style="height:10px"></div>
     <a class="reset" onclick="tryAccessCode()">J'ai un code d'accès</a>
@@ -2046,7 +2070,7 @@ async function deleteAccount(){
   if(IS_TWA || (DB.sub && /play/i.test(DB.sub.plan||""))){
     if(confirm("Important : supprimer ton compte n'arrête pas ton abonnement Google Play. Résilie-le d'abord dans Google Play, sinon il continuera d'être prélevé. Ouvrir la gestion de tes abonnements Google Play maintenant ?")){ playManage(); return; }
   }
-  if(!confirm("Supprimer ton compte PIVOT ? Ton effectif, tes séances, tes matchs et ton accès seront effacés définitivement, sur tous tes appareils.")) return;
+  if(!confirm("Supprimer ton compte PIVOT ? Ton effectif, tes séances, tes matchs et ton accès seront effacés définitivement, sur tous tes appareils."+(hasStripeSub()?" Ton abonnement souscrit sur le site sera résilié immédiatement.":""))) return;
   const typed=prompt("Pour confirmer, écris SUPPRIMER");
   if(String(typed||'').trim().toUpperCase()!=="SUPPRIMER"){ flash("Suppression annulée"); return; }
   let authH={}; try{ const s=await supa.auth.getSession(); if(s&&s.data&&s.data.session) authH={"Authorization":"Bearer "+s.data.session.access_token}; }catch(e){}
@@ -2839,6 +2863,13 @@ function pricingBannerHTML(){
   // Correctif 02/10/2026 (audit F6) : en mode découverte, le bandeau affichait « Encore 0 jour, Renouveler ».
   if(isDemo()) return "";
   const d=subDaysLeft();
+  // 02/11/2026 : un abonnement se renouvelle seul, on ne demande plus au coach de renouveler à la main.
+  const autoRenew=hasAccess() && (hasStripeSub() || String((DB.sub&&DB.sub.plan)||'').indexOf('play_')===0);
+  if(autoRenew && d<=7) return `<div class="pp">
+    <div class="ppt">Abonnement actif</div>
+    <div style="font-size:12.5px;opacity:.9;margin:5px 0 11px;position:relative;z-index:1">Prochaine échéance dans ${d} jour${d>1?'s':''}.</div>
+    ${(IS_TWA&&!_playReady)?'':`<button class="btn block" style="position:relative;z-index:1" onclick="openPricing()">Gérer mon abonnement</button>`}
+  </div>`;
   if(d>7) return `<div class="pp">
     <div class="ppt">Accès actif</div>
     <div style="font-size:12.5px;opacity:.9;margin:5px 0 0;position:relative;z-index:1">Il te reste ${d} jours. Tu profites de tout PIVOT, IA comprise.</div>
@@ -2851,7 +2882,16 @@ function pricingBannerHTML(){
 }
 function openPricing(){
   const d=subDaysLeft();
-  const card=(k)=>{ const o=STRIPE_LINKS[k]; return `<div class="card plan reco" style="${o.best?'border:2px solid var(--accent)':''}">${o.best?'<div class="tagreco">Le plus choisi</div>':''}<div class="pname">${o.label}</div><div class="price">${o.prix}</div><div class="hint" style="margin:2px 0 10px">${o.sub}</div><button class="btn block" onclick="location.href='${o.url}'">Payer ${o.prix}</button></div>`; };
+  const card=(k)=>{ const o=STRIPE_LINKS[k]; return `<div class="card plan reco" style="${o.best?'border:2px solid var(--accent)':''}">${o.best?'<div class="tagreco">Le plus choisi</div>':''}<div class="pname">${o.label}</div><div class="price">${o.prix}</div><div class="hint" style="margin:2px 0 10px">${o.sub}</div><button class="btn block" onclick="stripeGo('${k}')">Payer ${o.prix}</button></div>`; };
+  if(IS_TWA && hasStripeSub()){
+    openModal(`
+      <h3>Mon accès</h3>
+      <div class="offer">Accès actif, ${d} jour${d>1?'s':''} restant${d>1?'s':''}</div>
+      <div class="hint" style="margin:6px 2px 12px;line-height:1.55">Ton abonnement a été souscrit sur le site de PIVOT. Il se gère depuis le site, avec ton compte.</div>
+      <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+    `);
+    return;
+  }
   if(IS_TWA){
     const isPlay=!!(DB.sub&&String(DB.sub.plan||'').indexOf('play_')===0);
     openModal(`
@@ -2867,12 +2907,22 @@ function openPricing(){
     `);
     return;
   }
+  if(hasStripeSub()){
+    openModal(`
+      <h3>Mon abonnement</h3>
+      <div class="offer">Accès actif, prochaine échéance dans ${d} jour${d>1?'s':''}</div>
+      <div class="hint" style="margin:6px 2px 12px;line-height:1.55">L'abonnement se renouvelle automatiquement. Si tu le résilies, l'accès reste ouvert jusqu'à la fin de la période payée.</div>
+      <button class="btn block" onclick="stripeManage()">Gérer ou résilier mon abonnement</button>
+      <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
+    `);
+    return;
+  }
   openModal(`
     <h3>Mon abonnement</h3>
-    <div class="offer">Accès actif, ${d} jour${d>1?'s':''} restant${d>1?'s':''}</div>
-    <div class="hint" style="margin:6px 2px 12px">Renouvelle quand tu veux. La période payée s'ajoute à ton accès actuel.</div>
+    <div class="offer">${hasAccess()?`Accès actif, ${d} jour${d>1?'s':''} restant${d>1?'s':''}`:'Aucun accès actif'}</div>
+    <div class="hint" style="margin:6px 2px 12px">Choisis ta formule.</div>
     ${card('semaine')}${card('mois')}${card('annee')}
-    <div class="hint" style="margin-top:8px">Paiement sécurisé par Stripe. Le pass s'arrête à la fin de sa période, sans prélèvement automatique.</div>
+    <div class="hint" style="margin-top:8px;line-height:1.55">Paiement sécurisé par Stripe. L'abonnement se renouvelle automatiquement à la fin de chaque période, au même prix, tant que tu ne le résilies pas. Tu peux le résilier à tout moment dans Mon abonnement, l'accès reste ouvert jusqu'à la fin de la période payée.</div>
     <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Fermer</button>
   `);
 }

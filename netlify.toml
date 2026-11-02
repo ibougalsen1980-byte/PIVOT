@@ -18,6 +18,20 @@
   status = 200
   force = true
 
+# Abonnements Stripe, ajoutés le 02/11/2026 : événements envoyés par Stripe (renouvellement, résiliation)
+# et ouverture de l'espace où le coach gère son abonnement.
+[[redirects]]
+  from = "/api/stripe-webhook"
+  to = "/.netlify/functions/stripe-webhook"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/stripe-portal"
+  to = "/.netlify/functions/stripe-portal"
+  status = 200
+  force = true
+
 # Vérification des codes d'accès manuels (index.html appelle fetch('/api/redeem-code')), ajoutée le
 # 2026-09-12 : les codes ne sont plus stockés en clair dans l'application, la fonction serveur seule les
 # connaît (variable d'environnement PIVOT_ACCESS_CODES).
