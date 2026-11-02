@@ -11,7 +11,11 @@
 // notifications, les achats Google Play, les codes d'acces utilises, puis l'utilisateur Supabase lui-meme.
 // stripe_sessions_used garde l'identifiant de paiement (anti-reutilisation) mais perd le lien au compte.
 //
-// Variables d'environnement Netlify : SUPABASE_URL, SUPABASE_SERVICE_ROLE (deja configurees).
+// 02/11/2026 : un abonnement souscrit sur le site se renouvelle automatiquement. Il est resilie ici, avant
+// tout effacement : sans cela, le coach continuerait d'etre preleve sans compte. Si la resiliation echoue,
+// rien n'est efface et le coach recoit une erreur.
+//
+// Variables d'environnement Netlify : SUPABASE_URL, SUPABASE_SERVICE_ROLE, STRIPE_SECRET_KEY (deja configurees).
 
 exports.handler = async (event) => {
   const headers = {
@@ -40,6 +44,18 @@ exports.handler = async (event) => {
 
     const svcHeaders = { 'apikey': svc, 'authorization': 'Bearer ' + svc, 'Prefer': 'return=minimal' };
     const uid = encodeURIComponent(userId);
+
+    const subsR = await fetch(base + '/rest/v1/stripe_subscriptions?user_id=eq.' + uid + '&status=neq.canceled&select=subscription_id', { headers: svcHeaders });
+    if (!subsR.ok) return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: 'abonnement non verifie' }) };
+    const subs = await subsR.json();
+    for (const s of subs) {
+      const c = await fetch('https://api.stripe.com/v1/subscriptions/' + encodeURIComponent(s.subscription_id), {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + process.env.STRIPE_SECRET_KEY }
+      });
+      // 404 : l'abonnement n'existe plus chez Stripe, il ne sera donc plus preleve.
+      if (!c.ok && c.status !== 404) return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: 'abonnement non resilie' }) };
+    }
 
     const d1 = await fetch(base + '/rest/v1/coach_data?user_id=eq.' + uid, { method: 'DELETE', headers: svcHeaders });
     if (!d1.ok) return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: 'donnees non effacees' }) };

@@ -18,6 +18,12 @@
 // URL resauvegardee avant paiement). Chaque session_id deja traite est maintenant enregistre dans la table
 // Supabase stripe_sessions_used (cle primaire sur session_id, ecrite uniquement par cette fonction avec la
 // cle de service). Un meme session_id ne peut plus jamais crediter des jours une seconde fois.
+//
+// 02/11/2026 : les formules sont passees en abonnement a renouvellement automatique. Un retour de paiement
+// en mode abonnement ecrit l'etat reel de l'abonnement (voir lib/stripe-sub.js), sans ajouter de jours :
+// rejouer l'URL ne credite donc rien de plus. Le chemin par montant reste pour les anciens pass.
+const { syncSubscription } = require('../lib/stripe-sub');
+
 async function _alreadyProcessed(sessionId, userId) {
   const base = process.env.SUPABASE_URL;
   const svcHeaders = {
@@ -76,6 +82,14 @@ return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'pai
 const userId = session.client_reference_id;
 if (!userId) {
 return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'compte non identifie, contacte le support' }) };
+}
+if (session.mode === 'subscription') {
+const synced = await syncSubscription(session.subscription, userId);
+if (!synced.ok || synced.ignored || !synced.until) {
+return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'abonnement non confirme' }) };
+}
+const daysLeft = Math.ceil((synced.until - Date.now()) / 86400000);
+return { statusCode: 200, headers, body: JSON.stringify({ ok: true, days: daysLeft, plan: synced.plan, subscription: true }) };
 }
 const mapping = PRICE_TO_DAYS[session.amount_total];
 if (!mapping) {
