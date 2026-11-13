@@ -123,8 +123,7 @@
       "stats": "Défense",
       "prerequis": [],
       "suivants": [
-        "x40",
-        "x3"
+        "x40"
       ],
       "similaires": [
         "e1",
