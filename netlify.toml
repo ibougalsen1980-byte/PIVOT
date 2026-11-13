@@ -80,6 +80,13 @@
   status = 404
   force = true
 
+# Outils d'audit internes (robot de test), bloqués le 13/11/2026 : ils étaient lisibles publiquement.
+[[redirects]]
+  from = "/outils/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
 [[redirects]]
   from = "/README.md"
   to = "/404.html"

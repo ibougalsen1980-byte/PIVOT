@@ -7,7 +7,6 @@ Le site en production est `pivotcoach.netlify.app`, déployé depuis ce dépôt 
 ## Ce qu'il y a dedans
 - `index.html` : l'application PIVOT complète (un seul fichier).
 - `netlify/functions/coach.js` : la fonction serveur qui parle à l'IA Claude et garde la clé cachée. C'est celle qui tourne réellement en production.
-- `api/coach.js` : une ancienne version écrite pour Vercel, gardée dans le dépôt à titre d'historique mais jamais exécutée sur Netlify.
 - `netlify.toml` : la configuration Netlify. Elle redirige `/api/coach` (l'adresse que l'application appelle) vers la fonction Netlify, et définit les en-têtes de sécurité (Content-Security-Policy, etc.).
 - `exercices-bibliotheque.json` et `exercices-i18n.json` : la bibliothèque d'exercices et ses traductions, chargées par l'application au démarrage.
 - `manifest.json`, `sw.js`, `logo.png`, `logo-192.png` : les fichiers de l'application installable (PWA).
