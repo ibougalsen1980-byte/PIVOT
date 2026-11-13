@@ -394,7 +394,7 @@
   #aiFab .mi{font-size:27px}
   main{padding:16px 16px 100px}
   /* Barre d'onglets flottante, façon Linear et Strava */
-  nav.tabs{margin:0 12px calc(12px + env(safe-area-inset-bottom));border-radius:26px;padding:7px 6px;border:1px solid rgba(255,255,255,.65);
+  nav.tabs{margin:0 0 calc(12px + env(safe-area-inset-bottom));width:calc(100% - 24px);border-radius:26px;padding:7px 6px;border:1px solid rgba(255,255,255,.65);
     box-shadow:0 14px 34px rgba(40,33,26,.20);background:rgba(255,255,255,.70);
     -webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6)}
   nav.tabs button{border-radius:18px;min-height:50px;gap:4px;transition:background-color .22s ease,color .22s ease}
@@ -589,6 +589,15 @@
     box-shadow:0 4px 12px rgba(40,33,26,.10) !important;padding:9px 13px !important;font-size:12.5px !important;
     right:16px !important;bottom:91px !important}
   @media (min-width:760px) and (min-height:640px){ #pvAvisBtn{bottom:28px !important} }
+  /* 13/11/2026 : sur téléphone, la pastille texte recouvrait les boutons des blocs de séance, de la
+     plaquette et du match. Elle devient une icône ronde, placée au-dessus du bouton de l'assistant. */
+  @media (max-width:759px){
+    #pvAvisBtn{font-size:0 !important;gap:0 !important;padding:0 !important;width:40px;height:40px;justify-content:center;
+      border-radius:50% !important;bottom:235px !important;right:20px !important}
+    #pvAvisBtn .ic{font-size:20px !important}
+    /* Sur les écrans de travail (séance, match, plaquette...), un seul bouton flottant : l'assistant. */
+    body[data-view]:not([data-view="home"]) #pvAvisBtn{display:none !important}
+  }
 </style>
 </head>
 <body>
@@ -616,7 +625,7 @@
     <button data-v="match" aria-label="Match"><span class="ic mi">sports_basketball</span><span class="lbl">Match</span></button>
     <button data-v="tactics" aria-label="Tactique"><span class="ic mi">draw</span><span class="lbl">Tactique</span></button>
     <button data-v="posture" aria-label="Posture"><span class="ic mi">shield</span><span class="lbl">Posture</span></button>
-    <button data-modal="openResources" aria-label="Ressources : physique, santé, références"><span class="ic mi">apps</span><span class="lbl">Ressources</span></button>
+    <button data-modal="openResourcesMenu" aria-label="Ressources : physique, santé, références"><span class="ic mi">apps</span><span class="lbl">Ressources</span></button>
   </nav>
 </div>
 
@@ -1520,7 +1529,7 @@ const LANG={
   es:{home:"Inicio",roster:"Plantel",session:"Sesión",match:"Partido",tactics:"Jugadas",posture:"Actitud",physique:"Físico",sante:"Salud",references:"Biblioteca",ressources:"Recursos",hello:"Hola","Erreur fréquente":"Error frecuente","Correction":"Corrección"},
   pt:{home:"Início",roster:"Elenco",session:"Treino",match:"Jogo",tactics:"Jogadas",posture:"Postura",physique:"Físico",sante:"Saúde",references:"Biblioteca",ressources:"Recursos",hello:"Olá","Erreur fréquente":"Erro frequente","Correction":"Correção"},
 };
-const NAV_MODAL_KEY={openPhysique:"physique",openSante:"sante",openSystems:"references",openResources:"ressources"};
+const NAV_MODAL_KEY={openPhysique:"physique",openSante:"sante",openSystems:"references",openResources:"ressources",openResourcesMenu:"ressources"};
 const ALL_LANGS=[
   {code:"fr",name:"Français",ready:true},{code:"en",name:"English",ready:true},
   {code:"es",name:"Español",ready:true},{code:"pt",name:"Português",ready:true},
@@ -1864,6 +1873,7 @@ function pvGoTab(tab, opts){
   opts = opts || {};
   const prev = view;
   view = tab;
+  try{ document.body.dataset.view = tab; }catch(e){}
   document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("active", x.dataset.v===tab));
   if(opts.render!==false) render();
   if(!opts.noHistory && prev!==tab){
@@ -1925,7 +1935,7 @@ async function checkStripeReturn(){
   return ok;
 }
 async function tryAccessCode(){
-  const c=prompt("Entre ton code d'accès");
+  const c=await pvAsk({title:"Code d'accès",label:"Le code transmis par ton club ou par PIVOT.",placeholder:"Ton code",ok:"Activer"});
   if(c===null||!String(c).trim()) return;
   if(!supaOn()||!supaUser){ flash("Connecte-toi d'abord pour activer un code"); return; }
   flash("Vérification du code...");
@@ -2142,6 +2152,9 @@ function render(){
   main.scrollTop=0;
   main.classList.remove("enter"); void main.offsetWidth; main.classList.add("enter");
   pvApplyZoomLock();
+  // 13/11/2026 : certains chemins changent d'écran sans passer par pvGoTab (charger une séance depuis
+  // l'accueil, etc.) ; la barre du bas restait allumée sur l'ancien onglet. On la resynchronise ici.
+  try{ document.body.dataset.view=view; document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("active", x.dataset.v===view)); }catch(e){}
   if(view==="home") renderHome();
   else if(view==="roster") renderRoster();
   else if(view==="session") renderSession();
@@ -2328,9 +2341,9 @@ function pill(label,selected,onclick){
 }
 function syncOnbInputs(){ const n=document.getElementById("onb_name"), t=document.getElementById("onb_team"), e=document.getElementById("onb_email"), p=document.getElementById("onb_pw"), p2=document.getElementById("onb_pw2"); if(n)ONB.name=n.value; if(t)ONB.teamName=t.value; if(e)ONB.email=e.value; if(p)ONB.pw=p.value; if(p2)ONB.pw2=p2.value; }
 function onbSet(k,v){ syncOnbInputs(); ONB[k]=v; renderOnboarding(); }
-function onbCustomCategory(){
+async function onbCustomCategory(){
   syncOnbInputs();
-  const v=prompt("Tape ta categorie (ex : U16, U21, Veterans)", CATS.includes(ONB.category)?"":ONB.category);
+  const v=await pvAsk({title:"Ta catégorie",placeholder:"Ex : U16, U21, Vétérans",value:CATS.includes(ONB.category)?"":ONB.category,ok:"Valider"});
   if(v && v.trim()){ ONB.category=v.trim(); renderOnboarding(); }
 }
 function onbToggleDip(d){ syncOnbInputs(); const i=ONB.diplomas.indexOf(d); if(i>=0)ONB.diplomas.splice(i,1); else ONB.diplomas.push(d); renderOnboarding(); }
@@ -3162,7 +3175,9 @@ function physDetail(i){
     <button class="btn sec block" style="margin-top:8px" onclick="openPhysique()">← Retour à la préparation physique</button>
   `);
 }
-function openResources(){
+// Renommé le 13/11/2026 : une seconde fonction openResources (bibliothèque d'exercices) écrasait
+// ce menu, le bouton Ressources ouvrait donc la bibliothèque au lieu de Physique / Santé / Références.
+function openResourcesMenu(){
   openModal(`
     <h3 style="margin:0 0 6px">${tr('ressources')}</h3>
     <div class="sub" style="margin-bottom:10px">Préparation physique, santé et références techniques</div>
@@ -3697,8 +3712,8 @@ function loadCycleWeek(idx){
 function askCycle(){ const c=T().category||'mon équipe'; askAI("Construis un cycle de 4 semaines pour "+c+", progression sur la défense individuelle. Une séance type par semaine."); }
 function askReprise(){ const c=T().category||'mon équipe'; askAI("Prépare une séance de reprise après la coupure estivale pour "+c+", en mêlant foncier, prévention et technique à intensité modérée."); }
 /* Mémoire : observations du coach après une séance, réutilisées par l'IA. */
-function addObservation(){
-  const t=prompt("Observation après la séance : ce qui a marché, ce qui a coincé, un point à retravailler."); if(t===null) return;
+async function addObservation(){
+  const t=await pvAsk({title:"Observation de séance",label:"Ce qui a marché, ce qui a coincé, un point à retravailler. L'assistant en tiendra compte.",multiline:true,ok:"Noter"}); if(t===null) return;
   const v=(t||"").trim(); if(!v) return;
   if(!T().obs) T().obs=[]; T().obs.unshift({ts:Date.now(), txt:v.slice(0,300)});
   save(); try{sfx("ok");}catch(e){} flash("Observation notée, l'assistant IA en tiendra compte");
@@ -4519,10 +4534,29 @@ function applyEditBlock(i){
   b.dur=parseInt(val("eb_dur"))||b.dur; b.intensity=val("eb_int")||b.intensity; b.points=val("eb_pts")||"";
   save(); closeModal(); renderSession(); flash("Bloc mis à jour");
 }
-function saveCurrentSession(){
+/* Saisie dans une fenêtre de l'app (13/11/2026) : remplace les fenêtres natives du navigateur
+   (« pivotcoach.netlify.app indique… ») et leur petit champ, peu lisibles sur téléphone.
+   Renvoie le texte saisi, ou null si le coach annule. */
+function pvAsk(o){
+  return new Promise(function(res){
+    window.__pvAskRes=res;
+    const field=o.multiline
+      ? `<textarea id="pvAskIn" rows="4" style="width:100%;font-size:15px" placeholder="${esc(o.placeholder||"")}">${esc(o.value||"")}</textarea>`
+      : `<input id="pvAskIn" style="font-size:15px" value="${esc(o.value||"")}" placeholder="${esc(o.placeholder||"")}" onkeydown="if(event.key==='Enter'){event.preventDefault();pvAskDone(true);}">`;
+    openModal(`<h3>${esc(o.title||"")}</h3>${o.label?`<div class="muted" style="font-size:12.5px;margin-bottom:8px">${esc(o.label)}</div>`:""}${field}
+      <div style="height:12px"></div><button class="btn block" onclick="pvAskDone(true)">${esc(o.ok||"Valider")}</button>
+      <div style="height:8px"></div><button class="btn sec block" onclick="pvAskDone(false)">Annuler</button>`);
+    setTimeout(function(){ const i=document.getElementById("pvAskIn"); if(i){ try{ i.focus(); if(i.select) i.select(); }catch(e){} } },120);
+  });
+}
+function pvAskDone(ok){
+  const i=document.getElementById("pvAskIn"); const v=(ok&&i)?i.value:null;
+  const r=window.__pvAskRes; window.__pvAskRes=null; closeModal(); if(r) r(v);
+}
+async function saveCurrentSession(){
   const s=T().session; if(!s||!s.blocks||!s.blocks.length){ flash("Ajoute des blocs avant d'enregistrer"); return; }
   const def=s.title&&s.title!=="Nouvelle séance"?s.title:"";
-  const name=prompt("Nom de la séance à enregistrer :", def||"Ma séance"); if(name===null) return;
+  const name=await pvAsk({title:"Enregistrer la séance",label:"Elle sera rangée dans Mes séances.",value:def||"Ma séance",ok:"Enregistrer"}); if(name===null) return;
   const title=(name||"").trim()||"Ma séance";
   if(!T().savedSessions) T().savedSessions=[];
   T().savedSessions.unshift({id:uid(), title:title, ts:Date.now(), blocks:JSON.parse(JSON.stringify(s.blocks))});
@@ -6130,10 +6164,10 @@ function applyVoicePhrase(text){
 
 /* ============ CONTINUITÉ JOUEUR ============ */
 function toggleShare(id){ DB.consentShare[id]=!DB.consentShare[id]; save(); playerDetail(id); }
-function setGoal(id){
+async function setGoal(id){
   const p=T().players.find(x=>x.id===id); if(!p)return;
-  const g=prompt("Objectif du joueur (ex : passer de 55% à 70% aux lancers francs d'ici décembre)", p.goal||"");
-  if(g===null) return;
+  const g=await pvAsk({title:"Objectif de "+(p.first||"ce joueur"),placeholder:"Ex : passer de 55% à 70% aux lancers francs d'ici décembre",value:p.goal||"",ok:"Enregistrer"});
+  if(g===null){ playerDetail(id); return; }
   p.goal=g.trim(); save(); playerDetail(id); flash(p.goal?"Objectif enregistré":"Objectif retiré");
 }
 function addSolo(id){
@@ -8421,7 +8455,7 @@ if(_recoveryError){ try{ history.replaceState(null,"",location.pathname+location
   .pv-foot small{color:var(--muted);font-size:10.5px}
 </style>
 
-<button id="pvAvisBtn" type="button"><span class="ic">reviews</span>Mon avis</button>
+<button id="pvAvisBtn" type="button" aria-label="Donner mon avis" title="Donner mon avis"><span class="ic">reviews</span>Mon avis</button>
 
 <div id="pvAvisOver" role="dialog" aria-modal="true" aria-label="Donner mon avis">
   <div id="pvAvisSheet">
