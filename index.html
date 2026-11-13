@@ -4449,6 +4449,7 @@ function renderSession(){
         <button onclick="openAppel()"><span class="mi">how_to_reg</span><span class="lbl">Faire l'appel</span></button>
         <button onclick="addObservation()"><span class="mi">edit_note</span><span class="lbl">Noter une observation</span></button>
         <button onclick="exportSessionOnePDF()"><span class="mi">description</span><span class="lbl">Fiche pour le banc</span></button>
+        <button onclick="ficheModal()"><span class="mi">print</span><span class="lbl">Fiche d'entraînement</span></button>
       </div>`}
   `;
   drawBlocks();
@@ -4564,6 +4565,265 @@ function delSavedSession(id){
   if(!confirm("Supprimer la séance « "+o.title+" » ? Cette action est définitive.")) return;
   T().savedSessions=(T().savedSessions||[]).filter(x=>x.id!==id);
   save(); openMySessions(); flash("Séance supprimée");
+}
+/* ---- Fiche d'entraînement (13/11/2026) ----
+   Format inspiré des plans de séance des staffs professionnels, demandé par un coach :
+   A4 paysage recto-verso, 3 colonnes. Recto : déroulé horaire de la séance, groupes tirés de
+   l'effectif, lexique de l'équipe. Verso : systèmes du jour dessinés par la plaquette, lignes de
+   notes, terrains vierges. Partagée en PDF (envoi au staff ou impression). */
+const PV_LEX_DEFAUT=["# ATTAQUE","CORNES = 4 et 5 aux coudes","UN = isolation du meneur","POING = pick and roll axe",
+  "# TRANSITION","COULOIRS = 3 lignes, on court large","RETOUR = 2 joueurs en repli immédiat",
+  "# DÉFENSE SUR ÉCRAN","ROUGE = changement","MONTE = sortie forte","SOUS = passer sous l'écran","ICE = pousser vers la ligne de fond","PIÈGE = prise à deux",
+  "# DÉFENSE","5 = individuelle demi-terrain","DOUBLE POING = tout terrain","ZONE 2 = zone 2-3",
+  "# CLOSE-OUT","SHOOTEUR = bras haut, pas de saut","DRIBBLEUR = court, ferme la ligne"].join("\n");
+function ficheModal(){
+  const s=T().session||{blocks:[]};
+  if(!(s.blocks||[]).length){ flash("Ajoute des blocs avant de faire la fiche"); return; }
+  const f=T().fiche||{}; const plays=DB.plays||[]; const sel=f.plays||[];
+  openModal(`
+    <h3>Fiche d'entraînement</h3>
+    <div class="muted" style="font-size:12px;margin-bottom:8px">A4 paysage recto-verso : déroulé, groupes, lexique, systèmes du jour, notes et terrains vierges. À imprimer ou à envoyer au staff.</div>
+    <div class="row" style="gap:8px">
+      <div style="flex:1"><label class="fld">Date</label><input id="fi_date" type="date" value="${esc(f.date||todayISO())}"></div>
+      <div style="flex:1"><label class="fld">Début</label><input id="fi_start" type="time" value="${esc(f.start||"18:30")}"></div>
+    </div>
+    <label class="fld">Lieu</label><input id="fi_lieu" value="${esc(f.lieu||"")}" placeholder="Ex : Gymnase Jean Zay">
+    <label class="fld">Objectif du jour</label><input id="fi_obj" value="${esc(f.obj||"")}" placeholder="Ex : servir un partenaire lancé">
+    <label class="fld">Staff</label><input id="fi_staff" value="${esc(f.staff||"")}" placeholder="Ex : coach Rachid, adjoint Karim">
+    <label class="fld">Prochain match</label><input id="fi_match" value="${esc(f.match||"")}" placeholder="Ex : sam. 22/11, 15h, à domicile">
+    <label class="fld">Matériel</label><input id="fi_mat" value="${esc(f.mat||"")}" placeholder="Ex : ballons, plots, chasubles">
+    <label class="fld">Systèmes du jour (3 maximum)</label>
+    ${plays.length?plays.map((p,i)=>`<label style="display:flex;gap:8px;align-items:center;font-size:13px;margin:5px 0"><input type="checkbox" class="fi_play" value="${i}" ${sel.includes(i)?"checked":""} onchange="ficheLimitPlays(this)"> ${esc(p.title||("Système "+(i+1)))}</label>`).join("")
+      :`<div class="muted" style="font-size:12px">Aucun système enregistré. Enregistre-les depuis la plaquette tactique ; en attendant, des terrains vierges prennent leur place.</div>`}
+    <label class="fld">Fond des schémas</label>
+    <select id="fi_bg"><option value="white" ${f.bg!=="green"?"selected":""}>Blanc (économise l'encre)</option><option value="green" ${f.bg==="green"?"selected":""}>Vert (comme dans l'app)</option></select>
+    <label class="fld">Lexique de l'équipe</label>
+    <div class="muted" style="font-size:11.5px;margin-bottom:4px">Une annonce par ligne : MOT = sens. Une ligne qui commence par # ouvre une rubrique. Exemple à adapter à ton équipe, il est gardé pour les prochaines fiches.</div>
+    <textarea id="fi_lex" rows="9" style="width:100%;font-size:12.5px">${esc(T().lexique!=null?T().lexique:PV_LEX_DEFAUT)}</textarea>
+    <div style="height:12px"></div>
+    <button class="btn block" onclick="exportFichePDF()">Générer la fiche PDF</button>
+    <div style="height:8px"></div><button class="btn sec block" onclick="closeModal()">Annuler</button>`);
+}
+function ficheLimitPlays(cb){
+  const on=document.querySelectorAll(".fi_play:checked");
+  if(on.length>3){ cb.checked=false; flash("3 systèmes maximum sur la fiche"); }
+}
+async function exportFichePDF(){
+  if(!window.jspdf){ flash("Export PDF en cours de chargement, réessaie"); return; }
+  const checked=Array.from(document.querySelectorAll(".fi_play:checked")).map(c=>parseInt(c.value,10)).slice(0,3);
+  const f={date:val("fi_date"),start:val("fi_start")||"18:30",lieu:val("fi_lieu"),obj:val("fi_obj"),staff:val("fi_staff"),
+    match:val("fi_match"),mat:val("fi_mat"),bg:val("fi_bg")||"white",plays:checked};
+  const lexEl=document.getElementById("fi_lex"); if(lexEl) T().lexique=lexEl.value;
+  T().fiche=f; save();
+  closeModal(); flash("Préparation de la fiche...");
+  try{
+    const pdf=await buildFichePDF(f);
+    await sharePDF(pdf,"fiche_entrainement_pivot.pdf","Fiche d'entraînement PIVOT");
+  }catch(e){ flash("Souci pendant l'export, réessaie"); }
+}
+async function pvImgData(url){
+  try{ const b=await (await fetch(url)).blob();
+    return await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(b); });
+  }catch(e){ return null; }
+}
+// Version "fond blanc" d'un schéma : terrain blanc, lignes et flèches foncées (impression économe).
+function pvLightSVG(s){
+  return s.replace('fill="#14572b"','fill="#ffffff"')
+    .replace(/stroke="#eaeaea"/g,'stroke="#333333"').replace(/stroke="#fff"/g,'stroke="#333333"')
+    .replace(/stroke="#ffffff"/g,'stroke="#222222"')
+    .replace('<path d="M0,0 L6,3 L0,6 Z" fill="#ffffff"/>','<path d="M0,0 L6,3 L0,6 Z" fill="#222222"/>');
+}
+async function pvCourtJPEG(frame,court,light){
+  const prev=tac.court; tac.court=court; let svg;
+  try{ svg=pvInlinePlayerImgs(frameStandaloneSVG(frame)); } finally { tac.court=prev; }
+  if(light) svg=pvLightSVG(svg);
+  const img=await svgToImage(svg);
+  const c=document.createElement("canvas"); c.width=Math.round(CW*1.5); c.height=Math.round(CH*1.5);
+  const x=c.getContext("2d"); x.fillStyle=light?"#ffffff":"#14572b"; x.fillRect(0,0,c.width,c.height);
+  x.drawImage(img,0,0,c.width,c.height);
+  return c.toDataURL("image/jpeg",0.85);
+}
+async function buildFichePDF(f){
+  const { jsPDF }=window.jspdf; const pdf=new jsPDF({orientation:"landscape",unit:"pt",format:"a4"});
+  const PW=pdf.internal.pageSize.getWidth(), PH=pdf.internal.pageSize.getHeight();
+  const M=22, CWD=(PW-2*M)/3, PAD=11, TOP=M, BOT=PH-M;
+  const OR=[232,99,31], INK=[20,20,22];
+  const colX=i=>M+i*CWD+PAD, colW=CWD-2*PAD;
+  const sep=()=>{ pdf.setDrawColor(...INK); pdf.setLineWidth(1); for(let i=1;i<3;i++) pdf.line(M+i*CWD,TOP,M+i*CWD,BOT-6); };
+  const footer=()=>{ pdf.setFont("helvetica","normal"); pdf.setFontSize(7); pdf.setTextColor(150,150,150); pdf.text("Fait avec PIVOT · pivotcoach.netlify.app",PW-M,PH-9,{align:"right"}); };
+  await pvEnsurePlayerImgData();
+  const logo=await pvImgData("logo-192.png");
+  const s=T().session||{blocks:[]}; const blocks=s.blocks||[];
+  let dstr=""; try{ if(f.date) dstr=new Date(f.date+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short",year:"numeric"}); }catch(e){}
+
+  /* ===== RECTO ===== */
+  sep();
+  [0,1,2].forEach(i=>{ if(logo){ try{ pdf.addImage(logo,"PNG",M+i*CWD+CWD/2-13,TOP,26,26); }catch(e){} } });
+  // Colonne 1 : déroulé
+  let x=colX(0), y=TOP+44;
+  pdf.setFont("helvetica","bold"); pdf.setFontSize(15); pdf.setTextColor(...INK);
+  pdf.text("FICHE D'ENTRAÎNEMENT",M+CWD/2,y,{align:"center"}); y+=13;
+  pdf.setFont("helvetica","italic"); pdf.setFontSize(8); pdf.setTextColor(60,60,60);
+  const sub=[String(s.title||"Séance").toUpperCase(),dstr,f.lieu,[T().name,T().category].filter(Boolean).join(" ")].filter(Boolean).join(" | ");
+  pdf.splitTextToSize(sub,colW).slice(0,2).forEach(l=>{ pdf.text(l,M+CWD/2,y,{align:"center"}); y+=10; });
+  y+=4;
+  if(f.obj){
+    pdf.setFont("helvetica","bold"); pdf.setFontSize(8.5);
+    const ol=pdf.splitTextToSize("Objectif du jour : "+f.obj,colW-12); const h=ol.length*10+8;
+    pdf.setFillColor(255,244,236); pdf.setDrawColor(...OR); pdf.setLineWidth(1.2); pdf.roundedRect(x,y,colW,h,4,4,"FD");
+    pdf.setTextColor(...OR); ol.forEach((l,i)=>pdf.text(l,x+6,y+12+i*10)); y+=h+12;
+  }
+  const toMin=t=>{ const m=/(\d{1,2}):(\d{2})/.exec(t||""); return m?(+m[1])*60+(+m[2]):18*60+30; };
+  const hm=v=>{ v=((v%1440)+1440)%1440; return Math.floor(v/60)+"h"+String(v%60).padStart(2,"0"); };
+  const layoutBlocks=(fs,draw)=>{
+    let yy=y, t=toMin(f.start);
+    blocks.forEach(b=>{
+      const d=parseInt(b.dur,10)||0; const range=hm(t)+" – "+hm(t+d); t+=d;
+      pdf.setFont("helvetica","bold"); pdf.setFontSize(fs);
+      if(draw){ pdf.setTextColor(...INK); pdf.text(range+" : "+String(b.cat||"").toUpperCase(),x,yy);
+        pdf.setLineWidth(.7); pdf.setDrawColor(...INK); pdf.line(x,yy+1.6,x+pdf.getTextWidth(range),yy+1.6); }
+      yy+=fs*1.2;
+      const tl=pdf.splitTextToSize(String(b.title||""),colW);
+      if(draw){ pdf.setTextColor(...OR); pdf.text(tl,x,yy); }
+      yy+=tl.length*fs*1.15;
+      if(b.points){
+        pdf.setFont("helvetica","normal"); pdf.setFontSize(fs-1);
+        const pl=pdf.splitTextToSize("• "+String(b.points),colW-6).slice(0,3);
+        if(draw){ pdf.setTextColor(55,55,55); pdf.text(pl,x+4,yy); }
+        yy+=pl.length*(fs-1)*1.15;
+      }
+      yy+=fs*0.75;
+    });
+    return yy;
+  };
+  let fs=10; while(fs>6.5 && layoutBlocks(fs,false)>BOT-14) fs-=0.5;
+  layoutBlocks(fs,true);
+
+  // Colonne 2 : groupes
+  x=colX(1); y=TOP+44;
+  const ps=T().players||[];
+  const inj=p=>!!(p.injury&&p.injury.active);
+  const avail=ps.filter(p=>p.present&&!inj(p)).slice().sort((a,b)=>(a.num||0)-(b.num||0));
+  const A=[],B=[]; avail.forEach((p,i)=>(i%2?B:A).push(p));
+  const nm=p=>((p.num?("#"+p.num+" "):"")+(p.first||"")+(p.last?(" "+String(p.last).charAt(0)+"."):"")).trim();
+  const others=ps.filter(p=>avail.indexOf(p)<0);
+  const rows=Math.max(A.length,B.length,1);
+  const rh=Math.max(11,Math.min(19,(BOT-y-190)/(rows+1)));
+  const half=colW/2;
+  pdf.setLineWidth(.8); pdf.setDrawColor(...INK);
+  pdf.setFillColor(...OR); pdf.rect(x,y,half,rh,"FD"); pdf.setFillColor(...INK); pdf.rect(x+half,y,half,rh,"FD");
+  pdf.setFont("helvetica","bold"); pdf.setFontSize(Math.min(10,rh*0.6)); pdf.setTextColor(255,255,255);
+  pdf.text("ÉQUIPE A",x+half/2,y+rh*0.68,{align:"center"}); pdf.text("ÉQUIPE B",x+half*1.5,y+rh*0.68,{align:"center"});
+  y+=rh;
+  pdf.setFont("helvetica","normal"); pdf.setFontSize(Math.min(9.5,rh*0.55)); pdf.setTextColor(...INK);
+  for(let i=0;i<rows;i++){
+    pdf.rect(x,y,half,rh); pdf.rect(x+half,y,half,rh);
+    if(A[i]) pdf.text(nm(A[i]).slice(0,24),x+half/2,y+rh*0.66,{align:"center"});
+    if(B[i]) pdf.text(nm(B[i]).slice(0,24),x+half*1.5,y+rh*0.66,{align:"center"});
+    y+=rh;
+  }
+  y+=13;
+  if(others.length){
+    pdf.setFont("helvetica","bold"); pdf.setFontSize(8.5); pdf.setTextColor(...INK); pdf.text("Indisponibles",x,y); y+=11;
+    pdf.setFont("helvetica","normal"); pdf.setFontSize(8.5);
+    for(const p of others){
+      if(y>BOT-110) break;
+      const b=inj(p); pdf.setFillColor(...(b?[255,91,91]:[205,205,205])); pdf.rect(x,y-7,7,7,"F");
+      pdf.setTextColor(...INK); pdf.text(nm(p)+" · "+(b?"blessé(e)":"absent(e)"),x+11,y); y+=11;
+    }
+    y+=3;
+  }
+  pdf.setDrawColor(...INK); pdf.setLineWidth(.8); pdf.line(x,y,x+colW,y); y+=15;
+  const kv=(k,v)=>{
+    pdf.setFont("helvetica","bold"); pdf.setFontSize(9); pdf.setTextColor(...OR); pdf.text(k,x,y);
+    const kw=pdf.getTextWidth(k+" ");
+    pdf.setFont("helvetica","normal"); pdf.setTextColor(...INK);
+    const l=pdf.splitTextToSize(v||"______________________",colW-kw); pdf.text(l,x+kw,y); y+=l.length*11+5;
+  };
+  kv("Staff :",f.staff); kv("Prochain match :",f.match); kv("Matériel :",f.mat);
+  pdf.setFont("helvetica","normal"); pdf.setFontSize(8); pdf.setTextColor(100,100,100);
+  pdf.text(ps.length?(avail.length+" disponible"+(avail.length>1?"s":"")+" sur "+ps.length+" (d'après l'appel)"):"Effectif vide : ajoute tes joueurs dans l'onglet Effectif.",x,y+3);
+
+  // Colonne 3 : lexique
+  x=colX(2); y=TOP+44;
+  pdf.setFont("helvetica","bold"); pdf.setFontSize(11); pdf.setTextColor(...INK);
+  pdf.text("LEXIQUE DE L'ÉQUIPE",M+2*CWD+CWD/2,y,{align:"center"});
+  const tw=pdf.getTextWidth("LEXIQUE DE L'ÉQUIPE"); pdf.setLineWidth(.8); pdf.line(M+2*CWD+CWD/2-tw/2,y+2,M+2*CWD+CWD/2+tw/2,y+2);
+  y+=18;
+  const items=String(T().lexique||"").split(/\n/).map(l=>l.trim()).filter(Boolean);
+  const sw=(colW-10)/2;
+  const entry=(l,fs)=>{ // mesure (et découpe) une ligne du lexique
+    if(l.charAt(0)==="#"){ pdf.setFont("helvetica","bold"); pdf.setFontSize(fs);
+      const lines=pdf.splitTextToSize(l.replace(/^#+\s*/,"").toUpperCase(),sw); return {head:true,lines,h:lines.length*fs*1.2+5}; }
+    const m=/^(.+?)\s*=\s*(.*)$/.exec(l);
+    if(!m){ pdf.setFont("helvetica","normal"); pdf.setFontSize(fs); const lines=pdf.splitTextToSize("• "+l,sw); return {lines,h:lines.length*fs*1.15+2.5}; }
+    pdf.setFont("helvetica","bold"); pdf.setFontSize(fs); const key="• "+m[1]; const kw=pdf.getTextWidth(key+" ");
+    pdf.setFont("helvetica","normal");
+    let first=[], rest=[];
+    if(kw<sw-25){ const w1=pdf.splitTextToSize("= "+m[2],sw-kw); first=[w1[0]||""]; const r=w1.slice(1).join(" "); rest=r?pdf.splitTextToSize(r,sw-8):[]; }
+    else { rest=pdf.splitTextToSize("= "+m[2],sw-8); }
+    const n=(kw<sw-25?1:1)+rest.length; return {key,kw,first,rest,h:n*fs*1.15+2.5};
+  };
+  const lexLayout=(fs,draw)=>{
+    let cx=x, yy=y, ci=0;
+    for(const l of items){
+      const e=entry(l,fs);
+      if(yy+e.h>BOT-12){ if(ci===0){ ci=1; cx=x+sw+10; yy=y; } else return false; }
+      if(draw){
+        if(e.head){ pdf.setFont("helvetica","bold"); pdf.setFontSize(fs); pdf.setTextColor(...INK);
+          pdf.text(e.lines,cx,yy+2); pdf.setLineWidth(.6); pdf.line(cx,yy+3.6,cx+pdf.getTextWidth(e.lines[0]),yy+3.6); }
+        else if(e.key){ pdf.setFont("helvetica","bold"); pdf.setFontSize(fs); pdf.setTextColor(...OR); pdf.text(e.key,cx,yy);
+          pdf.setFont("helvetica","normal"); pdf.setTextColor(...INK);
+          if(e.first.length) pdf.text(e.first[0],cx+e.kw,yy);
+          if(e.rest.length) pdf.text(e.rest,cx+8,yy+fs*1.15);
+        }
+        else { pdf.setFont("helvetica","normal"); pdf.setFontSize(fs); pdf.setTextColor(...INK); pdf.text(e.lines,cx,yy); }
+      }
+      yy+=e.h+(e.head?1:0);
+    }
+    return true;
+  };
+  if(items.length){ let lf=9.5; while(lf>6 && !lexLayout(lf,false)) lf-=0.5; lexLayout(lf,true); }
+  else { pdf.setFont("helvetica","italic"); pdf.setFontSize(9); pdf.setTextColor(110,110,110);
+    pdf.text(pdf.splitTextToSize("Lexique vide. Ajoute tes annonces (MOT = sens) dans la fenêtre de la fiche : tout le staff parlera la même langue.",colW),x,y); }
+  footer();
+
+  /* ===== VERSO ===== */
+  pdf.addPage(); sep();
+  const light=f.bg!=="green";
+  // Colonne 1 : systèmes du jour
+  x=colX(0);
+  const chosen=(f.plays||[]).map(i=>(DB.plays||[])[i]).filter(Boolean).slice(0,3);
+  const slotH=(BOT-TOP-8)/3;
+  for(let i=0;i<3;i++){
+    const p=chosen[i]; const yy=TOP+2+i*slotH; const boxH=16;
+    pdf.setDrawColor(...INK); pdf.setLineWidth(.9); pdf.rect(x,yy,colW,boxH);
+    pdf.setFont("helvetica","bold"); pdf.setFontSize(9); pdf.setTextColor(...INK);
+    pdf.text(("> "+(p?String(p.title||"Système"):"Système / exercice : ________________")).toUpperCase().slice(0,44),x+5,yy+11);
+    const fr=p?((p.frames||[]).find(q=>q.paths&&q.paths.length)||(p.frames||[])[0]):null;
+    const imgH=slotH-boxH-20, imgW=imgH*(CW/CH);
+    const data=await pvCourtJPEG(fr||{tokens:[],paths:[]},"half",light||!fr);
+    pdf.addImage(data,"JPEG",x+(colW-imgW)/2,yy+boxH+3,imgW,imgH);
+    if(p&&(p.frames||[]).length>1){ pdf.setFont("helvetica","normal"); pdf.setFontSize(7); pdf.setTextColor(110,110,110);
+      pdf.text("1re étape sur "+p.frames.length+", animation complète dans PIVOT",x+(colW-imgW)/2,yy+boxH+imgH+12); }
+  }
+  // Colonne 2 : notes
+  x=colX(1); y=TOP+12;
+  pdf.setFont("helvetica","bold"); pdf.setFontSize(10); pdf.setTextColor(...INK); pdf.text("NOTES DE SÉANCE",x,y); y+=22;
+  pdf.setDrawColor(...INK); pdf.setLineWidth(.9); while(y<BOT-8){ pdf.line(x,y,x+colW,y); y+=21; }
+  // Colonne 3 : terrains vierges
+  x=colX(2);
+  const halfData=await pvCourtJPEG({tokens:[],paths:[]},"half",true);
+  const fullData=await pvCourtJPEG({tokens:[],paths:[]},"full",true);
+  const gw=(colW-8)/2, gh=gw*(CH/CW);
+  for(let r=0;r<2;r++) for(let c=0;c<2;c++){
+    const xx=x+c*(gw+8), yy=TOP+4+r*(gh+8);
+    pdf.setFillColor(232,232,232); pdf.rect(xx-2,yy-2,gw+4,gh+4,"F"); pdf.addImage(halfData,"JPEG",xx,yy,gw,gh);
+  }
+  const fy=TOP+4+2*(gh+8)+4; const fh=Math.min(BOT-14-fy,colW*(CH/CW)), fw=fh*(CW/CH);
+  pdf.setFillColor(232,232,232); pdf.rect(x+(colW-fw)/2-2,fy-2,fw+4,fh+4,"F"); pdf.addImage(fullData,"JPEG",x+(colW-fw)/2,fy,fw,fh);
+  footer();
+  return pdf;
 }
 async function exportSessionOnePDF(){
   if(!window.jspdf){ flash("Export PDF en cours de chargement, réessaie"); return; }
