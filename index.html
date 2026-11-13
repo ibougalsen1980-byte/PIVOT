@@ -4424,6 +4424,7 @@ function renderSession(){
       <button class="linkbtn" onclick="renameSession()"><span class="mi">edit</span><span class="lbl">Titre</span></button>
       <button class="linkbtn" onclick="newSession()"><span class="mi">add</span><span class="lbl">Nouvelle</span></button>
       <button class="linkbtn" onclick="openMySessions()"><span class="mi">folder_open</span><span class="lbl">Mes séances${sv?` (${sv})`:""}</span></button>
+      <button class="linkbtn" onclick="ficheModal()"><span class="mi">print</span><span class="lbl">Fiche A4</span></button>
     </div>
     <button class="btn block" onclick="customBlockModal()">＋ Ajouter un bloc, saisie rapide</button>
     <!-- Libellé corrigé le 20/09/2026 : "Générer une séance" lance un algorithme de règles
@@ -4578,28 +4579,35 @@ const PV_LEX_DEFAUT=["# ATTAQUE","CORNES = 4 et 5 aux coudes","UN = isolation du
   "# CLOSE-OUT","SHOOTEUR = bras haut, pas de saut","DRIBBLEUR = court, ferme la ligne"].join("\n");
 function ficheModal(){
   const s=T().session||{blocks:[]};
-  if(!(s.blocks||[]).length){ flash("Ajoute des blocs avant de faire la fiche"); return; }
+  if(!(s.blocks||[]).length){ flash("Ajoute d'abord des blocs à ta séance"); return; }
   const f=T().fiche||{}; const plays=DB.plays||[]; const sel=f.plays||[];
+  // L'objectif n'est repris que pour la même séance ; la date est toujours celle du jour.
+  const obj=(f.sessTitle===s.title)?(f.obj||""):"";
+  const cb="width:22px;height:22px;flex:none;margin:0;accent-color:#e8631f";
   openModal(`
-    <h3>Fiche d'entraînement</h3>
-    <div class="muted" style="font-size:12px;margin-bottom:8px">A4 paysage recto-verso : déroulé, groupes, lexique, systèmes du jour, notes et terrains vierges. À imprimer ou à envoyer au staff.</div>
-    <div class="row" style="gap:8px">
-      <div style="flex:1"><label class="fld">Date</label><input id="fi_date" type="date" value="${esc(f.date||todayISO())}"></div>
-      <div style="flex:1"><label class="fld">Début</label><input id="fi_start" type="time" value="${esc(f.start||"18:30")}"></div>
+    <h3>Fiche d'entraînement A4</h3>
+    <div class="muted" style="font-size:12px;margin-bottom:6px">Recto : horaires, équipes, lexique. Verso : systèmes, notes, terrains vierges. Tout est déjà rempli avec ta séance et ton appel : complète si besoin, puis génère.</div>
+    <button class="btn block" onclick="exportFichePDF()">Générer la fiche PDF</button>
+    <div class="row" style="gap:8px;margin-top:10px">
+      <div style="flex:1"><label class="fld">Date</label><input id="fi_date" type="date" value="${esc(todayISO())}"></div>
+      <div style="flex:1"><label class="fld">Heure de début</label><input id="fi_start" type="time" value="${esc(f.start||"18:30")}"></div>
     </div>
-    <label class="fld">Lieu</label><input id="fi_lieu" value="${esc(f.lieu||"")}" placeholder="Ex : Gymnase Jean Zay">
-    <label class="fld">Objectif du jour</label><input id="fi_obj" value="${esc(f.obj||"")}" placeholder="Ex : servir un partenaire lancé">
-    <label class="fld">Staff</label><input id="fi_staff" value="${esc(f.staff||"")}" placeholder="Ex : coach Rachid, adjoint Karim">
-    <label class="fld">Prochain match</label><input id="fi_match" value="${esc(f.match||"")}" placeholder="Ex : sam. 22/11, 15h, à domicile">
-    <label class="fld">Matériel</label><input id="fi_mat" value="${esc(f.mat||"")}" placeholder="Ex : ballons, plots, chasubles">
-    <label class="fld">Systèmes du jour (3 maximum)</label>
-    ${plays.length?plays.map((p,i)=>`<label style="display:flex;gap:8px;align-items:center;font-size:13px;margin:5px 0"><input type="checkbox" class="fi_play" value="${i}" ${sel.includes(i)?"checked":""} onchange="ficheLimitPlays(this)"> ${esc(p.title||("Système "+(i+1)))}</label>`).join("")
-      :`<div class="muted" style="font-size:12px">Aucun système enregistré. Enregistre-les depuis la plaquette tactique ; en attendant, des terrains vierges prennent leur place.</div>`}
-    <label class="fld">Fond des schémas</label>
-    <select id="fi_bg"><option value="white" ${f.bg!=="green"?"selected":""}>Blanc (économise l'encre)</option><option value="green" ${f.bg==="green"?"selected":""}>Vert (comme dans l'app)</option></select>
-    <label class="fld">Lexique de l'équipe</label>
-    <div class="muted" style="font-size:11.5px;margin-bottom:4px">Une annonce par ligne : MOT = sens. Une ligne qui commence par # ouvre une rubrique. Exemple à adapter à ton équipe, il est gardé pour les prochaines fiches.</div>
-    <textarea id="fi_lex" rows="9" style="width:100%;font-size:12.5px">${esc(T().lexique!=null?T().lexique:PV_LEX_DEFAUT)}</textarea>
+    <label class="fld">Objectif du jour (facultatif)</label><input id="fi_obj" value="${esc(obj)}" placeholder="Ex : servir un partenaire lancé">
+    <label class="fld">Systèmes au verso (3 maximum)</label>
+    ${plays.length?plays.map((p,i)=>`<label style="display:flex;gap:10px;align-items:center;font-size:14px;margin:6px 0;cursor:pointer"><input type="checkbox" class="fi_play" value="${i}" ${sel.includes(i)?"checked":""} onchange="ficheLimitPlays(this)" style="${cb}"><span>${esc(p.title||("Système "+(i+1)))}</span></label>`).join("")
+      :`<div class="muted" style="font-size:12px">Aucun système enregistré pour l'instant : des terrains vierges prendront leur place. Tu peux en enregistrer depuis la plaquette tactique.</div>`}
+    <details style="margin-top:10px"><summary style="font-weight:700;cursor:pointer;padding:6px 0">Infos de l'équipe (gardées d'une fiche à l'autre)</summary>
+      <label class="fld">Lieu</label><input id="fi_lieu" value="${esc(f.lieu||"")}" placeholder="Ex : Gymnase Jean Zay">
+      <label class="fld">Staff</label><input id="fi_staff" value="${esc(f.staff||"")}" placeholder="Ex : coach Rachid, adjoint Karim">
+      <label class="fld">Prochain match</label><input id="fi_match" value="${esc(f.match||"")}" placeholder="Ex : sam. 22/11, 15h, à domicile">
+      <label class="fld">Matériel</label><input id="fi_mat" value="${esc(f.mat||"")}" placeholder="Ex : ballons, plots, chasubles">
+      <label class="fld">Fond des schémas</label>
+      <select id="fi_bg"><option value="white" ${f.bg!=="green"?"selected":""}>Blanc (économise l'encre)</option><option value="green" ${f.bg==="green"?"selected":""}>Vert (comme dans l'app)</option></select>
+    </details>
+    <details style="margin-top:4px"><summary style="font-weight:700;cursor:pointer;padding:6px 0">Lexique de l'équipe${T().lexique==null?" (exemple à adapter)":""}</summary>
+      <div class="muted" style="font-size:11.5px;margin-bottom:4px">Une annonce par ligne : MOT = sens. Une ligne qui commence par # ouvre une rubrique. Gardé pour les prochaines fiches.</div>
+      <textarea id="fi_lex" rows="9" style="width:100%;font-size:13px">${esc(T().lexique!=null?T().lexique:PV_LEX_DEFAUT)}</textarea>
+    </details>
     <div style="height:12px"></div>
     <button class="btn block" onclick="exportFichePDF()">Générer la fiche PDF</button>
     <div style="height:8px"></div><button class="btn sec block" onclick="closeModal()">Annuler</button>`);
@@ -4611,7 +4619,7 @@ function ficheLimitPlays(cb){
 async function exportFichePDF(){
   if(!window.jspdf){ flash("Export PDF en cours de chargement, réessaie"); return; }
   const checked=Array.from(document.querySelectorAll(".fi_play:checked")).map(c=>parseInt(c.value,10)).slice(0,3);
-  const f={date:val("fi_date"),start:val("fi_start")||"18:30",lieu:val("fi_lieu"),obj:val("fi_obj"),staff:val("fi_staff"),
+  const f={sessTitle:(T().session||{}).title||"",date:val("fi_date"),start:val("fi_start")||"18:30",lieu:val("fi_lieu"),obj:val("fi_obj"),staff:val("fi_staff"),
     match:val("fi_match"),mat:val("fi_mat"),bg:val("fi_bg")||"white",plays:checked};
   const lexEl=document.getElementById("fi_lex"); if(lexEl) T().lexique=lexEl.value;
   T().fiche=f; save();
@@ -4619,6 +4627,7 @@ async function exportFichePDF(){
   try{
     const pdf=await buildFichePDF(f);
     await sharePDF(pdf,"fiche_entrainement_pivot.pdf","Fiche d'entraînement PIVOT");
+    if(pdf.__pvNote&&pdf.__pvNote.length) openModal(`<h3>Fiche prête, à vérifier</h3>${pdf.__pvNote.map(n=>`<div style="font-size:13.5px;line-height:1.5;margin:8px 0">⚠️ ${esc(n)}</div>`).join("")}<div style="height:8px"></div><button class="btn block" onclick="closeModal()">J'ai compris</button>`);
   }catch(e){ flash("Souci pendant l'export, réessaie"); }
 }
 async function pvImgData(url){
@@ -4675,6 +4684,7 @@ async function buildFichePDF(f){
   }
   const toMin=t=>{ const m=/(\d{1,2}):(\d{2})/.exec(t||""); return m?(+m[1])*60+(+m[2]):18*60+30; };
   const hm=v=>{ v=((v%1440)+1440)%1440; return Math.floor(v/60)+"h"+String(v%60).padStart(2,"0"); };
+  let withPts=true;
   const layoutBlocks=(fs,draw)=>{
     let yy=y, t=toMin(f.start);
     blocks.forEach(b=>{
@@ -4686,7 +4696,7 @@ async function buildFichePDF(f){
       const tl=pdf.splitTextToSize(String(b.title||""),colW);
       if(draw){ pdf.setTextColor(...OR); pdf.text(tl,x,yy); }
       yy+=tl.length*fs*1.15;
-      if(b.points){
+      if(b.points && withPts){
         pdf.setFont("helvetica","normal"); pdf.setFontSize(fs-1);
         const pl=pdf.splitTextToSize("• "+String(b.points),colW-6).slice(0,3);
         if(draw){ pdf.setTextColor(55,55,55); pdf.text(pl,x+4,yy); }
@@ -4696,7 +4706,9 @@ async function buildFichePDF(f){
     });
     return yy;
   };
-  let fs=10; while(fs>6.5 && layoutBlocks(fs,false)>BOT-14) fs-=0.5;
+  let fs=10; while(fs>8 && layoutBlocks(fs,false)>BOT-14) fs-=0.5;
+  if(layoutBlocks(fs,false)>BOT-14){ withPts=false; fs=10; while(fs>6.5 && layoutBlocks(fs,false)>BOT-14) fs-=0.5; }
+  if(!withPts) pdf.__pvNote=(pdf.__pvNote||[]).concat("Séance longue : les consignes des blocs ne tiennent pas sur la fiche, seuls les titres sont imprimés.");
   layoutBlocks(fs,true);
 
   // Colonne 2 : groupes
@@ -4764,8 +4776,9 @@ async function buildFichePDF(f){
     else { rest=pdf.splitTextToSize("= "+m[2],sw-8); }
     const n=(kw<sw-25?1:1)+rest.length; return {key,kw,first,rest,h:n*fs*1.15+2.5};
   };
+  let lexDrawn=0;
   const lexLayout=(fs,draw)=>{
-    let cx=x, yy=y, ci=0;
+    let cx=x, yy=y, ci=0; lexDrawn=0;
     for(const l of items){
       const e=entry(l,fs);
       if(yy+e.h>BOT-12){ if(ci===0){ ci=1; cx=x+sw+10; yy=y; } else return false; }
@@ -4779,11 +4792,12 @@ async function buildFichePDF(f){
         }
         else { pdf.setFont("helvetica","normal"); pdf.setFontSize(fs); pdf.setTextColor(...INK); pdf.text(e.lines,cx,yy); }
       }
-      yy+=e.h+(e.head?1:0);
+      yy+=e.h+(e.head?1:0); lexDrawn++;
     }
     return true;
   };
-  if(items.length){ let lf=9.5; while(lf>6 && !lexLayout(lf,false)) lf-=0.5; lexLayout(lf,true); }
+  if(items.length){ let lf=9.5; while(lf>6 && !lexLayout(lf,false)) lf-=0.5; lexLayout(lf,true);
+    const miss=items.length-lexDrawn; if(miss>0) pdf.__pvNote=(pdf.__pvNote||[]).concat("Lexique trop long : "+miss+" ligne"+(miss>1?"s n'apparaissent":" n'apparaît")+" pas sur la fiche. Raccourcis-le pour tout voir."); }
   else { pdf.setFont("helvetica","italic"); pdf.setFontSize(9); pdf.setTextColor(110,110,110);
     pdf.text(pdf.splitTextToSize("Lexique vide. Ajoute tes annonces (MOT = sens) dans la fenêtre de la fiche : tout le staff parlera la même langue.",colW),x,y); }
   footer();
