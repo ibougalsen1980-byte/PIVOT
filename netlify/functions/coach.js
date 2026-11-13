@@ -133,6 +133,7 @@ exports.handler = async (event) => {
       "Ne te fais jamais passer pour un professionnel de santé. Tu ne poses aucun diagnostic.",
       "Sujet sensible : si un mal-être dépasse la performance, surtout chez un mineur, oriente vers un adulte de confiance et un professionnel, et rappelle qu'en cas de danger on protège et on alerte.",
       "N'utilise pas de tirets cadratins. Reste direct et humain.",
+      "Sois bref : 350 mots au plus, sauf pour une séance ou un cycle. Termine toujours ta dernière phrase. Si la demande donne un nombre de joueurs, il prime sur l'effectif enregistré.",
       "Contexte de l'équipe : nom " + (team.name || 'inconnu') + ", catégorie " + (team.category || 'inconnue') + ", niveau " + (team.level || 'inconnu') + ", effectif " + (team.players || 0) + " joueurs, prochain adversaire " + (team.opponent || 'inconnu') + "."
     ];
     // Profil du coach ajouté le 20/09/2026 : le navigateur envoyait déjà ce profil (body.coach) à
@@ -159,7 +160,8 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify({
         model: model,
-        max_tokens: 700,
+        // 13/11/2026 : 700 coupait les réponses en plein milieu d'une phrase (constaté en production).
+        max_tokens: 1200,
         system: systemPrompt,
         messages: [{ role: 'user', content: message }]
       })
@@ -170,9 +172,17 @@ exports.handler = async (event) => {
       console.error('coach: erreur Anthropic', r.status, JSON.stringify((data && data.error) || data).slice(0, 500));
       return { statusCode: 502, headers, body: JSON.stringify({ error: 'ia' }) };
     }
-    const reply = (data && data.content && data.content[0] && data.content[0].text)
+    let reply = (data && data.content && data.content[0] && data.content[0].text)
       ? data.content[0].text
       : "Je n'ai pas pu formuler de réponse.";
+    // Réponse coupée par la limite : on retire la phrase inachevée et on le signale au coach,
+    // au lieu d'afficher un mot coupé. Un bloc <SEANCE> ouvert mais non fermé est laissé tel quel
+    // pour que l'app applique sa séance de repli.
+    if (data && data.stop_reason === 'max_tokens' && !/<SEANCE>(?![\s\S]*<\/SEANCE>)/.test(reply)) {
+      const cut = Math.max(reply.lastIndexOf('. '), reply.lastIndexOf('.\n'), reply.lastIndexOf('\n\n'));
+      if (cut > reply.length * 0.5) reply = reply.slice(0, cut + 1);
+      reply += "\n\n(Réponse raccourcie. Pose une demande plus ciblée pour obtenir le détail.)";
+    }
     return { statusCode: 200, headers, body: JSON.stringify({ reply }) };
   } catch (e) {
     console.error('coach: exception', e && e.message);

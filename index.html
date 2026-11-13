@@ -3567,8 +3567,19 @@ function aiHistoryContext(){
 function aiCandidates(query,max){
   const cat=teamAgeCat(); const th=detectTheme((query||"").toLowerCase());
   const pool=allExos().filter(function(e){ return exoFitsAge(e,cat); });
-  const match=function(e){ if(!th) return false; return e.cat===th.cat || (e.theme&&th.re.test(String(e.theme).toLowerCase())) || th.re.test((e.title||"").toLowerCase()); };
-  const list=pool.filter(match).concat(pool.filter(function(e){ return !match(e); })).slice(0,max||12);
+  // Classement par pertinence (13/11/2026) : avant, seul le thème détecté comptait et, sans thème,
+  // l'IA recevait les premiers exercices de la liste quel que soit le sujet de la question.
+  const STOP=/^(pour|avec|dans|mais|quels?|quelles?|comment|faire|veux|mes|mon|ton|tes|une|des|les|leur|joueurs?|séance|seance|exercices?|bibliothèque|pivot|conseilles?|ordre|samedi|aurai|apprendre|minutes?|match|équipe|equipe)$/;
+  const words=String(query||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").split(/[^a-z0-9-]+/).filter(function(w){ return w.length>=4 && !STOP.test(w); });
+  const norm=function(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); };
+  const score=function(e){
+    const head=norm([e.title,e.theme,(e.tags||[]).join(" ")].join(" ")), body=norm(e.objectif);
+    let s=0;
+    if(th){ const rx=th.ex||th.re; if(rx.test(head)) s+=6; else if(rx.test(body)) s+=3; if(e.cat===th.cat) s+=1; }
+    words.forEach(function(w){ if(head.indexOf(w)>=0) s+=2; else if(body.indexOf(w)>=0) s+=1; });
+    return s;
+  };
+  const list=pool.map(function(e,i){ return {e:e,s:score(e),i:i}; }).sort(function(a,b){ return (b.s-a.s)||(a.i-b.i); }).map(function(x){ return x.e; }).slice(0,max||12);
   return list.map(function(e){ return "- "+e.title+" ("+e.cat+(e.theme?(", "+e.theme):"")+", "+(e.age||"")+", "+(e.dur||"?")+" min, intensité "+(e.intensity||"")+") : "+String(e.objectif||"").slice(0,90); }).join("\n");
 }
 async function realAI(q){
@@ -3606,6 +3617,10 @@ function formatAI(text){
   for(const raw of lines){
     const ln=raw.trim();
     if(!ln){ closeList(); html+='<div class="ai-sp"></div>'; continue; }
+    // Titres markdown (#, ##, ###) et séparateurs (---) : affichés en clair au lieu des symboles bruts.
+    if(/^([-*_])\1{2,}$/.test(ln)){ closeList(); html+='<div class="ai-sp" style="border-top:1px solid var(--line,#ddd);margin:6px 0"></div>'; continue; }
+    const hd=ln.match(/^#{1,6}\s+(.*)$/);
+    if(hd){ closeList(); html+='<p class="ai-p" style="font-weight:800;margin-top:6px">'+fmtInline(esc(hd[1].replace(/\s*#+$/,'')))+'</p>'; continue; }
     const b=ln.match(/^[-•·]\s+(.*)$/);
     if(b){ if(!inList){ html+='<ul class="ai-ul">'; inList=true; } html+='<li>'+fmtInline(esc(b[1]))+'</li>'; continue; }
     closeList();
@@ -3819,6 +3834,8 @@ async function askAI(q){
     if(cand) extra="\n\nBibliothèque PIVOT disponible pour ce coach. Si tu recommandes un exercice, choisis parmi ceux-ci et cite son titre exact, n'en invente aucun. Si aucun ne convient, dis-le simplement.\n"+cand+aiHistoryContext();
   }
   try{
+    // 13/11/2026 : un coach qui écrit « j'aurai 10 joueurs » recevait une séance pour l'effectif enregistré (1 joueur).
+    if(/\b\d{1,2}\s*(joueurs?|joueuses?|gars|filles|enfants)\b/i.test(q)) extra+="\n\nLe coach indique lui-même le nombre de joueurs dans sa demande : ce nombre prime sur l'effectif enregistré dans PIVOT.";
     const txt=await realAI(q+extra);
     if(isCycle){
       const weeks=parseAiCycle(txt);
@@ -5064,6 +5081,9 @@ function addBlock(did){
 }
 /* Générateur de séance thématique : puise dans la bibliothèque, progression du simple au complexe. */
 const THEME_WORDS=[
+  // 13/11/2026 : « attaquer une zone » ne correspondait à aucun thème, l'IA recevait des exercices au hasard
+  // et répondait que la bibliothèque n'avait rien sur la zone. ex = motif cherché dans l'exercice lui-même.
+  {cat:"Jeu collectif",label:"l'attaque de zone",re:/(attaqu|contre|battre|face [àa]|percer|jouer)[^.?!]{0,30}\bzones?\b/,ex:/\bzones?\b/},
   {cat:"Défense",label:"la défense",re:/defens|défens|closeout|\bstop|aide défensive|repli/},
   {cat:"Tir",label:"le tir",re:/\btirs?\b|shoot|lancers?|adresse|finition/},
   {cat:"Maniement",label:"le maniement de balle",re:/maniement|dribble|ball\s*handling|main faible/},
