@@ -5771,6 +5771,142 @@
       "keys": "Contact first, ball second. Whoever watches the ball without touching their player loses the battle.",
       "vEasy": "No shot, on the coach's signal.",
       "vHard": "2 on 2, the team that gets the rebound attacks right away."
+    },
+    "x259": {
+      "titre": "Read the zone and line up in the gaps",
+      "objectif": "Recognize the opposing zone within three seconds and line up against it: odd alignment against an even zone, and vice versa.",
+      "placement": "Five defenders set up in a zone on the coach's call (2-3 or 1-3-1). Five attackers arrive from half court on the dribble.",
+      "materiel": "Balls, pinnies",
+      "etapes": [
+        "(4 min) The coach calls \"2-3\" or \"1-3-1\". Defenders set up, attackers line up without the ball: 1-3-1 against 2-3, two guards against 1-3-1. The coach counts to three and corrects positions.",
+        "(4 min) Same work with the ball. After lining up, at least five passes; every receiver stands in a gap between two defenders.",
+        "(4 min) The coach changes the zone during play. The offense must realign before the next pass, first pass into the high post as soon as it opens."
+      ],
+      "consignes": "Against two defenders up top, one attacker on top. Against one defender up top, two attackers on top. Everyone stands between two defenders, never in front of one.",
+      "erreurs": "Keeping the usual man-to-man alignment: each attacker faces a defender who has nothing to decide.",
+      "corrections": "Stop play, have each attacker name the two defenders they are troubling, then replay.",
+      "reussite": "The offense lines up correctly within three seconds, four times out of five.",
+      "vEasy": "Defenders stay still, the offense plays without the ball.",
+      "vHard": "The defense switches zones without warning on every possession."
+    },
+    "x260": {
+      "titre": "Attack the gap on the dribble: draw two defenders",
+      "objectif": "Drive between two zone defenders to force them to close on the ball handler, then hit the teammate left alone.",
+      "placement": "Three attackers: a ball handler up top, two spaced wings. Two defenders play the top of a 2-3 zone. A waiting line behind each spot.",
+      "materiel": "Balls",
+      "etapes": [
+        "(4 min) The ball handler attacks the gap between the two defenders, two dribbles max. As soon as both touch him, he passes to the wing on the side that opened.",
+        "(4 min) The wing who catches shoots if open, or attacks the next gap if his defender runs at him.",
+        "(4 min) Continuous three-on-two: play to the shot, attackers rotate clockwise."
+      ],
+      "consignes": "Aim at the inside shoulders of both defenders, not at one of them. Head up during the drive; the pass leaves when the two defenders meet.",
+      "erreurs": "Dribbling at a defender instead of the gap, or passing before drawing: the zone has nothing to do.",
+      "corrections": "Place two cones between the defenders: the dribble must go between the cones.",
+      "reussite": "Seven attacks out of ten end with a shot with no defender within arm's reach.",
+      "vEasy": "Defenders don't leave their starting cone.",
+      "vHard": "Add a third defender in the low post who can help."
+    },
+    "x261": {
+      "titre": "Hit the high post against the 2-3 zone, four on three",
+      "objectif": "Get the ball into the high post, in the heart of the zone, and teach the receiver his three reads: shot, pass to the short corner, pass back out.",
+      "placement": "Four attackers: a point guard up top, a wing, a low post who will flash to the high post, a player in the short corner (between the low block and the corner). Three defenders: the two top defenders and the middle defender of a 2-3 zone.",
+      "materiel": "Balls, pinnies",
+      "etapes": [
+        "(5 min) The point guard passes to the wing, the post flashes to the high post, in the gap behind the two top defenders. The wing hits him. The high post turns to face the rim and shoots if nobody steps up.",
+        "(5 min) The middle defender steps up to the high post: immediate pass to the short corner, who finishes near the rim.",
+        "(5 min) The three defenders play live. The high post reads: shot, short corner, or kick back out to the point guard or the wing if the zone collapses."
+      ],
+      "consignes": "The high post catches with hands up and pivots to face the rim before any decision. The short corner stays behind his defender, out of sight.",
+      "erreurs": "The high post catches with his back to the rim and passes back out without looking: the zone hasn't moved.",
+      "corrections": "Set the rule: before passing, the high post must have seen the rim.",
+      "reussite": "After every high-post touch the middle defender steps up, and the offense scores or gets an open shot six times out of ten.",
+      "vEasy": "Passive defenders: they step up to the high post every time.",
+      "vHard": "Go to five-on-five against the full zone."
+    },
+    "x262": {
+      "titre": "Short corner and high-post dive",
+      "objectif": "Make the two posts play together against the bottom of the zone: when the short corner catches, the high post dives to the rim.",
+      "placement": "A wing with the ball, a post in the ball-side short corner, a post at the high post. Two defenders: the ball-side bottom defender and the middle defender.",
+      "materiel": "Balls",
+      "etapes": [
+        "(4 min) The wing passes to the short corner. The bottom defender steps out on him. The short corner turns to face the rim.",
+        "(4 min) On the pass, the high post dives to the rim through the gap. The short corner hits him with a bounce or lob pass, finish under the rim.",
+        "(4 min) Defenders choose: if the middle follows the dive, the short corner shoots or attacks the baseline."
+      ],
+      "consignes": "The dive starts when the ball leaves the wing's hands, not after. The short corner shot-fakes before hitting the diver.",
+      "erreurs": "The high post waits to see the pass arrive before diving: the middle defender has already closed.",
+      "corrections": "Have the wing shout \"short!\" as he passes: that's the signal to dive.",
+      "reussite": "The diver catches the ball in the paint seven times out of ten.",
+      "vEasy": "Defenders stay still, rep the pass and the timing.",
+      "vHard": "Add the weak-side bottom defender, who can help."
+    },
+    "x263": {
+      "titre": "Skip pass over the zone and attack the weak side",
+      "objectif": "Overload one side to draw the zone, then reverse with a single skip pass to attack the weak side before it recovers.",
+      "placement": "Five attackers in a 1-3-1 against a five-man 2-3 zone. Three attackers occupy the right side: wing, corner, short corner.",
+      "materiel": "Balls, pinnies",
+      "etapes": [
+        "(5 min) The ball goes to the right wing, then to the corner. The zone shifts right. The opposite wing stays wide, ready to catch.",
+        "(5 min) Skip pass over the zone, from right wing to left wing, above the top defenders. The receiver shoots if his defender is late, otherwise he attacks the gap.",
+        "(5 min) Five-on-five: the skip pass is allowed only after at least two passes on the strong side."
+      ],
+      "consignes": "The skip pass is high and firm, above the defenders' heads. The receiver is ready to shoot before the ball arrives: feet set, hands ready.",
+      "erreurs": "Slow lob pass: the zone has time to recover. Or a skip pass without first drawing the zone to the strong side.",
+      "corrections": "Count out loud: the receiver must shoot or attack before \"two\".",
+      "reussite": "After the skip pass, open shot or drive into the gap six times out of ten.",
+      "vEasy": "The zone shifts slowly, the coach signals when to pass.",
+      "vHard": "The weak-side top defender may anticipate the pass."
+    },
+    "x264": {
+      "titre": "The baseline runner against the zone",
+      "objectif": "Free a shooter in the corner by having him run under the zone, corner to corner, while the ball changes sides.",
+      "placement": "Five attackers: point guard up top, two wings, a post at the high post, the shooter in the left corner. Five-man 2-3 zone.",
+      "materiel": "Balls, pinnies",
+      "etapes": [
+        "(5 min) The point guard passes to the left wing. The shooter stays in the left corner, the bottom defender steps out toward him.",
+        "(5 min) The ball comes back to the point guard then goes to the right wing. During this reversal the shooter runs along the baseline, under the zone, to the right corner.",
+        "(5 min) The right wing hits him in the corner: shoot on the catch, or drive baseline if the defender closes out too fast."
+      ],
+      "consignes": "The shooter runs under the zone, tight to the baseline, without stopping in the paint. The ball must arrive in the corner at the same time as he does.",
+      "erreurs": "The shooter runs too early and waits in the corner: the bottom defender has time to settle.",
+      "corrections": "The shooter starts when the point guard catches the return pass, not before.",
+      "reussite": "The shooter catches alone in the corner six times out of ten.",
+      "vEasy": "No defense, work the timing of the run and passes.",
+      "vHard": "The ball-side bottom defender follows the runner under the zone."
+    },
+    "x265": {
+      "titre": "Screen the zone for the corner shooter",
+      "objectif": "Stop the bottom defender from closing out to the corner by screening his path.",
+      "placement": "A wing with the ball, a shooter in the ball-side corner, a post on the low block. Two defenders: the ball-side top defender and the ball-side bottom defender.",
+      "materiel": "Balls",
+      "etapes": [
+        "(4 min) The post steps up to screen the bottom defender on the corner side, in his path to the shooter. The wing passes to the corner as the screen is set.",
+        "(4 min) The shooter shoots on the catch. If the defender goes around the screen, the post seals toward the rim and calls for the ball.",
+        "(4 min) Same action on the other side, then five-on-five against a full 2-3 zone."
+      ],
+      "consignes": "The screen is set still, feet wide, on the defender's path to the corner. The corner waits for the screen before calling for the pass.",
+      "erreurs": "Moving screen, or passing to the corner before the screen is set.",
+      "corrections": "Have the screen held for two seconds before allowing the pass.",
+      "reussite": "The bottom defender arrives late on the shooter seven times out of ten.",
+      "vEasy": "The bottom defender stays put, work the screen position.",
+      "vHard": "The top defender may drop to help on the corner."
+    },
+    "x266": {
+      "titre": "Five-on-five against the zone: inside points",
+      "objectif": "Transfer all the principles into live play, rewarding the offense that gets the ball inside the zone before shooting.",
+      "placement": "Five-on-five. Defenders play a 2-3 or 1-3-1 zone, coach's choice. The coach keeps score.",
+      "materiel": "Balls, pinnies, scoreboard",
+      "etapes": [
+        "(6 min) Scoring: a catch at the high post is worth one point, a catch in the short corner is worth one point, a basket scored after one of these touches counts double.",
+        "(8 min) The coach changes the zone every possession. The offense must line up before the first pass.",
+        "(6 min) Close-game finish: last minute, the offense must score, the defense picks its zone."
+      ],
+      "consignes": "No shot before touching the high post or the short corner, except in transition before the zone is set.",
+      "erreurs": "Shooting after passes around the zone without ever getting inside.",
+      "corrections": "Cancel a basket scored without an inside touch, and explain why.",
+      "reussite": "The attacking team scores more points per possession than in the first round.",
+      "vEasy": "Fixed, announced zone; the defense doesn't change.",
+      "vHard": "Box-and-one: one defender follows the best shooter man-to-man."
     }
   },
   "es": {},

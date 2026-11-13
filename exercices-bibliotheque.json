@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generatedAt": "2026-09-04T00:00:00.000Z",
-  "note": "Bibliothèque PIVOT, fournées 1 à 3, 150 exercices (x1 à x150). Exercices originaux inspirés des principes techniques universels du basketball, terminologie FIBA. Aucune reproduction de source protégée. | Fournée 4 : x151 à x180. | Baby basket : x181 à x192. | Fournee 5, x203 a x238, 36 exercices issus de la collection Basket Pret : Systeme 365 (tomes 1 a 6). Fournee 6, x239 a x258, 20 exercices supplementaires des tomes 1 a 5. 56 exercices ajoutes au total, dont le nouveau theme Preparation mentale (x203 a x218). | Correction du 5 septembre : reassignation de l'animation de 4 exercices vers une famille plus fidele au contenu (x212, x213, x217, x234), et fixation deliberee (non aleatoire) de l'animation des 13 autres exercices du theme mental directement dans le code de l'application.",
+  "note": "Bibliothèque PIVOT, fournées 1 à 3, 150 exercices (x1 à x150). Exercices originaux inspirés des principes techniques universels du basketball, terminologie FIBA. Aucune reproduction de source protégée. | Fournée 4 : x151 à x180. | Baby basket : x181 à x192. | Fournee 5, x203 a x238, 36 exercices issus de la collection Basket Pret : Systeme 365 (tomes 1 a 6). Fournee 6, x239 a x258, 20 exercices supplementaires des tomes 1 a 5. 56 exercices ajoutes au total, dont le nouveau theme Preparation mentale (x203 a x218). | Correction du 5 septembre : reassignation de l'animation de 4 exercices vers une famille plus fidele au contenu (x212, x213, x217, x234), et fixation deliberee (non aleatoire) de l'animation des 13 autres exercices du theme mental directement dans le code de l'application. | Fournee 7 (13 novembre 2026) : x259 a x266, parcours complet d'attaque de zone (lecture, intervalles, poste haut, short corner, passe par-dessus, coureur de ligne de fond, ecran sur la zone, match a points), chacun avec une animation dediee.",
   "exercises": [
     {
       "id": "x1",
@@ -4025,7 +4025,8 @@
         "x63"
       ],
       "suivants": [
-        "x93"
+        "x93",
+        "x260"
       ],
       "similaires": [],
       "tags": [
@@ -6173,7 +6174,8 @@
         "x92"
       ],
       "suivants": [
-        "x142"
+        "x142",
+        "x262"
       ],
       "similaires": [],
       "tags": [
@@ -7615,7 +7617,8 @@
         "x173"
       ],
       "suivants": [
-        "x175"
+        "x175",
+        "x261"
       ],
       "similaires": [
         "x164"
@@ -10754,7 +10757,9 @@
       "postes": "Tous",
       "stats": "Fluidité offensive, tirs ouverts",
       "prerequis": [],
-      "suivants": [],
+      "suivants": [
+        "x259"
+      ],
       "similaires": [],
       "tags": [
         "espacement",
@@ -10986,7 +10991,9 @@
       "postes": "Tous",
       "stats": "Attaques de zone réussies, tirs ouverts",
       "prerequis": [],
-      "suivants": [],
+      "suivants": [
+        "x259"
+      ],
       "similaires": [],
       "tags": [
         "zone",
@@ -11033,6 +11040,369 @@
         "systèmes"
       ],
       "animFamily": "Situation"
+    },
+    {
+      "id": "x259",
+      "titre": "Lire la zone et s'aligner dans les intervalles",
+      "cat": "Jeu collectif",
+      "theme": "Zone",
+      "niveau": "Intermédiaire",
+      "age": "U13 à Pro",
+      "joueursMin": 10,
+      "joueursMax": 12,
+      "dur": 12,
+      "intensite": "Faible",
+      "materiel": "Ballons, chasubles",
+      "surface": "Demi-terrain",
+      "objectif": "Reconnaître en trois secondes la zone adverse et s'aligner contre elle : alignement impair contre une zone paire, et inversement.",
+      "placement": "Cinq défenseurs se placent en zone sur l'annonce du coach (2-3 ou 1-3-1). Cinq attaquants arrivent du milieu de terrain en dribble.",
+      "etapes": [
+        "(4 min) Le coach annonce « 2-3 » ou « 1-3-1 ». Les défenseurs se placent, les attaquants s'alignent sans ballon : 1-3-1 contre 2-3, deux arrières contre 1-3-1. Le coach compte jusqu'à trois et corrige les placements.",
+        "(4 min) Même travail avec ballon. Après l'alignement, cinq passes au moins, chaque receveur se place dans un intervalle entre deux défenseurs.",
+        "(4 min) Le coach change la zone en cours d'action. L'attaque doit se réaligner avant la passe suivante, première passe au poste haut dès qu'il est ouvert."
+      ],
+      "consignes": "Contre deux défenseurs devant, un seul attaquant en haut. Contre un seul défenseur devant, deux attaquants en haut. Chacun se place entre deux défenseurs, jamais en face d'un seul.",
+      "erreurs": "Garder l'alignement habituel de l'attaque homme à homme : chaque attaquant se retrouve face à un défenseur qui n'a rien à décider.",
+      "corrections": "Arrête l'action, demande à chaque attaquant de nommer les deux défenseurs qu'il met en difficulté, puis rejoue.",
+      "reussite": "L'attaque est alignée correctement en moins de trois secondes, quatre fois sur cinq.",
+      "vEasy": "Les défenseurs restent immobiles, l'attaque joue sans ballon.",
+      "vHard": "La défense change de zone sans prévenir, à chaque possession.",
+      "postes": "Tous",
+      "stats": "Alignements corrects en moins de 3 secondes",
+      "prerequis": [
+        "x251"
+      ],
+      "suivants": [
+        "x260",
+        "x261"
+      ],
+      "similaires": [
+        "x257"
+      ],
+      "tags": [
+        "attaque de zone",
+        "lecture de jeu",
+        "intervalles",
+        "alignement"
+      ],
+      "animFamily": "Jeu collectif"
+    },
+    {
+      "id": "x260",
+      "titre": "Attaquer l'intervalle en dribble : fixer deux défenseurs",
+      "cat": "Jeu collectif",
+      "theme": "Zone",
+      "niveau": "Intermédiaire",
+      "age": "U13 à Pro",
+      "joueursMin": 5,
+      "joueursMax": 10,
+      "dur": 12,
+      "intensite": "Moyenne",
+      "materiel": "Ballons",
+      "surface": "Demi-terrain",
+      "objectif": "Pénétrer entre deux défenseurs de zone pour les obliger à se refermer sur le porteur, puis servir le partenaire laissé seul.",
+      "placement": "Trois attaquants : un porteur en haut, deux ailiers écartés. Deux défenseurs jouent le haut d'une zone 2-3. Une colonne d'attente derrière chaque poste.",
+      "etapes": [
+        "(4 min) Le porteur attaque l'intervalle entre les deux défenseurs, deux dribbles maximum. Dès que les deux le touchent, il passe à l'ailier du côté qui s'est ouvert.",
+        "(4 min) L'ailier qui reçoit tire s'il est libre, ou attaque à son tour l'intervalle suivant si son défenseur arrive en courant.",
+        "(4 min) Trois contre deux en continu : on joue jusqu'au tir, les attaquants tournent dans le sens des aiguilles d'une montre."
+      ],
+      "consignes": "Vise l'épaule intérieure des deux défenseurs, pas l'un des deux. Tête haute pendant la pénétration, la passe part au moment où les deux défenseurs se touchent.",
+      "erreurs": "Dribbler vers un défenseur au lieu de l'intervalle, ou passer avant d'avoir fixé : la zone n'a rien à faire.",
+      "corrections": "Pose deux plots entre les défenseurs : le dribble doit passer entre les plots.",
+      "reussite": "Sept attaques sur dix finissent par un tir sans défenseur à moins d'un bras.",
+      "vEasy": "Les défenseurs ne quittent pas leur plot de départ.",
+      "vHard": "Ajouter un troisième défenseur au poste bas qui peut aider.",
+      "postes": "Arrières, ailiers",
+      "stats": "Tirs ouverts créés par la pénétration",
+      "prerequis": [
+        "x259"
+      ],
+      "suivants": [
+        "x261"
+      ],
+      "similaires": [
+        "x92"
+      ],
+      "tags": [
+        "attaque de zone",
+        "pénétration",
+        "fixation",
+        "intervalles"
+      ],
+      "animFamily": "Jeu collectif"
+    },
+    {
+      "id": "x261",
+      "titre": "Toucher le poste haut contre la zone 2-3, quatre contre trois",
+      "cat": "Jeu collectif",
+      "theme": "Zone",
+      "niveau": "Avancé",
+      "age": "U15 à Pro",
+      "joueursMin": 7,
+      "joueursMax": 10,
+      "dur": 15,
+      "intensite": "Moyenne",
+      "materiel": "Ballons, chasubles",
+      "surface": "Demi-terrain",
+      "objectif": "Faire entrer le ballon au poste haut, au cœur de la zone, et apprendre au receveur ses trois lectures : tir, passe au short corner, passe à l'extérieur.",
+      "placement": "Quatre attaquants : un meneur en haut, un ailier, un intérieur bas qui va flasher au poste haut, un joueur au short corner (entre le poste bas et le corner). Trois défenseurs : les deux du haut et le défenseur du milieu d'une zone 2-3.",
+      "etapes": [
+        "(5 min) Le meneur passe à l'ailier, l'intérieur flashe au poste haut, dans l'intervalle derrière les deux défenseurs du haut. L'ailier lui donne le ballon. Le poste haut se retourne face au cercle et tire si personne ne sort.",
+        "(5 min) Le défenseur du milieu sort sur le poste haut : passe immédiate au short corner, qui finit près du cercle.",
+        "(5 min) Les trois défenseurs jouent libre. Le poste haut lit : tir, short corner, ou ressortie vers le meneur ou l'ailier si la zone se referme."
+      ],
+      "consignes": "Le poste haut reçoit les mains hautes, pivote face au cercle avant toute décision. Le short corner reste dans le dos du défenseur, hors de sa vue.",
+      "erreurs": "Le poste haut reçoit dos au cercle et repasse à l'extérieur sans regarder : la zone n'a pas bougé.",
+      "corrections": "Impose la règle : avant de passer, le poste haut doit avoir vu le cercle.",
+      "reussite": "Après chaque touche au poste haut, le défenseur du milieu sort, et l'attaque marque ou tire ouvert six fois sur dix.",
+      "vEasy": "Défenseurs passifs : ils sortent sur le poste haut à chaque fois.",
+      "vHard": "Passer à cinq contre cinq avec la zone complète.",
+      "postes": "Intérieurs, ailiers",
+      "stats": "Touches au poste haut, paniers après touche",
+      "prerequis": [
+        "x260"
+      ],
+      "suivants": [
+        "x262"
+      ],
+      "similaires": [
+        "x174"
+      ],
+      "tags": [
+        "attaque de zone",
+        "poste haut",
+        "short corner",
+        "lecture"
+      ],
+      "animFamily": "Jeu collectif"
+    },
+    {
+      "id": "x262",
+      "titre": "Short corner et plongeon du poste haut",
+      "cat": "Jeu collectif",
+      "theme": "Zone",
+      "niveau": "Avancé",
+      "age": "U15 à Pro",
+      "joueursMin": 5,
+      "joueursMax": 8,
+      "dur": 12,
+      "intensite": "Moyenne",
+      "materiel": "Ballons",
+      "surface": "Demi-terrain",
+      "objectif": "Faire jouer les deux intérieurs ensemble contre le bas de la zone : quand le short corner reçoit, le poste haut plonge au cercle.",
+      "placement": "Un ailier avec le ballon, un intérieur au short corner côté ballon, un intérieur au poste haut. Deux défenseurs : le défenseur du bas côté ballon et le défenseur du milieu.",
+      "etapes": [
+        "(4 min) L'ailier passe au short corner. Le défenseur du bas sort sur lui. Le short corner se retourne face au cercle.",
+        "(4 min) Au moment de la passe, le poste haut plonge vers le cercle dans l'intervalle. Le short corner lui donne le ballon à terre ou par-dessus, finition sous le cercle.",
+        "(4 min) Les défenseurs choisissent : si le milieu suit le plongeon, le short corner tire ou attaque la ligne de fond."
+      ],
+      "consignes": "Le plongeon part au moment où le ballon quitte les mains de l'ailier, pas après. Le short corner fait une feinte de tir avant de servir le plongeon.",
+      "erreurs": "Le poste haut attend de voir la passe arriver pour plonger : le défenseur du milieu a déjà fermé.",
+      "corrections": "Fais crier « short ! » à l'ailier au moment où il passe : c'est le signal du plongeon.",
+      "reussite": "Le plongeon reçoit le ballon dans la raquette sept fois sur dix.",
+      "vEasy": "Défenseurs immobiles, on répète la passe et le timing.",
+      "vHard": "Ajouter le défenseur du bas côté opposé, qui peut venir aider.",
+      "postes": "Intérieurs",
+      "stats": "Passes réussies short corner vers plongeon",
+      "prerequis": [
+        "x261"
+      ],
+      "suivants": [
+        "x263"
+      ],
+      "similaires": [
+        "x141"
+      ],
+      "tags": [
+        "attaque de zone",
+        "short corner",
+        "haut-bas",
+        "intérieurs"
+      ],
+      "animFamily": "Jeu collectif"
+    },
+    {
+      "id": "x263",
+      "titre": "Passe par-dessus la zone et attaque du côté faible",
+      "cat": "Jeu collectif",
+      "theme": "Zone",
+      "niveau": "Avancé",
+      "age": "U15 à Pro",
+      "joueursMin": 8,
+      "joueursMax": 10,
+      "dur": 15,
+      "intensite": "Moyenne",
+      "materiel": "Ballons, chasubles",
+      "surface": "Demi-terrain",
+      "objectif": "Surcharger un côté pour attirer la zone, puis renverser d'une seule passe par-dessus pour attaquer le côté faible avant qu'elle revienne.",
+      "placement": "Cinq attaquants en 1-3-1 contre une zone 2-3 de cinq défenseurs. Trois attaquants occupent le côté droit : aile, corner, short corner.",
+      "etapes": [
+        "(5 min) Le ballon va à l'aile droite, puis au corner. La zone glisse vers la droite. L'aile opposée reste large, prête à recevoir.",
+        "(5 min) Passe par-dessus la zone, de l'aile droite à l'aile gauche, au-dessus des défenseurs du haut. Le receveur tire si le défenseur arrive en retard, sinon il attaque l'intervalle.",
+        "(5 min) Cinq contre cinq : la passe par-dessus n'est permise qu'après au moins deux passes du côté fort."
+      ],
+      "consignes": "La passe par-dessus part haute et tendue, au-dessus de la tête des défenseurs. Le receveur est prêt à tirer avant que le ballon arrive : pieds orientés, mains prêtes.",
+      "erreurs": "Passe lobée trop lente : la zone a le temps de revenir. Ou passe par-dessus sans avoir d'abord attiré la zone du côté fort.",
+      "corrections": "Compte à voix haute : le receveur doit tirer ou attaquer avant « deux ».",
+      "reussite": "Après la passe par-dessus, tir ouvert ou pénétration dans l'intervalle six fois sur dix.",
+      "vEasy": "La zone glisse lentement, le coach signale le moment de la passe.",
+      "vHard": "Le défenseur du haut côté faible a le droit d'anticiper la passe.",
+      "postes": "Tous",
+      "stats": "Tirs ouverts après passe par-dessus",
+      "prerequis": [
+        "x262"
+      ],
+      "suivants": [
+        "x264"
+      ],
+      "similaires": [
+        "x141",
+        "x257"
+      ],
+      "tags": [
+        "attaque de zone",
+        "passe par-dessus",
+        "surcharge",
+        "renversement"
+      ],
+      "animFamily": "Jeu collectif"
+    },
+    {
+      "id": "x264",
+      "titre": "Le coureur de ligne de fond contre la zone",
+      "cat": "Jeu collectif",
+      "theme": "Zone",
+      "niveau": "Avancé",
+      "age": "U15 à Pro",
+      "joueursMin": 8,
+      "joueursMax": 10,
+      "dur": 15,
+      "intensite": "Forte",
+      "materiel": "Ballons, chasubles",
+      "surface": "Demi-terrain",
+      "objectif": "Libérer un tireur dans le corner en le faisant courir sous la zone, d'un corner à l'autre, pendant que le ballon change de côté.",
+      "placement": "Cinq attaquants : meneur en haut, deux ailes, un intérieur au poste haut, le tireur dans le corner gauche. Zone 2-3 de cinq défenseurs.",
+      "etapes": [
+        "(5 min) Le meneur passe à l'aile gauche. Le tireur reste au corner gauche, le défenseur du bas sort vers lui.",
+        "(5 min) Le ballon revient au meneur puis part à l'aile droite. Pendant ce renversement, le tireur court le long de la ligne de fond, sous la zone, jusqu'au corner droit.",
+        "(5 min) L'aile droite lui passe dans le corner : tir dès la réception, ou dribble vers la ligne de fond si le défenseur sort trop vite."
+      ],
+      "consignes": "Le tireur court sous la zone, collé à la ligne de fond, sans s'arrêter dans la raquette. Le ballon doit arriver dans le corner en même temps que lui.",
+      "erreurs": "Le tireur court trop tôt et attend dans le corner : le défenseur du bas a le temps de s'installer.",
+      "corrections": "Le tireur part au moment où le meneur reçoit la passe de retour, pas avant.",
+      "reussite": "Le tireur reçoit seul dans le corner six fois sur dix.",
+      "vEasy": "Sans défense, on travaille le timing de la course et des passes.",
+      "vHard": "Le défenseur du bas côté ballon suit le coureur sous la zone.",
+      "postes": "Arrières, ailiers",
+      "stats": "Tirs du corner pris seuls",
+      "prerequis": [
+        "x263"
+      ],
+      "suivants": [
+        "x265"
+      ],
+      "similaires": [
+        "x257"
+      ],
+      "tags": [
+        "attaque de zone",
+        "coureur de ligne de fond",
+        "tir",
+        "corner"
+      ],
+      "animFamily": "Jeu collectif"
+    },
+    {
+      "id": "x265",
+      "titre": "Poser un écran sur la zone pour le tireur du corner",
+      "cat": "Jeu collectif",
+      "theme": "Zone",
+      "niveau": "Avancé",
+      "age": "U15 à Pro",
+      "joueursMin": 6,
+      "joueursMax": 10,
+      "dur": 12,
+      "intensite": "Moyenne",
+      "materiel": "Ballons",
+      "surface": "Demi-terrain",
+      "objectif": "Empêcher le défenseur du bas de sortir sur le corner en posant un écran sur son chemin.",
+      "placement": "Un ailier avec le ballon, un tireur dans le corner côté ballon, un intérieur au poste bas. Deux défenseurs : le défenseur du haut côté ballon et le défenseur du bas côté ballon.",
+      "etapes": [
+        "(4 min) L'intérieur monte poser l'écran sur le défenseur du bas, côté corner, sur son chemin vers le tireur. L'ailier passe au corner au moment où l'écran est posé.",
+        "(4 min) Le tireur tire dès la réception. Si le défenseur contourne l'écran, l'intérieur se retourne vers le cercle et demande le ballon.",
+        "(4 min) Même action jouée de l'autre côté, puis en cinq contre cinq contre une zone 2-3 complète."
+      ],
+      "consignes": "L'écran est posé immobile, pieds écartés, sur le chemin du défenseur vers le corner. Le corner attend que l'écran soit posé pour demander la passe.",
+      "erreurs": "Écran posé en mouvement, ou passe au corner avant que l'écran soit en place.",
+      "corrections": "Fais tenir l'écran deux secondes avant d'autoriser la passe.",
+      "reussite": "Le défenseur du bas arrive en retard sur le tireur sept fois sur dix.",
+      "vEasy": "Le défenseur du bas reste sur place, on travaille la position de l'écran.",
+      "vHard": "Le défenseur du haut a le droit de descendre aider sur le corner.",
+      "postes": "Intérieurs, ailiers",
+      "stats": "Tirs du corner après écran",
+      "prerequis": [
+        "x264"
+      ],
+      "suivants": [
+        "x266"
+      ],
+      "similaires": [
+        "x92"
+      ],
+      "tags": [
+        "attaque de zone",
+        "écran",
+        "corner",
+        "tir"
+      ],
+      "animFamily": "Jeu collectif"
+    },
+    {
+      "id": "x266",
+      "titre": "Cinq contre cinq contre la zone : les points de l'intérieur",
+      "cat": "Jeu collectif",
+      "theme": "Zone",
+      "niveau": "Avancé",
+      "age": "U15 à Pro",
+      "joueursMin": 10,
+      "joueursMax": 12,
+      "dur": 20,
+      "intensite": "Forte",
+      "materiel": "Ballons, chasubles, tableau de score",
+      "surface": "Demi-terrain",
+      "objectif": "Transférer tous les principes en jeu réel, en récompensant l'attaque qui fait entrer le ballon dans la zone avant de tirer.",
+      "placement": "Cinq contre cinq. Les défenseurs jouent une zone 2-3 ou 1-3-1, au choix du coach. Le coach tient le score.",
+      "etapes": [
+        "(6 min) Barème : une passe reçue au poste haut vaut un point, une passe reçue au short corner vaut un point, un panier marqué après l'une de ces touches compte double.",
+        "(8 min) Le coach change la zone à chaque possession. L'attaque doit s'aligner avant la première passe.",
+        "(6 min) Fin de match à score serré : dernière minute, l'attaque doit marquer, la défense choisit sa zone."
+      ],
+      "consignes": "Pas de tir avant d'avoir touché le poste haut ou le short corner, sauf en contre-attaque, avant que la zone soit placée.",
+      "erreurs": "Tirer après des passes autour de la zone sans jamais entrer dedans.",
+      "corrections": "Annule le panier marqué sans touche intérieure, et explique pourquoi.",
+      "reussite": "L'équipe qui attaque marque plus de points par possession qu'au premier passage.",
+      "vEasy": "Zone fixe et annoncée, la défense ne change pas.",
+      "vHard": "Zone mixte : un défenseur suit le meilleur tireur en individuel.",
+      "postes": "Tous",
+      "stats": "Touches intérieures, points par possession",
+      "prerequis": [
+        "x265"
+      ],
+      "suivants": [],
+      "similaires": [
+        "x257",
+        "x92",
+        "x174",
+        "x141"
+      ],
+      "tags": [
+        "attaque de zone",
+        "match",
+        "poste haut",
+        "short corner"
+      ],
+      "animFamily": "Jeu collectif"
     }
   ]
 }
