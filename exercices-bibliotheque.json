@@ -6776,7 +6776,7 @@
       "postes": "Tous",
       "stats": "Passes de transition réussies",
       "prerequis": [
-        "e17"
+        "x14"
       ],
       "suivants": [
         "x156",

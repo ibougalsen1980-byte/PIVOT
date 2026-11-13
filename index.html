@@ -5593,6 +5593,22 @@ function playAnim(){
   step();
 }
 /* ---- Export PDF / Vidéo / Partage ---- */
+// Correctif du 13/11/2026 : un SVG converti en image (blob) ne charge pas les fichiers externes,
+// donc les silhouettes assets/players/*.png disparaissaient de l'export PDF (seuls les badges
+// restaient). On charge une fois les 6 images en base64 et on les intègre au SVG d'export.
+const PV_PLAYER_DATA={};
+async function pvEnsurePlayerImgData(){
+  const files=Object.values(PLAYER_IMG).map(o=>o.file).filter(f=>!PV_PLAYER_DATA[f]);
+  await Promise.all(files.map(async f=>{
+    try{
+      const blob=await (await fetch(f)).blob();
+      PV_PLAYER_DATA[f]=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(blob);});
+    }catch(e){}
+  }));
+}
+function pvInlinePlayerImgs(svg){
+  return svg.replace(/href="(assets\/players\/[a-z_]+\.png)"/g,(m,f)=>PV_PLAYER_DATA[f]?`href="${PV_PLAYER_DATA[f]}"`:m);
+}
 function frameStandaloneSVG(f){
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${CW} ${CH}" width="${CW}" height="${CH}">
     <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ffffff"/></marker></defs>
@@ -5616,11 +5632,12 @@ async function buildPDFBlob(title){
   const { jsPDF }=window.jspdf;
   const pdf=new jsPDF({orientation:"portrait",unit:"pt",format:"a4"});
   const pw=pdf.internal.pageSize.getWidth(), ph=pdf.internal.pageSize.getHeight();
+  await pvEnsurePlayerImgData();
   for(let i=0;i<tac.frames.length;i++){
     if(i>0) pdf.addPage();
     pdf.setFontSize(16); pdf.setTextColor(20,24,34);
     pdf.text(title+"   image "+(i+1)+" sur "+tac.frames.length, 40, 46);
-    const img=await svgToImage(frameStandaloneSVG(tac.frames[i]));
+    const img=await svgToImage(pvInlinePlayerImgs(frameStandaloneSVG(tac.frames[i])));
     const c=document.createElement("canvas"); c.width=CW*2; c.height=CH*2;
     const cx=c.getContext("2d");
     // JPEG compressé au lieu de PNG, corrigé le 18/10/2026 : le PNG était réembarqué non compressé
