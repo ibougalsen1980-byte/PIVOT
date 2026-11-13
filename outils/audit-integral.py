@@ -33,6 +33,10 @@ SETUP = """()=>{
      {title:'Tir',cat:'Tir',dur:15,intensity:'Moyenne',points:'y',exoId:allExos()[0].id}]};
   t.savedSessions=[{id:'ss1',title:'Ancienne',ts:Date.now(),blocks:[{title:'A',cat:'Tir',dur:10}]}];
   t.obs=[{ts:Date.now(),txt:'obs'}];
+  t.lexique='# DEFENSE'+String.fromCharCode(10)+'ROUGE = changement';
+  t.fiches=[{id:'fi1',ts:Date.now(),f:{date:'2026-11-13',start:'18:30',obj:'objectif',bg:'white',plays:[0]},
+     src:{sessTitle:'Fiche test',blocks:[{title:'A',cat:'Tir',dur:10}],team:'Audit',category:'U15',
+     players:[{first:'P',last:'N',num:4,present:true,injury:{active:false}}],plays:[],lexique:'ROUGE = changement'}}];
   t.match={opponent:'Adv',live:true,events:[{id:'e1',pid:'pl0',type:'fg2',made:true,side:'us'},{id:'e2',side:'opp',pts:2,type:'opp'}],
      onCourt:['pl0','pl1','pl2','pl3','pl4']};
   DB.plays=[{title:'Sys',frames:[{tokens:[{id:'a',kind:'off',label:'1',x:250,y:380},{id:'b',kind:'ball',label:'',x:265,y:370}],
