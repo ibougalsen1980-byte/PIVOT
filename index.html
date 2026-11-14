@@ -8513,6 +8513,30 @@ try{
 }catch(e){}
 // Retour de paiement Stripe : on vérifie et on déverrouille.
 (async function(){ if(new URLSearchParams(location.search).get('session_id')){ await checkStripeReturn(); render(); } })();
+// Compteur anonyme d'usage (14/11/2026). Compte combien de fois chaque action est faite, par jour,
+// sans identité (ni compte, ni appareil, ni adresse) : table usage_events, fonction pivot_track.
+// Inactif hors du site de production et pendant les tests automatiques, pour ne pas fausser les chiffres.
+function track(ev){
+  try{
+    if(location.hostname!=="pivotcoach.netlify.app" || navigator.webdriver || !supaOn()) return;
+    supa.rpc("pivot_track",{p_event:ev, p_mode:(isDemo()?"decouverte":"compte")}).then(function(){},function(){});
+  }catch(e){}
+}
+(function(){
+  const map={askAI:"ia_question",aiChat:"ia_ouverte",generateSession:"seance_generee",saveCurrentSession:"seance_enregistree",
+    exportPDF:"seance_pdf",exportFichePDF:"fiche_pdf",openMesFiches:"mes_fiches",exoDetail:"exercice_ouvert",
+    previewSystem:"systeme_apercu",loadSystem:"systeme_charge",createPlayer:"joueur_ajoute",endMatch:"match_termine",
+    openPricing:"tarifs_vus",stripeGo:"paiement_clic",startDemo:"decouverte_lancee"};
+  Object.keys(map).forEach(function(f){
+    const orig=window[f]; if(typeof orig!=="function") return;
+    window[f]=function(){ track(map[f]); return orig.apply(this,arguments); };
+  });
+  [["cloudLogin","connexion"],["cloudSignup","inscription"]].forEach(function(x){
+    const orig=window[x[0]]; if(typeof orig!=="function") return;
+    window[x[0]]=async function(){ const had=!!supaUser; const r=await orig.apply(this,arguments); if(!had && supaUser) track(x[1]); return r; };
+  });
+  try{ if(!sessionStorage.getItem("pv_open")){ sessionStorage.setItem("pv_open","1"); setTimeout(function(){ track("app_ouverte"); },2500); } }catch(e){}
+})();
 setTimeout(function(){ var s=document.getElementById('splash'); if(s){ s.classList.add('gone'); setTimeout(function(){ if(s&&s.parentNode) s.parentNode.removeChild(s); },500);} },1600);
 if(_recoveryError){ try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} setTimeout(function(){ flash("Ce lien de réinitialisation a expiré ou a déjà été utilisé. Redemande un mot de passe oublié."); },1800); }
 </script>
