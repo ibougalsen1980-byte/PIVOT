@@ -7,6 +7,7 @@
     "node": "24.x"
   },
   "dependencies": {
-    "web-push": "^3.6.7"
+    "web-push": "^3.6.7",
+    "@netlify/blobs": "^11.1.9"
   }
 }
