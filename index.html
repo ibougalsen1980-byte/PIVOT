@@ -2190,7 +2190,10 @@ function flash(msg){const f=document.getElementById("flash");f.textContent=msg;f
 /* Effets sonores discrets, synthétisés, sans fichier externe */
 let _audio=null;
 /* Échantillons réels enregistrés par le coach */
-const SND_URLS={bounce:"snd-bounce.mp3", net:"snd-net.mp3", crowd:"snd-crowd.mp3"};
+// 16/11/2026 : snd-bounce.mp3 et snd-net.mp3 n'ont jamais été déposés sur le site (deux erreurs 404 à
+// chaque premier son). Rebond et filet restent joués par la synthèse de repli ci-dessous, sans changement
+// audible. Pour remettre un vrai échantillon : déposer le fichier puis rajouter sa clé ici.
+const SND_URLS={crowd:"snd-crowd.mp3"};
 let _buf={};
 function _loadSnd(){
   if(!_audio) return;
