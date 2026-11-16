@@ -1718,6 +1718,11 @@ const I18N_EXTRA={"en":{"Attaque":"Offense","Contre la zone":"Against the zone",
   es:{"Réglages":"Ajustes","Fiche d'entraînement":"Ficha de entrenamiento","Fiche A4":"Ficha A4","Fiche d'entraînement A4":"Ficha de entrenamiento A4","Générer la fiche PDF":"Generar la ficha PDF","Heure de début":"Hora de inicio","Objectif du jour (facultatif)":"Objetivo del día (opcional)","Systèmes au verso (3 maximum)":"Sistemas al dorso (3 máximo)","Infos de l'équipe (gardées d'une fiche à l'autre)":"Datos del equipo (se guardan de una ficha a otra)","Lexique de l'équipe":"Léxico del equipo","Lexique de l'équipe (exemple à adapter)":"Léxico del equipo (ejemplo a adaptar)","Fond des schémas":"Fondo de los esquemas","Prochain match":"Próximo partido","Matériel":"Material","Lieu":"Lugar","Staff":"Cuerpo técnico","Enregistrer la séance":"Guardar la sesión","Observation de séance":"Observación de la sesión","Noter":"Anotar","Code d'accès":"Código de acceso","Activer":"Activar","Valider":"Validar","Ta catégorie":"Tu categoría","Fiche prête, à vérifier":"Ficha lista, por revisar","J'ai compris":"Entendido","Mes fiches":"Mis fichas","Recharger":"Recargar","Fermer":"Cerrar","Nouvelle fiche avec la séance en cours":"Nueva ficha con la sesión actual"},
   pt:{"Réglages":"Definições","Fiche d'entraînement":"Ficha de treino","Fiche A4":"Ficha A4","Fiche d'entraînement A4":"Ficha de treino A4","Générer la fiche PDF":"Gerar a ficha PDF","Heure de début":"Hora de início","Objectif du jour (facultatif)":"Objetivo do dia (opcional)","Systèmes au verso (3 maximum)":"Sistemas no verso (3 no máximo)","Infos de l'équipe (gardées d'une fiche à l'autre)":"Dados da equipa (guardados de uma ficha para outra)","Lexique de l'équipe":"Léxico da equipa","Lexique de l'équipe (exemple à adapter)":"Léxico da equipa (exemplo a adaptar)","Fond des schémas":"Fundo dos esquemas","Prochain match":"Próximo jogo","Matériel":"Material","Lieu":"Local","Staff":"Equipa técnica","Enregistrer la séance":"Guardar o treino","Observation de séance":"Observação do treino","Noter":"Anotar","Code d'accès":"Código de acesso","Activer":"Ativar","Valider":"Validar","Ta catégorie":"A tua categoria","Fiche prête, à vérifier":"Ficha pronta, a verificar","J'ai compris":"Entendi","Mes fiches":"As minhas fichas","Recharger":"Recarregar","Fermer":"Fechar","Nouvelle fiche avec la séance en cours":"Nova ficha com o treino atual"}};
   ["en","es","pt"].forEach(function(l){ if(!I18N[l]) return; Object.keys(add[l]).forEach(function(k){ if(I18N[l][k]===undefined) I18N[l][k]=add[l][k]; }); }); })();
+(function(){ const add={
+  en:{"Modifier le schéma":"Edit diagram","Aucun schéma":"No diagram","Commentaire (imprimé sous le schéma)":"Comment (printed under the diagram)","Schéma de l'exercice (imprimé dans la Fiche pour le banc)":"Drill diagram (printed in the bench sheet)","Titre et commentaire":"Title and comment"},
+  es:{"Modifier le schéma":"Editar el esquema","Aucun schéma":"Ningún esquema","Commentaire (imprimé sous le schéma)":"Comentario (impreso bajo el esquema)","Schéma de l'exercice (imprimé dans la Fiche pour le banc)":"Esquema del ejercicio (impreso en la ficha para el banco)","Titre et commentaire":"Título y comentario"},
+  pt:{"Modifier le schéma":"Editar o esquema","Aucun schéma":"Nenhum esquema","Commentaire (imprimé sous le schéma)":"Comentário (impresso sob o esquema)","Schéma de l'exercice (imprimé dans la Fiche pour le banc)":"Esquema do exercício (impresso na ficha do banco)","Titre et commentaire":"Título e comentário"} };
+  ["en","es","pt"].forEach(function(l){ if(!I18N[l]) return; Object.keys(add[l]).forEach(function(k){ if(I18N[l][k]===undefined) I18N[l][k]=add[l][k]; }); }); })();
 (function(){ ["en","es","pt"].forEach(function(l){ if(!I18N[l]||!I18N_EXTRA[l]) return;
   Object.keys(I18N_EXTRA[l]).forEach(function(k){ if(I18N[l][k]===undefined) I18N[l][k]=I18N_EXTRA[l][k]; }); }); })();
 function i18nPhrase(t,d,depth){
@@ -4533,6 +4538,7 @@ function customBlockModal(){
     </div>
     <div style="height:8px"></div>
     <label class="fld">Points clés (optionnel)</label><textarea id="cb_pts" rows="2" placeholder="Consignes, objectif, organisation"></textarea>
+    ${pvPlaySelectHTML("")}
     <div style="height:12px"></div>
     <button class="btn block" onclick="createCustomBlock()">Ajouter à la séance</button>
     <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Annuler</button>
@@ -4543,7 +4549,8 @@ function createCustomBlock(){
   const t=val("cb_title"); if(!t){ flash("Donne un nom au bloc"); return; }
   if(!T().session) T().session={title:"Nouvelle séance",blocks:[]};
   if(!T().session.blocks) T().session.blocks=[];
-  T().session.blocks.push({title:t, cat:"Perso", dur:parseInt(val("cb_dur"))||10, intensity:val("cb_int")||"Moyenne", points:val("cb_pts")||""});
+  const nb={title:t, cat:"Perso", dur:parseInt(val("cb_dur"))||10, intensity:val("cb_int")||"Moyenne", points:val("cb_pts")||""};
+  pvReadPlaySelect(nb); T().session.blocks.push(nb);
   save(); closeModal(); renderSession(); flash("Bloc ajouté");
 }
 function editBlock(i){
@@ -4557,6 +4564,7 @@ function editBlock(i){
     </div>
     <div style="height:8px"></div>
     <label class="fld">Points clés</label><textarea id="eb_pts" rows="2">${b.points||""}</textarea>
+    ${pvPlaySelectHTML(b.playId||"")}
     <div style="height:12px"></div>
     <button class="btn block" onclick="applyEditBlock(${i})">Enregistrer</button>
     ${b.exoId?`<button class="btn sec block" style="margin-top:8px" onclick="exoDetail('${b.exoId}')">Voir la fiche complète de l'exercice</button>`:(b.physId!=null?`<button class="btn sec block" style="margin-top:8px" onclick="physDetail(${b.physId})">Voir la fiche complète</button>`:"")}
@@ -4568,6 +4576,7 @@ function applyEditBlock(i){
   const b=T().session.blocks[i]; if(!b) return;
   const t=val("eb_title"); if(t) b.title=t;
   b.dur=parseInt(val("eb_dur"))||b.dur; b.intensity=val("eb_int")||b.intensity; b.points=val("eb_pts")||"";
+  pvReadPlaySelect(b);
   save(); closeModal(); renderSession(); flash("Bloc mis à jour");
 }
 /* Saisie dans une fenêtre de l'app (13/11/2026) : remplace les fenêtres natives du navigateur
@@ -4694,7 +4703,7 @@ function ficheSnapshot(f){
   const s=T().session||{blocks:[]};
   const plays=(f.plays||[]).map(i=>(DB.plays||[])[i]).filter(Boolean).slice(0,3).map(p=>{
     const fr=((p.frames||[]).find(q=>q.paths&&q.paths.length)||(p.frames||[])[0]);
-    return {title:p.title||"", frames:fr?[JSON.parse(JSON.stringify(fr))]:[], nframes:(p.frames||[]).length};
+    return {title:p.title||"", note:p.note||"", court:p.court||"half", frames:fr?[JSON.parse(JSON.stringify(fr))]:[], nframes:(p.frames||[]).length};
   });
   return {sessTitle:s.title||"", blocks:JSON.parse(JSON.stringify(s.blocks||[])), team:T().name||"", category:T().category||"",
     players:(T().players||[]).map(p=>({first:p.first||"",last:p.last||"",num:p.num||0,present:!!p.present,injury:{active:!!(p.injury&&p.injury.active)}})),
@@ -4946,11 +4955,16 @@ async function buildFichePDF(f,src){
     pdf.setFont("helvetica","bold"); pdf.setFontSize(9); pdf.setTextColor(...INK);
     pdf.text(("> "+(p?String(p.title||"Système"):"Système / exercice : ________________")).toUpperCase().slice(0,44),x+5,yy+11);
     const fr=p?((p.frames||[]).find(q=>q.paths&&q.paths.length)||(p.frames||[])[0]):null;
-    const imgH=slotH-boxH-20, imgW=imgH*(CW/CH);
-    const data=await pvCourtJPEG(fr||{tokens:[],paths:[]},"half",light||!fr);
+    const noteL=(p&&p.note)?pdf.splitTextToSize(String(p.note),colW).slice(0,2):[];
+    let imgH=slotH-boxH-20-noteL.length*9, imgW=imgH*(CW/CH);
+    if(imgW>colW){ imgW=colW; imgH=imgW*(CH/CW); }
+    const data=await pvCourtJPEG(fr||{tokens:[],paths:[]},(p&&p.court)||"half",light||!fr);
     pdf.addImage(data,"JPEG",x+(colW-imgW)/2,yy+boxH+3,imgW,imgH);
-    if(p&&(p.frames||[]).length>1){ pdf.setFont("helvetica","normal"); pdf.setFontSize(7); pdf.setTextColor(110,110,110);
-      pdf.text("1re étape sur "+p.frames.length+", animation complète dans PIVOT",x+(colW-imgW)/2,yy+boxH+imgH+12); }
+    if(noteL.length){ pdf.setFont("helvetica","italic"); pdf.setFontSize(7.5); pdf.setTextColor(40,40,40);
+      noteL.forEach(function(l,li){ pdf.text(l,x,yy+boxH+imgH+(p.nframes>1||(p.frames||[]).length>1?22:11)+li*9); }); }
+    // 16/11/2026 : le nombre d'étapes vient de nframes (l'instantané ne garde qu'une étape, la mention ne s'affichait jamais).
+    if(p&&(p.nframes||(p.frames||[]).length)>1){ pdf.setFont("helvetica","normal"); pdf.setFontSize(7); pdf.setTextColor(110,110,110);
+      pdf.text("1re étape sur "+(p.nframes||p.frames.length)+", animation complète dans PIVOT",x+(colW-imgW)/2,yy+boxH+imgH+12); }
   }
   // Colonne 2 : notes
   x=colX(1); y=TOP+12;
@@ -5039,9 +5053,47 @@ async function exportSessionOnePDF(){
         pdf.text("Schéma fidèle à cet exercice, PIVOT",M,ph-24);
       }catch(eDiag){ /* un schéma en échec n'empêche pas le reste de l'export */ }
     }
+    await pvAddCoachSchemaPages(pdf,blocks,M);
     pdf.save("seance_pivot.pdf");
     flash("Fiche de séance PDF prête");
   }catch(e){ flash("Souci pendant l'export, réessaie"); }
+}
+/* Pages « schéma du coach » (16/11/2026) : une page par bloc auquel le coach a joint un schéma
+   de la plaquette. Toutes les étapes sont imprimées (2 par ligne, fond blanc pour l'impression),
+   suivies des points clés du bloc et du commentaire du schéma. */
+async function pvAddCoachSchemaPages(pdf,blocks,M){
+  const items=[]; blocks.forEach(function(b,i){ const pl=pvPlayById(b.playId); if(pl&&(pl.frames||[]).length) items.push({b:b,i:i,pl:pl}); });
+  if(!items.length) return;
+  try{ await pvEnsurePlayerImgData(); }catch(e){}
+  const pw=pdf.internal.pageSize.getWidth(), ph=pdf.internal.pageSize.getHeight();
+  const W=pw-2*M, GAP=14, colW=(W-GAP)/2, imgH=colW*(CH/CW);
+  const footer=function(){ pdf.setFont("helvetica","normal");pdf.setFontSize(9);pdf.setTextColor(150,150,150); pdf.text("Schéma dessiné par le coach, PIVOT",M,ph-24); };
+  const writeLines=function(txt,y,size,style,color){ pdf.setFont("helvetica",style);pdf.setFontSize(size);pdf.setTextColor(...color);
+    const lines=pdf.splitTextToSize(String(txt),W); lines.forEach(function(l){ if(y>ph-40){ footer(); pdf.addPage(); y=48; pdf.setFont("helvetica",style);pdf.setFontSize(size);pdf.setTextColor(...color); } pdf.text(l,M,y); y+=size*1.3; }); return y; };
+  for(const it of items){
+    try{
+      const b=it.b, pl=it.pl, frames=pl.frames, court=pl.court||"half";
+      pdf.addPage(); let y=48;
+      pdf.setFont("helvetica","bold");pdf.setFontSize(13);pdf.setTextColor(20,24,34);
+      pdf.text(pdf.splitTextToSize("Exercice "+(it.i+1)+" : "+String(blockTitle(b)||""),W)[0],M,y); y+=16;
+      pdf.setFont("helvetica","normal");pdf.setFontSize(9.5);pdf.setTextColor(90,90,90);
+      pdf.text([b.cat,(b.dur||0)+" min","intensité "+(b.intensity||""),"schéma : "+(pl.title||"Système")].filter(Boolean).join("   ·   "),M,y); y+=10;
+      pdf.setDrawColor(232,99,31); pdf.setLineWidth(1); pdf.line(M,y,pw-M,y); y+=12;
+      for(let k=0;k<frames.length;k++){
+        const col=k%2;
+        if(col===0 && y+imgH+16>ph-40){ footer(); pdf.addPage(); y=48; }
+        const x=M+col*(colW+GAP);
+        const data=await pvCourtJPEG(frames[k],court,true);
+        pdf.setDrawColor(200,200,200); pdf.setLineWidth(.6);
+        pdf.addImage(data,"JPEG",x,y,colW,imgH); pdf.rect(x,y,colW,imgH);
+        if(frames.length>1){ pdf.setFont("helvetica","bold");pdf.setFontSize(8.5);pdf.setTextColor(232,99,31); pdf.text("Étape "+(k+1)+" / "+frames.length,x+4,y+imgH+11); }
+        if(col===1||k===frames.length-1) y+=imgH+(frames.length>1?20:10);
+      }
+      if(b.points){ y=writeLines("Points clés",y+4,10,"bold",[20,24,34]); y=writeLines(b.points,y,9.5,"normal",[50,50,50]); }
+      if(pl.note){ y=writeLines("Commentaire",y+6,10,"bold",[20,24,34]); y=writeLines(pl.note,y,9.5,"normal",[50,50,50]); }
+      footer();
+    }catch(e){ /* un schéma en échec n'empêche pas le reste de l'export */ }
+  }
 }
 function drawBlocks(){
   const c=document.getElementById("blocks");
@@ -5049,7 +5101,7 @@ function drawBlocks(){
   c.innerHTML=hint+T().session.blocks.map((b,i)=>`
     <div class="block-item">
       <div class="num" style="background:var(--panel);border:1px solid var(--line);color:var(--muted)">${i+1}</div>
-      <div class="bt" style="cursor:pointer" onclick="editBlock(${i})"><b>${blockTitle(b)}</b><br><small>${b.cat} · ${b.dur} min · intensité ${b.intensity}${b.points?" · ✎":""}</small></div>
+      <div class="bt" style="cursor:pointer" onclick="editBlock(${i})"><b>${blockTitle(b)}</b><br><small>${b.cat} · ${b.dur} min · intensité ${b.intensity}${b.points?" · ✎":""}${pvPlayById(b.playId)?" · schéma joint":""}</small></div>
       <button class="iconbtn" title="Modifier ce bloc" onclick="editBlock(${i})">✎</button>
       ${b.exoId?`<button class="iconbtn" title="Voir la fiche de l'exercice" onclick="exoDetail('${b.exoId}')">📋</button>`:(b.physId!=null?`<button class="iconbtn" title="Voir la fiche" onclick="physDetail(${b.physId})">📋</button>`:"")}
       <button class="iconbtn" onclick="moveBlock(${i},-1)">↑</button>
@@ -5623,7 +5675,7 @@ function renderTactics(){
       <button class="btn sm" style="flex:1" onclick="shareMyPlay()">Partager</button>
     </div>
     <div class="hint">Stylo pour dessiner librement. Ajoute des joueurs et le ballon, puis relie-les avec course, passe ou écran. Ajoute une étape pour animer le mouvement.</div>
-    ${DB.plays.length?`<div class="card" style="margin-top:12px"><h3>Mes systèmes (${DB.plays.length})</h3>${DB.plays.map((pl,i)=>`<div class="listitem"><div class="num" style="background:var(--panel2);border:1px solid var(--line);color:var(--muted)">▶</div><div style="flex:1" onclick="loadPlay(${i})"><b>${esc(pl.title)}</b><br><small class="muted">${pl.frames.length} image(s)</small></div><button class="iconbtn" onclick="delPlay(${i})">🗑</button></div>`).join("")}</div>`:""}
+    ${DB.plays.length?`<div class="card" style="margin-top:12px"><h3>Mes systèmes (${DB.plays.length})</h3>${DB.plays.map((pl,i)=>`<div class="listitem"><div class="num" style="background:var(--panel2);border:1px solid var(--line);color:var(--muted)">▶</div><div style="flex:1" onclick="loadPlay(${i})"><b>${esc(pl.title)}</b><br><small class="muted">${pl.frames.length} image(s)${pl.note?" · "+esc(pl.note.length>60?pl.note.slice(0,60)+"…":pl.note):""}</small></div><button class="iconbtn" title="Titre et commentaire" onclick="editPlayNote(${i})">✎</button><button class="iconbtn" onclick="delPlay(${i})">🗑</button></div>`).join("")}</div>`:""}
   `;
   document.querySelectorAll("#toolbar .tool").forEach(b=>{
     b.classList.toggle("active",b.dataset.t===tac.tool);
@@ -6194,7 +6246,8 @@ async function shareMyPlay(){
 function savePlay(){
   openModal(`
     <h3>Enregistrer le système</h3>
-    <label class="fld">Titre</label><input id="pl_title" placeholder="Ex : Pick and roll aile droite">
+    <label class="fld">Titre</label><input id="pl_title" value="${esc(tac.playTitle||"")}" placeholder="Ex : Pick and roll aile droite">
+    <label class="fld" style="margin-top:8px">Commentaire (imprimé sous le schéma)</label><textarea id="pl_note" rows="3" placeholder="Consignes, rotations, ce qu'il faut corriger">${esc(tac.playNote||"")}</textarea>
     <div style="height:12px"></div>
     <button class="btn block" onclick="confirmSavePlay()">Enregistrer (${tac.frames.length} image(s))</button>
     <div style="height:8px"></div><button class="btn sec block" onclick="closeModal()">Annuler</button>
@@ -6202,11 +6255,41 @@ function savePlay(){
 }
 function confirmSavePlay(){
   const t=val("pl_title")||("Système "+(DB.plays.length+1));
-  DB.plays.push({title:t,frames:JSON.parse(JSON.stringify(tac.frames))});
-  tac.playTitle=t;
+  // 16/11/2026 : commentaire, identifiant stable (pour l'attacher à un bloc de séance) et type de terrain.
+  const note=(document.getElementById("pl_note")||{}).value||"";
+  DB.plays.push({id:"pl"+uid(),title:t,note:note.trim(),court:tac.court||"half",frames:JSON.parse(JSON.stringify(tac.frames))});
+  tac.playTitle=t; tac.playNote=note.trim();
   save();closeModal();sfx("ok");renderTactics();flash("Système enregistré");
 }
-function loadPlay(i){tac.frames=JSON.parse(JSON.stringify(DB.plays[i].frames));tac.cur=0;tac.playing=false;tac.playTitle=DB.plays[i].title||"";renderTactics();flash("Système chargé");}
+function loadPlay(i){tac.frames=JSON.parse(JSON.stringify(DB.plays[i].frames));tac.cur=0;tac.playing=false;tac.playTitle=DB.plays[i].title||"";tac.playNote=DB.plays[i].note||"";if(DB.plays[i].court)tac.court=DB.plays[i].court;renderTactics();flash("Système chargé");}
+/* Schémas perso (16/11/2026, demande de Timothy Nollet) : chaque schéma de la plaquette garde un
+   commentaire, et peut être attaché à un bloc de la séance pour sortir dans le PDF à sa place. */
+function pvPlayId(pl){ if(pl && !pl.id){ pl.id="pl"+uid(); } return pl?pl.id:""; }
+function pvPlayById(id){ return id?(DB.plays||[]).find(function(p){ return p.id===id; })||null:null; }
+function editPlayNote(i){
+  const pl=DB.plays[i]; if(!pl) return;
+  openModal(`
+    <h3>Modifier le schéma</h3>
+    <label class="fld">Titre</label><input id="pn_title" value="${esc(pl.title||"")}">
+    <label class="fld" style="margin-top:8px">Commentaire (imprimé sous le schéma)</label><textarea id="pn_note" rows="4" placeholder="Consignes, rotations, ce qu'il faut corriger">${esc(pl.note||"")}</textarea>
+    <div style="height:12px"></div>
+    <button class="btn block" onclick="applyPlayNote(${i})">Enregistrer</button>
+    <button class="btn sec block" style="margin-top:8px" onclick="closeModal()">Annuler</button>
+  `);
+}
+function applyPlayNote(i){
+  const pl=DB.plays[i]; if(!pl) return;
+  const t=val("pn_title"); if(t) pl.title=t;
+  pl.note=((document.getElementById("pn_note")||{}).value||"").trim();
+  save(); closeModal(); if(view==="tactics") renderTactics(); flash("Schéma mis à jour");
+}
+function pvPlaySelectHTML(cur){
+  const plays=DB.plays||[];
+  if(!plays.length) return `<div class="hint" style="margin-top:8px">Pour joindre ton propre schéma à ce bloc : dessine-le dans l'onglet Tactique et enregistre-le, il apparaîtra ici.</div>`;
+  return `<label class="fld" style="margin-top:8px">Schéma de l'exercice (imprimé dans la Fiche pour le banc)</label>
+    <select id="blk_play"><option value="">Aucun schéma</option>${plays.map(function(p){ const id=pvPlayId(p); return `<option value="${id}"${id===cur?" selected":""}>${esc(p.title||"Système")} (${(p.frames||[]).length} étape${(p.frames||[]).length>1?"s":""})</option>`; }).join("")}</select>`;
+}
+function pvReadPlaySelect(b){ const sel=document.getElementById("blk_play"); if(!sel) return; if(sel.value) b.playId=sel.value; else delete b.playId; }
 function delPlay(i){DB.plays.splice(i,1);save();renderTactics();}
 
 /* ============ UTILS ============ */
